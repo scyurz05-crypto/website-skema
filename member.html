@@ -1,0 +1,576 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Dashboard Member – SKEMA UNINDRA</title>
+
+  <link rel="icon" href="skema.jpg">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+
+    .member-box {
+      max-width: 900px;
+      margin: 50px auto;
+    }
+
+    .member-card {
+      padding: 25px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      margin-top: 25px;
+      border-radius: 8px;
+    }
+
+    .member-card h2 {
+      margin-top: 0;
+    }
+
+    .member-info {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .member-info div {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .member-info div:last-child {
+      border-bottom: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    .data-item {
+      padding: 15px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .data-item:first-child {
+      border-top: 0;
+    }
+
+    .data-item h3 {
+      margin: 0 0 5px;
+    }
+
+    .data-item p {
+      margin: 4px 0;
+    }
+
+    #loading {
+      margin-top: 20px;
+    }
+
+    .logout {
+      margin-top: 25px;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="wrap member-box">
+
+
+  <!-- HEADER -->
+
+  <img
+    src="skema.jpg"
+    alt="Logo SKEMA"
+    style="width:80px"
+  >
+
+  <h1>
+    Dashboard Member
+  </h1>
+
+  <p class="lead">
+    Selamat datang di ruang member SKEMA UNINDRA.
+  </p>
+
+
+  <p id="loading">
+    Memuat data...
+  </p>
+
+
+  <!-- PROFIL -->
+
+  <div
+    class="member-card"
+    id="profile-card"
+    hidden
+  >
+
+    <h2>
+      Profil Saya
+    </h2>
+
+
+    <div class="member-info">
+
+      <div>
+        <strong>
+          Nama
+        </strong>
+
+        <br>
+
+        <span id="nama">
+          -
+        </span>
+      </div>
+
+
+      <div>
+        <strong>
+          Email
+        </strong>
+
+        <br>
+
+        <span id="email">
+          -
+        </span>
+      </div>
+
+
+      <div>
+        <strong>
+          Status
+        </strong>
+
+        <br>
+
+        <span>
+          Member SKEMA
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- AGENDA -->
+
+  <div
+    class="member-card"
+    id="agenda-card"
+    hidden
+  >
+
+    <h2>
+      Agenda SKEMA
+    </h2>
+
+    <div id="agenda-list">
+    </div>
+
+  </div>
+
+
+  <!-- KARYA -->
+
+  <div
+    class="member-card"
+    id="karya-card"
+    hidden
+  >
+
+    <h2>
+      Karya SKEMA
+    </h2>
+
+    <div id="karya-list">
+    </div>
+
+  </div>
+
+
+  <!-- MENU -->
+
+  <div class="member-card">
+
+    <h2>
+      Menu
+    </h2>
+
+    <div class="actions">
+
+      <a
+        class="btn"
+        href="index.html"
+      >
+        Website SKEMA
+      </a>
+
+
+      <a
+        class="btn alt"
+        href="index.html#agenda"
+      >
+        Lihat Agenda
+      </a>
+
+
+      <a
+        class="btn alt"
+        href="index.html#karya"
+      >
+        Lihat Karya
+      </a>
+
+
+      <button
+        class="btn alt"
+        id="logout"
+      >
+        Keluar
+      </button>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<script src="config.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+
+const sb =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/*
+=====================================================
+TAMPILKAN PESAN
+=====================================================
+*/
+
+function pesan(text) {
+
+  document.getElementById(
+    "loading"
+  ).textContent = text;
+
+}
+
+
+/*
+=====================================================
+CEK LOGIN
+=====================================================
+*/
+
+async function cekUser() {
+
+  const {
+    data,
+    error
+  } = await sb.auth.getUser();
+
+
+  if (
+    error ||
+    !data.user
+  ) {
+
+    window.location.href =
+      "login.html";
+
+    return;
+
+  }
+
+
+  const user =
+    data.user;
+
+
+  /*
+  PROFIL
+  */
+
+  document.getElementById(
+    "nama"
+  ).textContent =
+    user.user_metadata?.nama ||
+    "Member SKEMA";
+
+
+  document.getElementById(
+    "email"
+  ).textContent =
+    user.email ||
+    "-";
+
+
+  document.getElementById(
+    "profile-card"
+  ).hidden = false;
+
+
+  /*
+  AMBIL AGENDA DAN KARYA
+  */
+
+  await Promise.all([
+    muatAgenda(),
+    muatKarya()
+  ]);
+
+
+  document.getElementById(
+    "loading"
+  ).textContent =
+    "Data berhasil dimuat.";
+
+}
+
+
+/*
+=====================================================
+AGENDA
+=====================================================
+*/
+
+async function muatAgenda() {
+
+  const {
+    data,
+    error
+  } = await sb
+    .from("agenda")
+    .select("*")
+    .order("id");
+
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  const box =
+    document.getElementById(
+      "agenda-list"
+    );
+
+
+  box.innerHTML = "";
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    box.innerHTML =
+      "<p>Belum ada agenda.</p>";
+
+  } else {
+
+    data.forEach(
+      item => {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "data-item";
+
+
+        div.innerHTML = `
+          <h3>${aman(item.kegiatan)}</h3>
+          <p>${aman(item.waktu || "-")}</p>
+          <p>${aman(item.jenis || "-")}</p>
+        `;
+
+
+        box.appendChild(div);
+
+      }
+    );
+
+  }
+
+
+  document.getElementById(
+    "agenda-card"
+  ).hidden = false;
+
+}
+
+
+/*
+=====================================================
+KARYA
+=====================================================
+*/
+
+async function muatKarya() {
+
+  const {
+    data,
+    error
+  } = await sb
+    .from("karya")
+    .select("*")
+    .order("id");
+
+
+  if (error) {
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  const box =
+    document.getElementById(
+      "karya-list"
+    );
+
+
+  box.innerHTML = "";
+
+
+  if (
+    !data ||
+    data.length === 0
+  ) {
+
+    box.innerHTML =
+      "<p>Belum ada karya.</p>";
+
+  } else {
+
+    data.forEach(
+      item => {
+
+        const div =
+          document.createElement(
+            "div"
+          );
+
+        div.className =
+          "data-item";
+
+
+        div.innerHTML = `
+          <h3>${aman(item.judul)}</h3>
+          <p>Jenis: ${aman(item.jenis || "-")}</p>
+          <p>Penulis: ${aman(item.penulis || "-")}</p>
+          <p>Tahun: ${aman(item.tahun || "-")}</p>
+        `;
+
+
+        box.appendChild(div);
+
+      }
+    );
+
+  }
+
+
+  document.getElementById(
+    "karya-card"
+  ).hidden = false;
+
+}
+
+
+/*
+=====================================================
+AMAN UNTUK TEXT HTML
+=====================================================
+*/
+
+function aman(value) {
+
+  const div =
+    document.createElement(
+      "div"
+    );
+
+  div.textContent =
+    value;
+
+  return div.innerHTML;
+
+}
+
+
+/*
+=====================================================
+LOGOUT
+=====================================================
+*/
+
+document.getElementById(
+  "logout"
+).onclick =
+  async function() {
+
+    await sb.auth.signOut();
+
+    window.location.href =
+      "login.html";
+
+  };
+
+
+/*
+=====================================================
+JALANKAN
+=====================================================
+*/
+
+cekUser();
+
+</script>
+
+
+</body>
+
+</html>
+```
