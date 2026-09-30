@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daftar Member – SKEMA UNINDRA</title>
+  <link rel="icon" href="skema.jpg">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .auth-box {
+      max-width: 480px;
+      margin: 70px auto;
+    }
+
+    .auth-box input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .auth-box label {
+      display: block;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+
+    .auth-box button {
+      margin-top: 22px;
+      border: 0;
+      cursor: pointer;
+    }
+
+    #msg {
+      min-height: 24px;
+      margin-top: 15px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div class="wrap auth-box">
+
+  <img src="skema.jpg" alt="Logo SKEMA" style="width:80px">
+
+  <h1>Daftar Member</h1>
+
+  <p class="lead">
+    Buat akun untuk bergabung sebagai member SKEMA UNINDRA.
+  </p>
+
+  <form id="registerForm">
+
+```
+<label for="nama">Nama Lengkap</label>
+<input id="nama" type="text" required>
+
+<label for="email">Email</label>
+<input id="email" type="email" required>
+
+<label for="password">Kata Sandi</label>
+<input id="password" type="password" minlength="6" required>
+
+<label for="password2">Konfirmasi Kata Sandi</label>
+<input id="password2" type="password" minlength="6" required>
+
+<button class="btn" type="submit">
+  Daftar
+</button>
+```
+
+  </form>
+
+  <p id="msg"></p>
+
+  <p>
+    Sudah punya akun?
+    <a href="login.html">Login di sini</a>
+  </p>
+
+  <p>
+    <a href="index.html">← Kembali ke website</a>
+  </p>
+
+</div>
+
+<script src="config.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const sb = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+const form = document.getElementById("registerForm");
+const msg = document.getElementById("msg");
+
+form.addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const nama = document.getElementById("nama").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const password2 = document.getElementById("password2").value;
+
+  if (password !== password2) {
+    msg.textContent = "Konfirmasi kata sandi tidak sama.";
+    return;
+  }
+
+  msg.textContent = "Mendaftarkan akun...";
+
+  const { data, error } = await sb.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      data: {
+        nama: nama,
+        role: "member"
+      }
+    }
+  });
+
+  if (error) {
+    msg.textContent = "Gagal daftar: " + error.message;
+    return;
+  }
+
+  if (data.session) {
+    window.location.href = "member.html";
+  } else {
+    msg.textContent =
+      "Pendaftaran berhasil. Silakan cek email untuk verifikasi akun.";
+  }
+});
+</script>
+
+</body>
+</html>
