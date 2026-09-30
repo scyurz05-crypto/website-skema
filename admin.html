@@ -1,105 +1,699 @@
+```html
 <!DOCTYPE html>
-<html lang="id"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin SKEMA UNINDRA</title>
-<link rel="stylesheet" href="style.css">
-<style>
-.box{max-width:720px;margin:40px auto}
-label{display:block;font:500 15px var(--head);margin:12px 0 4px}
-input{width:100%;padding:10px;font:17px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px}
-.row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
-.row button{font:500 14px var(--head);padding:6px 12px;cursor:pointer}
-#msg{color:var(--accent);font:500 16px var(--head);min-height:1.5em}
-#form .btn{margin-top:16px;border:0;cursor:pointer}
-</style></head>
-<body><div class="wrap box">
-<h1 style="font-size:40px;margin-bottom:8px">Admin SKEMA</h1>
-<p id="msg"></p>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div id="login">
-  <label for="em">Email</label><input id="em" type="email" autocomplete="username">
-  <label for="pw">Kata sandi</label><input id="pw" type="password" autocomplete="current-password">
-  <button class="btn" id="masuk" style="margin-top:16px;border:0;cursor:pointer">Masuk</button>
+  <title>Admin SKEMA UNINDRA</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .box {
+      max-width: 720px;
+      margin: 40px auto;
+    }
+
+    label {
+      display: block;
+      font: 500 15px var(--head);
+      margin: 12px 0 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font: 17px var(--body);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .row button {
+      font: 500 14px var(--head);
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    #msg {
+      color: var(--accent);
+      font: 500 16px var(--head);
+      min-height: 1.5em;
+    }
+
+    #form .btn {
+      margin-top: 16px;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .error {
+      color: #b00020;
+    }
+
+    .success {
+      color: var(--accent);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap box">
+
+  <h1 style="font-size:40px;margin-bottom:8px">
+    Admin SKEMA
+  </h1>
+
+  <p id="msg"></p>
+
+
+  <!-- LOGIN -->
+
+  <div id="login">
+
+    <label for="em">
+      Email Pengurus
+    </label>
+
+    <input
+      id="em"
+      type="email"
+      autocomplete="username"
+      required
+    >
+
+    <label for="pw">
+      Kata Sandi
+    </label>
+
+    <input
+      id="pw"
+      type="password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button
+      class="btn"
+      id="masuk"
+      style="margin-top:16px;border:0;cursor:pointer"
+    >
+      Masuk
+    </button>
+
+  </div>
+
+
+  <!-- PANEL ADMIN -->
+
+  <div id="panel" hidden>
+
+    <p>
+      Login sebagai <strong id="admin-email"></strong>
+    </p>
+
+    <div
+      class="tabs"
+      id="tabs">
+    </div>
+
+    <div id="form"></div>
+
+    <h2 style="font-size:26px;margin-top:32px">
+      Data tersimpan
+    </h2>
+
+    <div id="list"></div>
+
+    <button
+      class="btn alt"
+      id="keluar"
+      style="margin-top:24px;cursor:pointer"
+    >
+      Keluar
+    </button>
+
+  </div>
+
+
+  <p>
+    <a href="index.html">
+      Kembali ke website
+    </a>
+  </p>
+
 </div>
 
-<div id="panel" hidden>
-  <div class="tabs" id="tabs"></div>
-  <div id="form"></div>
-  <h2 style="font-size:26px;margin-top:32px">Data tersimpan</h2>
-  <div id="list"></div>
-  <button class="btn alt" id="keluar" style="margin-top:24px;cursor:pointer">Keluar</button>
-</div>
-<p><a href="index.html">Kembali ke website</a></p>
-</div>
 
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="db.js"></script>
-<script>
-// Definisi tabel: [nama kolom, label, tipe]
-const S={
-  pengurus:{urut:"urutan",f:[["nama","Nama"],["jabatan","Jabatan"],["divisi","Divisi (kosongkan untuk pengurus inti)"],["prodi","Prodi"],["angkatan","Angkatan","number"],["urutan","Urutan tampil","number"]]},
-  agenda:{urut:"id",f:[["kegiatan","Kegiatan"],["waktu","Waktu"],["jenis","Jenis"]]},
-  karya:{urut:"id",f:[["judul","Judul"],["jenis","Jenis (Artikel / Policy brief / Poster)"],["penulis","Penulis"],["tahun","Tahun","number"]]}
-};
-let tabel="pengurus";
-const msg=t=>{$("msg").textContent=t||""};
 
-function tampil(masuk){
-  $("login").hidden=masuk; $("panel").hidden=!masuk;
-  if(masuk){buatTab();muat()}
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="db.js"></script>
+
+
+<script>
+
+const S = {
+
+  pengurus: {
+    urut: "urutan",
+
+    f: [
+      ["nama", "Nama"],
+      ["jabatan", "Jabatan"],
+      ["divisi", "Divisi (kosongkan untuk pengurus inti)"],
+      ["prodi", "Prodi"],
+      ["angkatan", "Angkatan", "number"],
+      ["urutan", "Urutan tampil", "number"]
+    ]
+  },
+
+  agenda: {
+    urut: "id",
+
+    f: [
+      ["kegiatan", "Kegiatan"],
+      ["waktu", "Waktu"],
+      ["jenis", "Jenis"]
+    ]
+  },
+
+  karya: {
+    urut: "id",
+
+    f: [
+      ["judul", "Judul"],
+      ["jenis", "Jenis (Artikel / Policy brief / Poster)"],
+      ["penulis", "Penulis"],
+      ["tahun", "Tahun", "number"]
+    ]
+  }
+
+};
+
+
+let tabel = "pengurus";
+
+
+const msg = t => {
+  $("msg").textContent = t || "";
+};
+
+
+function tampil(masuk) {
+
+  $("login").hidden = masuk;
+  $("panel").hidden = !masuk;
+
+  if (masuk) {
+    buatTab();
+    muat();
+  }
+
 }
-function buatTab(){
-  $("tabs").innerHTML="";
-  Object.keys(S).forEach(k=>{
-    const b=el("button","",k[0].toUpperCase()+k.slice(1));
-    b.setAttribute("aria-pressed",k===tabel);
-    b.onclick=()=>{tabel=k;buatTab();muat()};
-    $("tabs").appendChild(b);
-  });
-  buatForm();
+
+
+/*
+=====================================================
+CEK APAKAH USER ADALAH PENGURUS
+=====================================================
+*/
+
+async function cekPengurus(userId) {
+
+  const { data, error } = await sb
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+
+    console.error(error);
+
+    msg(
+      "Gagal memeriksa akses pengurus: " +
+      error.message
+    );
+
+    return false;
+  }
+
+  return !!data;
 }
-function buatForm(){
-  const f=$("form"); f.innerHTML="";
-  S[tabel].f.forEach(([k,label,tipe])=>{
-    const i=el("input"); i.id="f-"+k; i.type=tipe||"text";
-    f.append(el("label","",label),i);
-  });
-  const b=el("button","btn","Tambah"); b.onclick=tambah; f.appendChild(b);
-}
-async function tambah(){
-  const row={};
-  S[tabel].f.forEach(([k,,tipe])=>{
-    const v=$("f-"+k).value; row[k]=tipe==="number"?(v===""?null:Number(v)):v;
-  });
-  const {error}=await sb.from(tabel).insert(row);
-  if(error) return msg("Gagal: "+error.message);
-  msg("Tersimpan."); buatForm(); muat();
-}
-async function muat(){
-  const {data}=await sb.from(tabel).select("*").order(S[tabel].urut);
-  $("list").innerHTML="";
-  (data||[]).forEach(r=>{
-    const d=el("div","row");
-    d.appendChild(el("span","",S[tabel].f.map(([k])=>r[k]).filter(x=>x!==null&&x!=="").join(" · ")));
-    const h=el("button","","Hapus");
-    h.onclick=async()=>{
-      if(!confirm("Hapus data ini?")) return;
-      const {error}=await sb.from(tabel).delete().eq("id",r.id);
-      if(error) msg("Gagal: "+error.message);
+
+
+/*
+=====================================================
+TAB
+=====================================================
+*/
+
+function buatTab() {
+
+  $("tabs").innerHTML = "";
+
+  Object.keys(S).forEach(k => {
+
+    const b = el(
+      "button",
+      "",
+      k[0].toUpperCase() + k.slice(1)
+    );
+
+    b.setAttribute(
+      "aria-pressed",
+      k === tabel
+    );
+
+    b.onclick = () => {
+
+      tabel = k;
+
+      buatTab();
+
       muat();
+
     };
-    d.appendChild(h); $("list").appendChild(d);
+
+    $("tabs").appendChild(b);
+
   });
+
+  buatForm();
+
 }
-if(!sb){ msg("Isi config.js dulu dengan URL dan anon key Supabase."); $("masuk").disabled=true; }
-else{
-  $("masuk").onclick=async()=>{
-    const {error}=await sb.auth.signInWithPassword({email:$("em").value,password:$("pw").value});
-    if(error) msg("Gagal masuk: "+error.message); else {msg();tampil(true)}
+
+
+/*
+=====================================================
+FORM
+=====================================================
+*/
+
+function buatForm() {
+
+  const f = $("form");
+
+  f.innerHTML = "";
+
+  S[tabel].f.forEach(
+    ([k, label, tipe]) => {
+
+      const i = el("input");
+
+      i.id = "f-" + k;
+
+      i.type = tipe || "text";
+
+      f.append(
+        el("label", "", label),
+        i
+      );
+
+    }
+  );
+
+
+  const b = el(
+    "button",
+    "btn",
+    "Tambah"
+  );
+
+  b.type = "button";
+
+  b.onclick = tambah;
+
+  f.appendChild(b);
+
+}
+
+
+/*
+=====================================================
+TAMBAH DATA
+=====================================================
+*/
+
+async function tambah() {
+
+  const row = {};
+
+  S[tabel].f.forEach(
+    ([k, , tipe]) => {
+
+      const v =
+        $("f-" + k).value;
+
+      row[k] =
+        tipe === "number"
+          ? (v === "" ? null : Number(v))
+          : v;
+
+    }
+  );
+
+
+  const { error } =
+    await sb
+      .from(tabel)
+      .insert(row);
+
+
+  if (error) {
+
+    msg(
+      "Gagal: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  msg("Data berhasil ditambahkan.");
+
+  buatForm();
+
+  muat();
+
+}
+
+
+/*
+=====================================================
+LOAD DATA
+=====================================================
+*/
+
+async function muat() {
+
+  const {
+    data,
+    error
+  } = await sb
+    .from(tabel)
+    .select("*")
+    .order(S[tabel].urut);
+
+
+  if (error) {
+
+    msg(
+      "Gagal mengambil data: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  $("list").innerHTML = "";
+
+
+  (data || []).forEach(r => {
+
+    const d =
+      el("div", "row");
+
+
+    d.appendChild(
+      el(
+        "span",
+        "",
+        S[tabel].f
+          .map(([k]) => r[k])
+          .filter(
+            x => x !== null &&
+                 x !== ""
+          )
+          .join(" · ")
+      )
+    );
+
+
+    const h =
+      el(
+        "button",
+        "",
+        "Hapus"
+      );
+
+
+    h.onclick = async () => {
+
+      if (
+        !confirm(
+          "Hapus data ini?"
+        )
+      ) {
+        return;
+      }
+
+
+      const {
+        error
+      } = await sb
+        .from(tabel)
+        .delete()
+        .eq("id", r.id);
+
+
+      if (error) {
+
+        msg(
+          "Gagal: " +
+          error.message
+        );
+
+        return;
+      }
+
+
+      msg(
+        "Data berhasil dihapus."
+      );
+
+      muat();
+
+    };
+
+
+    d.appendChild(h);
+
+    $("list")
+      .appendChild(d);
+
+  });
+
+}
+
+
+/*
+=====================================================
+LOGIN
+=====================================================
+*/
+
+async function loginPengurus() {
+
+  const email =
+    $("em").value.trim();
+
+  const password =
+    $("pw").value;
+
+
+  if (!email || !password) {
+
+    msg(
+      "Email dan kata sandi wajib diisi."
+    );
+
+    return;
+  }
+
+
+  msg(
+    "Memeriksa akun..."
+  );
+
+
+  const {
+    data,
+    error
+  } = await sb.auth
+    .signInWithPassword({
+      email,
+      password
+    });
+
+
+  if (error) {
+
+    msg(
+      "Login gagal: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  const user =
+    data.user;
+
+
+  /*
+  Cek role setelah login
+  */
+
+  const isAdmin =
+    await cekPengurus(
+      user.id
+    );
+
+
+  if (!isAdmin) {
+
+    await sb.auth.signOut();
+
+    msg(
+      "Akses ditolak. Akun ini bukan akun pengurus."
+    );
+
+    return;
+  }
+
+
+  $("admin-email")
+    .textContent =
+    user.email || "-";
+
+
+  msg(
+    "Login pengurus berhasil."
+  );
+
+
+  tampil(true);
+
+}
+
+
+/*
+=====================================================
+CEK SESSION SAAT HALAMAN DIBUKA
+=====================================================
+*/
+
+async function cekSession() {
+
+  const {
+    data
+  } = await sb.auth
+    .getSession();
+
+
+  const session =
+    data.session;
+
+
+  if (!session) {
+
+    tampil(false);
+
+    return;
+  }
+
+
+  const isAdmin =
+    await cekPengurus(
+      session.user.id
+    );
+
+
+  if (!isAdmin) {
+
+    await sb.auth.signOut();
+
+    tampil(false);
+
+    msg(
+      "Akses ditolak. Halaman ini khusus pengurus."
+    );
+
+    return;
+  }
+
+
+  $("admin-email")
+    .textContent =
+    session.user.email || "-";
+
+
+  tampil(true);
+
+}
+
+
+/*
+=====================================================
+LOGOUT
+=====================================================
+*/
+
+$("keluar").onclick =
+  async () => {
+
+    await sb.auth.signOut();
+
+    window.location.href =
+      "admin.html";
+
   };
-  $("keluar").onclick=async()=>{await sb.auth.signOut();tampil(false)};
-  sb.auth.getSession().then(({data})=>tampil(!!data.session));
+
+
+/*
+=====================================================
+JALANKAN
+=====================================================
+*/
+
+if (!sb) {
+
+  msg(
+    "Konfigurasi Supabase belum tersedia."
+  );
+
+  $("masuk").disabled = true;
+
+} else {
+
+  $("masuk").onclick =
+    loginPengurus;
+
+  cekSession();
+
 }
+
 </script>
-</body></html>
+
+</body>
+</html>
+```
