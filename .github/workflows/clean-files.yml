@@ -1,25 +1,83 @@
-name: Clean Code Fences
+name: Auto Clean Code Fences
 
-on: push
+on:
+push:
+branches:
+- main
 
 permissions:
 contents: write
 
 jobs:
 clean:
+if: github.actor != 'github-actions[bot]'
 runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v4
 
 ````
-  - name: Remove code fences
-    run: python3 -c "from pathlib import Path; exts={'.html','.css','.js','.json','.sql','.txt'}; [p.write_text(p.read_text(encoding='utf-8').replace('```',''),encoding='utf-8') for p in Path('.').rglob('*') if p.is_file() and p.suffix.lower() in exts and '.git' not in p.parts]"
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
 
-  - name: Commit
+  - name: Clean code fences
+    run: |
+      python3 - <<'PY'
+      from pathlib import Path
+
+      extensions = {
+          ".html",
+          ".css",
+          ".js",
+          ".json",
+          ".sql",
+          ".txt"
+      }
+
+      for file in Path(".").rglob("*"):
+          if not file.is_file():
+              continue
+
+          if ".git" in file.parts:
+              continue
+
+          if file.suffix.lower() not in extensions:
+              continue
+
+          try:
+              text = file.read_text(encoding="utf-8")
+          except UnicodeDecodeError:
+              continue
+
+          cleaned = text.replace("```html", "")
+          cleaned = cleaned.replace("```HTML", "")
+          cleaned = cleaned.replace("```css", "")
+          cleaned = cleaned.replace("```CSS", "")
+          cleaned = cleaned.replace("```javascript", "")
+          cleaned = cleaned.replace("```JavaScript", "")
+          cleaned = cleaned.replace("```js", "")
+          cleaned = cleaned.replace("```JS", "")
+          cleaned = cleaned.replace("```sql", "")
+          cleaned = cleaned.replace("```SQL", "")
+          cleaned = cleaned.replace("```json", "")
+          cleaned = cleaned.replace("```JSON", "")
+          cleaned = cleaned.replace("```", "")
+
+          if cleaned != text:
+              file.write_text(cleaned, encoding="utf-8")
+              print("Dibersihkan:", file)
+
+      PY
+
+  - name: Commit cleaned files
     run: |
       git config user.name "github-actions[bot]"
       git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       git add .
-      git diff --cached --quiet || git commit -m "Auto remove code fences"
-      git push
+
+      if git diff --cached --quiet; then
+        echo "Tidak ada yang perlu dibersihkan."
+      else
+        git commit -m "Auto clean code fences"
+        git push
+      fi
 ````
