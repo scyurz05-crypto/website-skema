@@ -12,6 +12,7 @@ jobs:
 clean:
 runs-on: ubuntu-latest
 
+````
 steps:
   - name: Checkout
     uses: actions/checkout@v4
@@ -30,3 +31,4 @@ steps:
       git add .
       git diff --cached --quiet || git commit -m "Auto remove code fences"
       git push
+````
