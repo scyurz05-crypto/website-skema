@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,12 +33,33 @@
     }
 
     .row {
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .row-content {
       display: flex;
       justify-content: space-between;
-      gap: 12px;
+      gap: 15px;
       align-items: center;
-      padding: 10px 0;
-      border-top: 1px solid var(--line);
+    }
+
+    .row-info {
+      flex: 1;
+    }
+
+    .row-photo {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 8px;
     }
 
     .row button {
@@ -64,6 +86,17 @@
 
     .success {
       color: var(--accent);
+    }
+
+    .social-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .social-links a {
+      font-size: 14px;
     }
   </style>
 </head>
@@ -94,6 +127,7 @@
       required
     >
 
+
     <label for="pw">
       Kata Sandi
     </label>
@@ -104,6 +138,7 @@
       autocomplete="current-password"
       required
     >
+
 
     <button
       class="btn"
@@ -121,21 +156,27 @@
   <div id="panel" hidden>
 
     <p>
-      Login sebagai <strong id="admin-email"></strong>
+      Login sebagai
+      <strong id="admin-email"></strong>
     </p>
+
 
     <div
       class="tabs"
       id="tabs">
     </div>
 
+
     <div id="form"></div>
+
 
     <h2 style="font-size:26px;margin-top:32px">
       Data tersimpan
     </h2>
 
+
     <div id="list"></div>
+
 
     <button
       class="btn alt"
@@ -169,6 +210,7 @@
 const S = {
 
   pengurus: {
+
     urut: "urutan",
 
     f: [
@@ -177,11 +219,18 @@ const S = {
       ["divisi", "Divisi (kosongkan untuk pengurus inti)"],
       ["prodi", "Prodi"],
       ["angkatan", "Angkatan", "number"],
-      ["urutan", "Urutan tampil", "number"]
+      ["urutan", "Urutan tampil", "number"],
+      ["foto", "Link Foto"],
+      ["instagram", "Link Instagram"],
+      ["tiktok", "Link TikTok"],
+      ["linkedin", "Link LinkedIn"]
     ]
+
   },
 
+
   agenda: {
+
     urut: "id",
 
     f: [
@@ -189,9 +238,12 @@ const S = {
       ["waktu", "Waktu"],
       ["jenis", "Jenis"]
     ]
+
   },
 
+
   karya: {
+
     urut: "id",
 
     f: [
@@ -200,6 +252,7 @@ const S = {
       ["penulis", "Penulis"],
       ["tahun", "Tahun", "number"]
     ]
+
   }
 
 };
@@ -226,19 +279,17 @@ function tampil(masuk) {
 }
 
 
-/*
-=====================================================
-CEK APAKAH USER ADALAH PENGURUS
-=====================================================
-*/
-
 async function cekPengurus(userId) {
 
-  const { data, error } = await sb
+  const {
+    data,
+    error
+  } = await sb
     .from("admin_users")
     .select("user_id")
     .eq("user_id", userId)
     .maybeSingle();
+
 
   if (error) {
 
@@ -250,21 +301,19 @@ async function cekPengurus(userId) {
     );
 
     return false;
+
   }
 
+
   return !!data;
+
 }
 
-
-/*
-=====================================================
-TAB
-=====================================================
-*/
 
 function buatTab() {
 
   $("tabs").innerHTML = "";
+
 
   Object.keys(S).forEach(k => {
 
@@ -274,10 +323,12 @@ function buatTab() {
       k[0].toUpperCase() + k.slice(1)
     );
 
+
     b.setAttribute(
       "aria-pressed",
       k === tabel
     );
+
 
     b.onclick = () => {
 
@@ -289,26 +340,23 @@ function buatTab() {
 
     };
 
+
     $("tabs").appendChild(b);
 
   });
+
 
   buatForm();
 
 }
 
 
-/*
-=====================================================
-FORM
-=====================================================
-*/
-
 function buatForm() {
 
   const f = $("form");
 
   f.innerHTML = "";
+
 
   S[tabel].f.forEach(
     ([k, label, tipe]) => {
@@ -318,6 +366,20 @@ function buatForm() {
       i.id = "f-" + k;
 
       i.type = tipe || "text";
+
+
+      if (
+        k === "foto" ||
+        k === "instagram" ||
+        k === "tiktok" ||
+        k === "linkedin"
+      ) {
+
+        i.placeholder =
+          "https://...";
+
+      }
+
 
       f.append(
         el("label", "", label),
@@ -334,6 +396,7 @@ function buatForm() {
     "Tambah"
   );
 
+
   b.type = "button";
 
   b.onclick = tambah;
@@ -343,21 +406,17 @@ function buatForm() {
 }
 
 
-/*
-=====================================================
-TAMBAH DATA
-=====================================================
-*/
-
 async function tambah() {
 
   const row = {};
+
 
   S[tabel].f.forEach(
     ([k, , tipe]) => {
 
       const v =
-        $("f-" + k).value;
+        $("f-" + k).value.trim();
+
 
       row[k] =
         tipe === "number"
@@ -368,10 +427,11 @@ async function tambah() {
   );
 
 
-  const { error } =
-    await sb
-      .from(tabel)
-      .insert(row);
+  const {
+    error
+  } = await sb
+    .from(tabel)
+    .insert(row);
 
 
   if (error) {
@@ -382,10 +442,14 @@ async function tambah() {
     );
 
     return;
+
   }
 
 
-  msg("Data berhasil ditambahkan.");
+  msg(
+    "Data berhasil ditambahkan."
+  );
+
 
   buatForm();
 
@@ -393,12 +457,6 @@ async function tambah() {
 
 }
 
-
-/*
-=====================================================
-LOAD DATA
-=====================================================
-*/
 
 async function muat() {
 
@@ -419,6 +477,7 @@ async function muat() {
     );
 
     return;
+
   }
 
 
@@ -431,88 +490,240 @@ async function muat() {
       el("div", "row");
 
 
-    d.appendChild(
-      el(
-        "span",
-        "",
+    if (tabel === "pengurus") {
+
+      const content =
+        el("div", "row-content");
+
+
+      if (r.foto) {
+
+        const img =
+          el("img", "row-photo");
+
+        img.src = r.foto;
+
+        img.alt = r.nama || "Foto pengurus";
+
+        content.appendChild(img);
+
+      }
+
+
+      const info =
+        el("div", "row-info");
+
+
+      info.appendChild(
+        el(
+          "strong",
+          "",
+          r.nama || "-"
+        )
+      );
+
+
+      info.appendChild(
+        el(
+          "div",
+          "",
+          [
+            r.jabatan,
+            r.divisi,
+            r.prodi,
+            r.angkatan
+          ]
+          .filter(Boolean)
+          .join(" · ")
+        )
+      );
+
+
+      const socials =
+        el("div", "social-links");
+
+
+      [
+        ["Instagram", r.instagram],
+        ["TikTok", r.tiktok],
+        ["LinkedIn", r.linkedin]
+      ]
+      .forEach(([nama, link]) => {
+
+        if (!link) return;
+
+
+        const a =
+          document.createElement("a");
+
+        a.href = link;
+
+        a.target = "_blank";
+
+        a.rel = "noopener noreferrer";
+
+        a.textContent = nama;
+
+        socials.appendChild(a);
+
+      });
+
+
+      info.appendChild(socials);
+
+      content.appendChild(info);
+
+
+      const actions =
+        el("div", "row-actions");
+
+
+      const h =
+        el(
+          "button",
+          "",
+          "Hapus"
+        );
+
+
+      h.onclick = async () => {
+
+        if (
+          !confirm(
+            "Hapus data ini?"
+          )
+        ) {
+          return;
+        }
+
+
+        const {
+          error
+        } = await sb
+          .from(tabel)
+          .delete()
+          .eq("id", r.id);
+
+
+        if (error) {
+
+          msg(
+            "Gagal: " +
+            error.message
+          );
+
+          return;
+
+        }
+
+
+        msg(
+          "Data berhasil dihapus."
+        );
+
+
+        muat();
+
+      };
+
+
+      actions.appendChild(h);
+
+      content.appendChild(actions);
+
+      d.appendChild(content);
+
+    } else {
+
+      const content =
+        el("div", "row-content");
+
+
+      const info =
+        el("div", "row-info");
+
+
+      info.textContent =
         S[tabel].f
           .map(([k]) => r[k])
           .filter(
-            x => x !== null &&
-                 x !== ""
+            x =>
+              x !== null &&
+              x !== ""
           )
-          .join(" · ")
-      )
-    );
+          .join(" · ");
 
 
-    const h =
-      el(
-        "button",
-        "",
-        "Hapus"
-      );
-
-
-    h.onclick = async () => {
-
-      if (
-        !confirm(
-          "Hapus data ini?"
-        )
-      ) {
-        return;
-      }
-
-
-      const {
-        error
-      } = await sb
-        .from(tabel)
-        .delete()
-        .eq("id", r.id);
-
-
-      if (error) {
-
-        msg(
-          "Gagal: " +
-          error.message
+      const h =
+        el(
+          "button",
+          "",
+          "Hapus"
         );
 
-        return;
-      }
+
+      h.onclick = async () => {
+
+        if (
+          !confirm(
+            "Hapus data ini?"
+          )
+        ) {
+          return;
+        }
 
 
-      msg(
-        "Data berhasil dihapus."
-      );
+        const {
+          error
+        } = await sb
+          .from(tabel)
+          .delete()
+          .eq("id", r.id);
 
-      muat();
 
-    };
+        if (error) {
+
+          msg(
+            "Gagal: " +
+            error.message
+          );
+
+          return;
+
+        }
 
 
-    d.appendChild(h);
+        msg(
+          "Data berhasil dihapus."
+        );
 
-    $("list")
-      .appendChild(d);
+
+        muat();
+
+      };
+
+
+      content.appendChild(info);
+
+      content.appendChild(h);
+
+      d.appendChild(content);
+
+    }
+
+
+    $("list").appendChild(d);
 
   });
 
 }
 
 
-/*
-=====================================================
-LOGIN
-=====================================================
-*/
-
 async function loginPengurus() {
 
   const email =
     $("em").value.trim();
+
 
   const password =
     $("pw").value;
@@ -525,6 +736,7 @@ async function loginPengurus() {
     );
 
     return;
+
   }
 
 
@@ -551,16 +763,13 @@ async function loginPengurus() {
     );
 
     return;
+
   }
 
 
   const user =
     data.user;
 
-
-  /*
-  Cek role setelah login
-  */
 
   const isAdmin =
     await cekPengurus(
@@ -572,11 +781,14 @@ async function loginPengurus() {
 
     await sb.auth.signOut();
 
+
     msg(
       "Akses ditolak. Akun ini bukan akun pengurus."
     );
 
+
     return;
+
   }
 
 
@@ -595,12 +807,6 @@ async function loginPengurus() {
 }
 
 
-/*
-=====================================================
-CEK SESSION SAAT HALAMAN DIBUKA
-=====================================================
-*/
-
 async function cekSession() {
 
   const {
@@ -618,6 +824,7 @@ async function cekSession() {
     tampil(false);
 
     return;
+
   }
 
 
@@ -633,11 +840,14 @@ async function cekSession() {
 
     tampil(false);
 
+
     msg(
       "Akses ditolak. Halaman ini khusus pengurus."
     );
 
+
     return;
+
   }
 
 
@@ -651,12 +861,6 @@ async function cekSession() {
 }
 
 
-/*
-=====================================================
-LOGOUT
-=====================================================
-*/
-
 $("keluar").onclick =
   async () => {
 
@@ -667,12 +871,6 @@ $("keluar").onclick =
 
   };
 
-
-/*
-=====================================================
-JALANKAN
-=====================================================
-*/
 
 if (!sb) {
 
@@ -694,4 +892,5 @@ if (!sb) {
 </script>
 
 </body>
+
 </html>
