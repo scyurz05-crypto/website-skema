@@ -1,9 +1,6 @@
 name: Clean Code Fences
 
-on:
-push:
-branches:
-- main
+on: push
 
 permissions:
 contents: write
@@ -11,20 +8,14 @@ contents: write
 jobs:
 clean:
 runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v4
 
 ````
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+  - name: Remove code fences
+    run: python3 -c "from pathlib import Path; exts={'.html','.css','.js','.json','.sql','.txt'}; [p.write_text(p.read_text(encoding='utf-8').replace('```',''),encoding='utf-8') for p in Path('.').rglob('*') if p.is_file() and p.suffix.lower() in exts and '.git' not in p.parts]"
 
-  - name: Clean files
-    shell: bash
-    run: |
-      find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.json" -o -name "*.sql" -o -name "*.txt" \) \
-        -not -path "./.git/*" \
-        -exec sed -i 's/```//g' {} +
-
-  - name: Commit changes
+  - name: Commit
     run: |
       git config user.name "github-actions[bot]"
       git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
