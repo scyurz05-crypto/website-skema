@@ -1,16 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="id">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>SKEMA UNINDRA – Studi Kajian dan Riset Mahasiswa</title>
+  <title>SKEMA UNINDRA — Studi Kajian dan Riset Mahasiswa</title>
 
   <link rel="icon" href="skema.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,384 +19,542 @@
 <body>
 
 <header>
-  <div class="wrap">
-    <nav>
+  <div class="wrap nav-wrap">
 
-      <a class="logo" href="#top">
-        <img src="skema.jpg" alt="Logo SKEMA">
-        SKEMA UNINDRA
-      </a>
+```
+<a class="logo" href="#top">
+  <img src="skema.jpg" alt="Logo SKEMA">
+  <span>
+    <b>SKEMA</b>
+    <small>UNINDRA</small>
+  </span>
+</a>
 
-      <div class="links">
+<nav class="links">
+  <a href="#dashboard">Dashboard</a>
+  <a href="#kajian">Kajian</a>
+  <a href="#pengurus">Pengurus</a>
+  <a href="#agenda">Agenda</a>
+  <a href="#karya">Karya</a>
+</nav>
 
-        <a href="#dashboard">
-          Dashboard
-        </a>
+<a class="nav-login" href="login.html">
+  Login Member
+</a>
+```
 
-        <a href="#kajian">
-          Bidang kajian
-        </a>
-
-        <a href="#alur">
-          Cara kerja
-        </a>
-
-        <a href="#pengurus">
-          Pengurus
-        </a>
-
-        <a href="#agenda">
-          Agenda
-        </a>
-
-        <a href="#karya">
-          Karya
-        </a>
-
-        <a href="#gabung">
-          Gabung
-        </a>
-
-        <a href="login.html">
-          Login Member
-        </a>
-
-      </div>
-
-    </nav>
   </div>
 </header>
-
 
 <main id="top">
 
   <!-- HERO -->
 
-  <div class="hero">
-    <div class="wrap">
+  <section class="hero">
 
-      <h1>
-        Studi Kajian dan <mark>Riset</mark> Mahasiswa
-      </h1>
+```
+<div class="hero-grid"></div>
 
-      <p>
-        Ruang bagi mahasiswa UNINDRA untuk mengajukan pertanyaan,
-        membaca literatur, meneliti, dan menuliskan hasilnya bersama.
-      </p>
+<div class="wrap hero-content">
 
-      <a class="btn" href="#gabung">
+  <div class="hero-copy">
+
+    <div class="eyebrow">
+      <span></span>
+      STUDI KAJIAN & RISET MAHASISWA
+    </div>
+
+    <h1>
+      Think.
+      <span>Research.</span>
+      Create.
+    </h1>
+
+    <p>
+      Ruang bagi mahasiswa UNINDRA untuk bertanya,
+      berdiskusi, melakukan penelitian, dan menghasilkan
+      karya yang berdampak.
+    </p>
+
+    <div class="hero-buttons">
+      <a class="btn primary" href="#gabung">
         Gabung SKEMA
+        <span>↗</span>
       </a>
 
-      <a class="btn alt" href="#pengurus">
+      <a class="btn secondary" href="#pengurus">
         Lihat pengurus
       </a>
-
     </div>
+
   </div>
 
 
-  <!-- DASHBOARD -->
+  <div class="hero-visual">
 
-  <section id="dashboard">
-    <div class="wrap">
+    <div class="visual-card main-visual">
 
-      <h2>Dashboard SKEMA</h2>
-
-      <p class="lead">
-        Ringkasan pengurus, kegiatan, dan karya.
-        Diperbarui otomatis dari database.
-      </p>
-
-      <div class="stats">
-
-        <div class="stat">
-          <b id="s-pengurus">0</b>
-          <span>Pengurus</span>
-        </div>
-
-        <div class="stat">
-          <b id="s-divisi">0</b>
-          <span>Divisi</span>
-        </div>
-
-        <div class="stat">
-          <b id="s-agenda">0</b>
-          <span>Kegiatan</span>
-        </div>
-
-        <div class="stat">
-          <b id="s-karya">0</b>
-          <span>Karya</span>
-        </div>
-
+      <div class="visual-top">
+        <span>SKEMA</span>
+        <span>2026</span>
       </div>
 
+      <div class="visual-logo">
+        <img src="skema.jpg" alt="SKEMA UNINDRA">
+      </div>
 
-      <p class="subhead" style="margin-top:32px">
-        Karya per jenis
-      </p>
+      <div class="visual-title">
+        <strong>STUDI KAJIAN</strong>
+        <strong>& RISET MAHASISWA</strong>
+      </div>
 
-      <div id="bar-karya"></div>
+      <div class="visual-line"></div>
+
+      <div class="visual-bottom">
+        <span>IDEAS</span>
+        <span>DATA</span>
+        <span>IMPACT</span>
+      </div>
 
     </div>
+
+    <div class="floating-card floating-one">
+      <strong id="hero-pengurus">0</strong>
+      <span>Pengurus</span>
+    </div>
+
+    <div class="floating-card floating-two">
+      <strong id="hero-karya">0</strong>
+      <span>Karya</span>
+    </div>
+
+  </div>
+
+</div>
+```
+
   </section>
 
+  <!-- DASHBOARD -->
+
+  <section id="dashboard" class="dashboard-section">
+
+```
+<div class="wrap">
+
+  <div class="section-head">
+    <div>
+      <span class="eyebrow blue">01 — OVERVIEW</span>
+      <h2>SKEMA dalam angka.</h2>
+    </div>
+
+    <p>
+      Ringkasan aktivitas organisasi yang diperbarui
+      langsung dari database.
+    </p>
+  </div>
+
+
+  <div class="dashboard-grid">
+
+    <div class="big-stat">
+      <span>Pengurus aktif</span>
+      <strong id="s-pengurus">0</strong>
+      <small>orang</small>
+    </div>
+
+    <div class="big-stat">
+      <span>Bidang kajian</span>
+      <strong id="s-divisi">0</strong>
+      <small>divisi</small>
+    </div>
+
+    <div class="big-stat">
+      <span>Agenda</span>
+      <strong id="s-agenda">0</strong>
+      <small>kegiatan</small>
+    </div>
+
+    <div class="big-stat">
+      <span>Karya</span>
+      <strong id="s-karya">0</strong>
+      <small>publikasi</small>
+    </div>
+
+  </div>
+
+
+  <div class="chart-box">
+
+    <div class="chart-title">
+      <div>
+        <span class="eyebrow blue">PUBLICATION</span>
+        <h3>Karya berdasarkan jenis</h3>
+      </div>
+    </div>
+
+    <div id="bar-karya"></div>
+
+  </div>
+
+</div>
+```
+
+  </section>
 
   <!-- BIDANG KAJIAN -->
 
   <section id="kajian">
-    <div class="wrap">
 
-      <h2>Bidang kajian</h2>
+```
+<div class="wrap">
 
-      <p class="lead">
-        Setiap anggota memilih satu bidang,
-        lalu bergabung di kelompok kajiannya.
-      </p>
-
-      <div class="fields">
-
-        <div class="field">
-          <h3>Pendidikan &amp; Pembelajaran</h3>
-          <p>
-            Metode ajar, kurikulum, dan masalah nyata di kelas.
-          </p>
-        </div>
-
-        <div class="field">
-          <h3>Sosial &amp; Kebijakan</h3>
-          <p>
-            Isu masyarakat, kebijakan publik,
-            dan dampaknya bagi mahasiswa.
-          </p>
-        </div>
-
-        <div class="field">
-          <h3>Sains &amp; Teknologi</h3>
-          <p>
-            Data, sistem informasi, dan kecerdasan buatan
-            untuk kampus.
-          </p>
-        </div>
-
-        <div class="field">
-          <h3>Bahasa &amp; Budaya</h3>
-          <p>
-            Kajian bahasa, sastra, dan budaya lokal.
-          </p>
-        </div>
-
-      </div>
-
+  <div class="section-head">
+    <div>
+      <span class="eyebrow blue">02 — FOCUS AREA</span>
+      <h2>Bidang kajian.</h2>
     </div>
-  </section>
 
+    <p>
+      Tempat anggota mengembangkan ide sesuai
+      minat dan bidang yang ingin dipelajari.
+    </p>
+  </div>
+
+
+  <div class="research-grid">
+
+    <article class="research-card">
+      <span class="number">01</span>
+      <div class="research-icon">ED</div>
+      <h3>Pendidikan & Pembelajaran</h3>
+      <p>
+        Metode ajar, kurikulum, pendidikan,
+        dan persoalan nyata di ruang kelas.
+      </p>
+    </article>
+
+    <article class="research-card">
+      <span class="number">02</span>
+      <div class="research-icon">SP</div>
+      <h3>Sosial & Kebijakan</h3>
+      <p>
+        Fenomena sosial, kebijakan publik,
+        dan dampaknya terhadap masyarakat.
+      </p>
+    </article>
+
+    <article class="research-card">
+      <span class="number">03</span>
+      <div class="research-icon">ST</div>
+      <h3>Sains & Teknologi</h3>
+      <p>
+        Data, sistem informasi, teknologi,
+        dan kecerdasan buatan untuk kampus.
+      </p>
+    </article>
+
+    <article class="research-card">
+      <span class="number">04</span>
+      <div class="research-icon">BC</div>
+      <h3>Bahasa & Budaya</h3>
+      <p>
+        Bahasa, sastra, budaya lokal,
+        dan berbagai bentuk ekspresi masyarakat.
+      </p>
+    </article>
+
+  </div>
+
+</div>
+```
+
+  </section>
 
   <!-- CARA KERJA -->
 
-  <section id="alur">
-    <div class="wrap cols">
+  <section id="alur" class="process-section">
 
+```
+<div class="wrap process-grid">
+
+  <div class="process-intro">
+
+    <span class="eyebrow">03 — PROCESS</span>
+
+    <h2>
+      Dari rasa ingin tahu
+      menjadi karya.
+    </h2>
+
+    <p>
+      SKEMA membantu anggota melewati proses
+      kajian dan riset secara bertahap.
+    </p>
+
+  </div>
+
+
+  <div class="process-list">
+
+    <div class="process-item">
+      <span>01</span>
       <div>
-
-        <h2>Cara kerja</h2>
-
-        <p class="lead">
-          Dari pertanyaan sampai tulisan yang bisa dibaca orang lain,
-          dalam satu semester.
+        <h3>Rumuskan pertanyaan</h3>
+        <p>
+          Tentukan masalah dan pertanyaan
+          yang ingin dijawab.
         </p>
-
       </div>
-
-
-      <ol class="flow">
-
-        <li>
-          <b>Rumuskan pertanyaan</b>
-          Tentukan masalah yang ingin dijawab dan tujuannya.
-        </li>
-
-        <li>
-          <b>Kaji literatur</b>
-          Baca jurnal dan sumber terkait,
-          catat celah yang belum terjawab.
-        </li>
-
-        <li>
-          <b>Kumpulkan data</b>
-          Survei, wawancara, atau observasi
-          sesuai metode yang dipilih.
-        </li>
-
-        <li>
-          <b>Diskusi dan tulis</b>
-          Presentasikan di forum kajian,
-          terima masukan, lalu susun laporan.
-        </li>
-
-      </ol>
-
     </div>
-  </section>
 
+    <div class="process-item">
+      <span>02</span>
+      <div>
+        <h3>Kaji literatur</h3>
+        <p>
+          Baca jurnal dan sumber terpercaya
+          untuk menemukan dasar penelitian.
+        </p>
+      </div>
+    </div>
+
+    <div class="process-item">
+      <span>03</span>
+      <div>
+        <h3>Kumpulkan data</h3>
+        <p>
+          Gunakan survei, wawancara,
+          observasi, atau metode yang sesuai.
+        </p>
+      </div>
+    </div>
+
+    <div class="process-item">
+      <span>04</span>
+      <div>
+        <h3>Diskusi & tulis</h3>
+        <p>
+          Presentasikan hasil, terima masukan,
+          lalu susun menjadi karya.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+```
+
+  </section>
 
   <!-- PENGURUS -->
 
   <section id="pengurus">
-    <div class="wrap">
 
-      <h2>Struktur pengurus</h2>
+```
+<div class="wrap">
 
-      <p class="lead">
-        Data diambil dari database dan bisa diubah oleh pengurus.
-      </p>
+  <div class="section-head">
+    <div>
+      <span class="eyebrow blue">04 — PEOPLE</span>
+      <h2>Orang di balik SKEMA.</h2>
+    </div>
+
+    <p>
+      Kenali pengurus dan anggota yang menjalankan
+      kegiatan SKEMA.
+    </p>
+  </div>
 
 
-      <p class="subhead">
-        Pengurus inti
-      </p>
-
-      <div class="people" id="inti"></div>
+  <div class="people" id="inti"></div>
 
 
-      <div class="divisi">
+  <div class="division-area">
 
-        <p class="subhead">
-          Divisi
-        </p>
-
-        <div
-          class="tabs"
-          id="filter-divisi"
-          role="group"
-          aria-label="Filter divisi">
-        </div>
-
-        <div id="divisi"></div>
-
+    <div class="division-header">
+      <div>
+        <span class="eyebrow blue">DIVISIONS</span>
+        <h3>Tim berdasarkan bidang</h3>
       </div>
 
+      <div
+        class="tabs"
+        id="filter-divisi"
+        role="group"
+        aria-label="Filter divisi">
+      </div>
     </div>
-  </section>
 
+    <div id="divisi"></div>
+
+  </div>
+
+</div>
+```
+
+  </section>
 
   <!-- AGENDA -->
 
-  <section id="agenda">
-    <div class="wrap">
+  <section id="agenda" class="agenda-section">
 
-      <h2>Agenda</h2>
+```
+<div class="wrap">
 
-      <p class="lead">
-        Contoh jadwal. Ubah sesuai kegiatan SKEMA yang sebenarnya.
-      </p>
-
-
-      <div class="wrap-x">
-
-        <table class="agenda">
-
-          <thead>
-            <tr>
-              <th>Kegiatan</th>
-              <th>Waktu</th>
-              <th>Jenis</th>
-            </tr>
-          </thead>
-
-          <tbody id="agenda-body"></tbody>
-
-        </table>
-
-      </div>
-
+  <div class="section-head">
+    <div>
+      <span class="eyebrow blue">05 — EVENTS</span>
+      <h2>Agenda SKEMA.</h2>
     </div>
-  </section>
 
+    <p>
+      Ikuti berbagai kegiatan kajian,
+      diskusi, dan pengembangan riset.
+    </p>
+  </div>
+
+
+  <div id="agenda-list" class="agenda-list"></div>
+
+</div>
+```
+
+  </section>
 
   <!-- KARYA -->
 
   <section id="karya">
-    <div class="wrap">
 
-      <h2>Karya</h2>
+```
+<div class="wrap">
 
-      <p class="lead">
-        Kumpulan hasil kajian anggota.
-        Ganti isi contoh ini dengan karya asli.
-      </p>
-
-
-      <div
-        class="tabs"
-        id="filter-karya"
-        role="group"
-        aria-label="Filter karya">
-      </div>
-
-
-      <div
-        class="pub"
-        id="pub">
-      </div>
-
+  <div class="section-head">
+    <div>
+      <span class="eyebrow blue">06 — PUBLICATION</span>
+      <h2>Karya mahasiswa.</h2>
     </div>
-  </section>
 
+    <p>
+      Hasil pemikiran, kajian, dan penelitian
+      yang dikembangkan bersama.
+    </p>
+  </div>
+
+
+  <div
+    class="tabs"
+    id="filter-karya"
+    role="group"
+    aria-label="Filter karya">
+  </div>
+
+
+  <div class="pub" id="pub"></div>
+
+</div>
+```
+
+  </section>
 
   <!-- GABUNG -->
 
-  <section id="gabung" class="join">
-    <div class="wrap">
+  <section id="gabung" class="join-section">
 
-      <h2>Gabung SKEMA</h2>
+```
+<div class="wrap join-box">
 
-      <p class="lead">
-        Terbuka untuk mahasiswa UNINDRA dari semua program studi.
-        Tidak perlu pengalaman meneliti.
-      </p>
+  <div>
+    <span class="eyebrow">07 — JOIN US</span>
+
+    <h2>
+      Punya pertanyaan
+      yang ingin dijawab?
+    </h2>
+
+    <p>
+      Bergabung bersama SKEMA dan kembangkan
+      ide menjadi kajian, riset, dan karya.
+    </p>
+  </div>
 
 
-      <a class="btn" href="register.html">
-        Daftar Member
-      </a>
+  <div class="join-actions">
 
+    <a class="btn primary" href="register.html">
+      Daftar Member
+      <span>↗</span>
+    </a>
 
-      <a class="btn alt" href="login.html">
-        Login Member
-      </a>
+    <a class="btn secondary light" href="login.html">
+      Login Member
+    </a>
 
-    </div>
+  </div>
+
+</div>
+```
+
   </section>
 
 </main>
 
-
 <!-- FOOTER -->
 
 <footer>
-  <div class="wrap">
 
-<img
-  src="skema.jpg"
-  alt="Logo SKEMA"
->
-<span>
-  © SKEMA UNINDRA – Studi Kajian dan Riset Mahasiswa
-</span>
+  <div class="wrap footer-grid">
 
-<a href="admin.html">
-  Masuk Pengurus
-</a>
+```
+<div class="footer-brand">
 
+  <a class="logo" href="#top">
+    <img src="skema.jpg" alt="Logo SKEMA">
+
+    <span>
+      <b>SKEMA</b>
+      <small>UNINDRA</small>
+    </span>
+  </a>
+
+  <p>
+    Studi Kajian dan Riset Mahasiswa
+  </p>
+
+</div>
+
+
+<div class="footer-links">
+
+  <a href="#dashboard">Dashboard</a>
+  <a href="#pengurus">Pengurus</a>
+  <a href="#agenda">Agenda</a>
+  <a href="#karya">Karya</a>
+
+  <a class="admin-link" href="admin.html">
+    Masuk Pengurus →
+  </a>
+
+</div>
+```
 
   </div>
+
+  <div class="wrap footer-bottom">
+    <span>
+      © SKEMA UNINDRA
+    </span>
+
+```
+<span>
+  Studi Kajian dan Riset Mahasiswa
+</span>
+```
+
+  </div>
+
 </footer>
-
-
-
-<!-- SCRIPT -->
 
 <script src="config.js"></script>
 
@@ -408,5 +567,4 @@
 <script src="script.js"></script>
 
 </body>
-
 </html>
