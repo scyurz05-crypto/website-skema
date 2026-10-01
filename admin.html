@@ -60,12 +60,14 @@
     .row-actions {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .row button {
       font: 500 14px var(--head);
       padding: 6px 12px;
       cursor: pointer;
+      border: 0;
     }
 
     #msg {
@@ -80,12 +82,15 @@
       cursor: pointer;
     }
 
-    .error {
-      color: #b00020;
-    }
-
-    .success {
-      color: var(--accent);
+    .cancel {
+      margin-top: 16px;
+      margin-left: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      border-radius: 6px;
     }
 
     .social-links {
@@ -127,7 +132,6 @@
       required
     >
 
-
     <label for="pw">
       Kata Sandi
     </label>
@@ -138,7 +142,6 @@
       autocomplete="current-password"
       required
     >
-
 
     <button
       class="btn"
@@ -160,23 +163,18 @@
       <strong id="admin-email"></strong>
     </p>
 
-
     <div
       class="tabs"
       id="tabs">
     </div>
 
-
     <div id="form"></div>
-
 
     <h2 style="font-size:26px;margin-top:32px">
       Data tersimpan
     </h2>
 
-
     <div id="list"></div>
-
 
     <button
       class="btn alt"
@@ -228,7 +226,6 @@ const S = {
 
   },
 
-
   agenda: {
 
     urut: "id",
@@ -240,7 +237,6 @@ const S = {
     ]
 
   },
-
 
   karya: {
 
@@ -259,6 +255,7 @@ const S = {
 
 
 let tabel = "pengurus";
+let editId = null;
 
 
 const msg = t => {
@@ -290,7 +287,6 @@ async function cekPengurus(userId) {
     .eq("user_id", userId)
     .maybeSingle();
 
-
   if (error) {
 
     console.error(error);
@@ -304,7 +300,6 @@ async function cekPengurus(userId) {
 
   }
 
-
   return !!data;
 
 }
@@ -314,7 +309,6 @@ function buatTab() {
 
   $("tabs").innerHTML = "";
 
-
   Object.keys(S).forEach(k => {
 
     const b = el(
@@ -323,40 +317,35 @@ function buatTab() {
       k[0].toUpperCase() + k.slice(1)
     );
 
-
     b.setAttribute(
       "aria-pressed",
       k === tabel
     );
 
-
     b.onclick = () => {
 
       tabel = k;
+      editId = null;
 
       buatTab();
-
       muat();
 
     };
 
-
     $("tabs").appendChild(b);
 
   });
-
 
   buatForm();
 
 }
 
 
-function buatForm() {
+function buatForm(data = null) {
 
   const f = $("form");
 
   f.innerHTML = "";
-
 
   S[tabel].f.forEach(
     ([k, label, tipe]) => {
@@ -367,7 +356,6 @@ function buatForm() {
 
       i.type = tipe || "text";
 
-
       if (
         k === "foto" ||
         k === "instagram" ||
@@ -375,11 +363,13 @@ function buatForm() {
         k === "linkedin"
       ) {
 
-        i.placeholder =
-          "https://...";
+        i.placeholder = "https://...";
 
       }
 
+      if (data && data[k] !== null && data[k] !== undefined) {
+        i.value = data[k];
+      }
 
       f.append(
         el("label", "", label),
@@ -393,30 +383,53 @@ function buatForm() {
   const b = el(
     "button",
     "btn",
-    "Tambah"
+    editId === null
+      ? "Tambah"
+      : "Simpan Perubahan"
   );
 
-
   b.type = "button";
-
-  b.onclick = tambah;
+  b.onclick = editId === null ? tambah : simpanEdit;
 
   f.appendChild(b);
+
+
+  if (editId !== null) {
+
+    const batal = el(
+      "button",
+      "cancel",
+      "Batal Edit"
+    );
+
+    batal.type = "button";
+
+    batal.onclick = () => {
+
+      editId = null;
+
+      buatForm();
+
+      msg("");
+
+    };
+
+    f.appendChild(batal);
+
+  }
 
 }
 
 
-async function tambah() {
+function ambilDataForm() {
 
   const row = {};
-
 
   S[tabel].f.forEach(
     ([k, , tipe]) => {
 
       const v =
         $("f-" + k).value.trim();
-
 
       row[k] =
         tipe === "number"
@@ -426,13 +439,20 @@ async function tambah() {
     }
   );
 
+  return row;
+
+}
+
+
+async function tambah() {
+
+  const row = ambilDataForm();
 
   const {
     error
   } = await sb
     .from(tabel)
     .insert(row);
-
 
   if (error) {
 
@@ -445,13 +465,130 @@ async function tambah() {
 
   }
 
-
   msg(
     "Data berhasil ditambahkan."
   );
 
+  buatForm();
+
+  muat();
+
+}
+
+
+async function mulaiEdit(id) {
+
+  const {
+    data,
+    error
+  } = await sb
+    .from(tabel)
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+
+    msg(
+      "Gagal mengambil data: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+  editId = id;
+
+  buatForm(data);
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+  msg(
+    "Mode edit aktif."
+  );
+
+}
+
+
+async function simpanEdit() {
+
+  if (editId === null) {
+    return;
+  }
+
+  const row = ambilDataForm();
+
+  const {
+    error
+  } = await sb
+    .from(tabel)
+    .update(row)
+    .eq("id", editId);
+
+  if (error) {
+
+    msg(
+      "Gagal menyimpan perubahan: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+  editId = null;
+
+  msg(
+    "Perubahan berhasil disimpan."
+  );
 
   buatForm();
+
+  muat();
+
+}
+
+
+async function hapusData(id) {
+
+  if (
+    !confirm(
+      "Hapus data ini?"
+    )
+  ) {
+    return;
+  }
+
+  const {
+    error
+  } = await sb
+    .from(tabel)
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+
+    msg(
+      "Gagal: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+  if (editId === id) {
+    editId = null;
+    buatForm();
+  }
+
+  msg(
+    "Data berhasil dihapus."
+  );
 
   muat();
 
@@ -468,7 +605,6 @@ async function muat() {
     .select("*")
     .order(S[tabel].urut);
 
-
   if (error) {
 
     msg(
@@ -479,7 +615,6 @@ async function muat() {
     return;
 
   }
-
 
   $("list").innerHTML = "";
 
@@ -503,7 +638,8 @@ async function muat() {
 
         img.src = r.foto;
 
-        img.alt = r.nama || "Foto pengurus";
+        img.alt =
+          r.nama || "Foto pengurus";
 
         content.appendChild(img);
 
@@ -552,7 +688,6 @@ async function muat() {
 
         if (!link) return;
 
-
         const a =
           document.createElement("a");
 
@@ -560,7 +695,8 @@ async function muat() {
 
         a.target = "_blank";
 
-        a.rel = "noopener noreferrer";
+        a.rel =
+          "noopener noreferrer";
 
         a.textContent = nama;
 
@@ -578,56 +714,30 @@ async function muat() {
         el("div", "row-actions");
 
 
-      const h =
+      const edit =
+        el(
+          "button",
+          "",
+          "Edit"
+        );
+
+      edit.onclick = () =>
+        mulaiEdit(r.id);
+
+
+      const hapus =
         el(
           "button",
           "",
           "Hapus"
         );
 
-
-      h.onclick = async () => {
-
-        if (
-          !confirm(
-            "Hapus data ini?"
-          )
-        ) {
-          return;
-        }
+      hapus.onclick = () =>
+        hapusData(r.id);
 
 
-        const {
-          error
-        } = await sb
-          .from(tabel)
-          .delete()
-          .eq("id", r.id);
-
-
-        if (error) {
-
-          msg(
-            "Gagal: " +
-            error.message
-          );
-
-          return;
-
-        }
-
-
-        msg(
-          "Data berhasil dihapus."
-        );
-
-
-        muat();
-
-      };
-
-
-      actions.appendChild(h);
+      actions.appendChild(edit);
+      actions.appendChild(hapus);
 
       content.appendChild(actions);
 
@@ -654,58 +764,37 @@ async function muat() {
           .join(" · ");
 
 
-      const h =
+      const actions =
+        el("div", "row-actions");
+
+
+      const edit =
+        el(
+          "button",
+          "",
+          "Edit"
+        );
+
+      edit.onclick = () =>
+        mulaiEdit(r.id);
+
+
+      const hapus =
         el(
           "button",
           "",
           "Hapus"
         );
 
-
-      h.onclick = async () => {
-
-        if (
-          !confirm(
-            "Hapus data ini?"
-          )
-        ) {
-          return;
-        }
+      hapus.onclick = () =>
+        hapusData(r.id);
 
 
-        const {
-          error
-        } = await sb
-          .from(tabel)
-          .delete()
-          .eq("id", r.id);
-
-
-        if (error) {
-
-          msg(
-            "Gagal: " +
-            error.message
-          );
-
-          return;
-
-        }
-
-
-        msg(
-          "Data berhasil dihapus."
-        );
-
-
-        muat();
-
-      };
-
+      actions.appendChild(edit);
+      actions.appendChild(hapus);
 
       content.appendChild(info);
-
-      content.appendChild(h);
+      content.appendChild(actions);
 
       d.appendChild(content);
 
@@ -723,7 +812,6 @@ async function loginPengurus() {
 
   const email =
     $("em").value.trim();
-
 
   const password =
     $("pw").value;
@@ -781,11 +869,9 @@ async function loginPengurus() {
 
     await sb.auth.signOut();
 
-
     msg(
       "Akses ditolak. Akun ini bukan akun pengurus."
     );
-
 
     return;
 
@@ -840,11 +926,9 @@ async function cekSession() {
 
     tampil(false);
 
-
     msg(
       "Akses ditolak. Halaman ini khusus pengurus."
     );
-
 
     return;
 
@@ -894,3 +978,4 @@ if (!sb) {
 </body>
 
 </html>
+
