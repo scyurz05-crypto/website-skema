@@ -1,200 +1,744 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Login Member — SKEMA UNINDRA</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="config.js"></script>
+  <title>Login — SKEMA UNINDRA</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="icon" href="skema.jpg">
 
-<style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#111827;
-min-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:20px
-}
-.box{
-width:100%;
-max-width:420px;
-background:white;
-padding:30px;
-border-radius:18px
-}
-h1{margin-top:0}
-.field{margin-bottom:15px}
-input{
-width:100%;
-padding:12px;
-margin-top:7px;
-border:1px solid #ddd;
-border-radius:9px;
-box-sizing:border-box
-}
-button{
-width:100%;
-padding:13px;
-border:0;
-border-radius:9px;
-background:#111827;
-color:white;
-font-weight:bold;
-cursor:pointer
-}
-.status{
-margin-top:15px;
-padding:12px;
-border-radius:9px;
-background:#f3f4f6
-}
-.hidden{display:none}
-a{color:#111827;font-weight:bold}
-</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root{
+      --bg:#F5F7FB;
+      --surface:#FFFFFF;
+      --ink:#111B33;
+      --muted:#59657D;
+      --line:#DCE2ED;
+      --accent:#2549D6;
+      --accent-light:#4F6FF0;
+      --hl:#FFD84D;
+      --danger:#C62828;
+    }
+
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+
+    body{
+      min-height:100vh;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:"Bricolage Grotesque",sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:25px;
+    }
+
+    .login-box{
+      width:100%;
+      max-width:430px;
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:35px;
+      box-shadow:0 20px 50px rgba(17,27,51,.10);
+    }
+
+    .logo-box{
+      text-align:center;
+      margin-bottom:25px;
+    }
+
+    .logo{
+      width:75px;
+      height:75px;
+      object-fit:cover;
+      border-radius:20px;
+      margin-bottom:15px;
+    }
+
+    h1{
+      font-size:30px;
+      line-height:1.1;
+      margin-bottom:8px;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.6;
+    }
+
+    .form{
+      margin-top:28px;
+    }
+
+    .field{
+      margin-bottom:18px;
+    }
+
+    label{
+      display:block;
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:8px;
+    }
+
+    input{
+      width:100%;
+      padding:14px 15px;
+      border:1px solid var(--line);
+      border-radius:13px;
+      font-family:inherit;
+      font-size:15px;
+      outline:none;
+      transition:.2s;
+      background:#fff;
+    }
+
+    input:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(37,73,214,.08);
+    }
+
+    .password-wrap{
+      position:relative;
+    }
+
+    .password-wrap input{
+      padding-right:55px;
+    }
+
+    .show-password{
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      border:0;
+      background:none;
+      cursor:pointer;
+      font-size:18px;
+      color:var(--muted);
+    }
+
+    .btn{
+      width:100%;
+      border:0;
+      border-radius:13px;
+      padding:14px;
+      background:var(--accent);
+      color:white;
+      font-family:inherit;
+      font-size:15px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    .btn:hover{
+      background:var(--accent-light);
+      transform:translateY(-1px);
+    }
+
+    .btn:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    .message{
+      display:none;
+      margin-top:16px;
+      padding:13px 14px;
+      border-radius:12px;
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .message.error{
+      display:block;
+      background:#FFF0F0;
+      color:var(--danger);
+      border:1px solid #FFD0D0;
+    }
+
+    .message.success{
+      display:block;
+      background:#EEF9F0;
+      color:#237A36;
+      border:1px solid #CDEED3;
+    }
+
+    .register{
+      text-align:center;
+      margin-top:22px;
+      font-size:14px;
+      color:var(--muted);
+    }
+
+    .register a{
+      color:var(--accent);
+      font-weight:700;
+      text-decoration:none;
+    }
+
+    .back{
+      display:block;
+      text-align:center;
+      margin-top:18px;
+      color:var(--muted);
+      font-size:14px;
+      text-decoration:none;
+    }
+
+    .back:hover{
+      color:var(--accent);
+    }
+
+    .loading{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .dot{
+      width:7px;
+      height:7px;
+      background:white;
+      border-radius:50%;
+      animation:blink 1s infinite;
+    }
+
+    .dot:nth-child(2){
+      animation-delay:.15s;
+    }
+
+    .dot:nth-child(3){
+      animation-delay:.3s;
+    }
+
+    @keyframes blink{
+      0%,80%,100%{
+        opacity:.3;
+      }
+      40%{
+        opacity:1;
+      }
+    }
+
+    @media(max-width:480px){
+      body{
+        padding:15px;
+      }
+
+      .login-box{
+        padding:26px 22px;
+        border-radius:20px;
+      }
+
+      h1{
+        font-size:27px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="box">
+  <main class="login-box">
 
-<h1>Login Member</h1>
-<p>Masuk ke dashboard member SKEMA.</p>
+    <div class="logo-box">
+      <img src="skema.jpg" class="logo" alt="Logo SKEMA">
 
-<form id="login-form">
+      <h1>Login SKEMA</h1>
 
-<div class="field">
-<label>Email</label>
-<input id="email" type="email" required>
-</div>
+      <p class="subtitle">
+        Masuk menggunakan akun SKEMA kamu.
+      </p>
+    </div>
 
-<div class="field">
-<label>Password</label>
-<input id="password" type="password" required>
-</div>
+    <form id="login-form" class="form">
 
-<button type="submit">Login</button>
+      <div class="field">
+        <label for="email">Email</label>
 
-<div id="status" class="status hidden"></div>
+        <input
+          id="email"
+          type="email"
+          placeholder="Masukkan email"
+          autocomplete="email"
+          required
+        >
+      </div>
 
-</form>
+      <div class="field">
+        <label for="password">Password</label>
 
-<p>
-Belum punya akun?
-<a href="register.html">Daftar Member</a>
-</p>
+        <div class="password-wrap">
+          <input
+            id="password"
+            type="password"
+            placeholder="Masukkan password"
+            autocomplete="current-password"
+            required
+          >
 
-</div>
+          <button
+            type="button"
+            class="show-password"
+            id="toggle-password"
+            aria-label="Tampilkan password"
+          >
+            👁
+          </button>
+        </div>
+      </div>
 
-<script>
+      <button
+        type="submit"
+        class="btn"
+        id="btn-login"
+      >
+        Login
+      </button>
 
-const sb=supabase.createClient(
-SUPABASE_URL,
-SUPABASE_ANON_KEY
-);
+      <div id="message" class="message"></div>
 
-const form=document.getElementById("login-form");
-const status=document.getElementById("status");
+    </form>
 
+    <div class="register">
+      Belum punya akun?
+      <a href="register.html">Daftar sebagai Member</a>
+    </div>
 
-async function cekMember(user){
+    <a href="index.html" class="back">
+      ← Kembali ke website SKEMA
+    </a>
 
-const {data,error}=await sb
-.from("member_profiles")
-.select("*")
-.eq("id",user.id)
-.maybeSingle();
+  </main>
 
-if(error){
-throw error;
-}
+  <script>
 
-return data;
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
 
-}
-
-
-form.addEventListener("submit",async e=>{
-
-e.preventDefault();
-
-status.classList.remove("hidden");
-status.textContent="Login...";
-
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
-
-
-const {data,error}=await sb.auth.signInWithPassword({
-email,
-password
-});
-
-
-if(error){
-
-status.textContent=error.message;
-status.style.background="#fee2e2";
-status.style.color="#991b1b";
-
-return;
-
-}
-
-
-try{
-
-const member=await cekMember(data.user);
-
-if(!member){
-
-await sb.auth.signOut();
-
-status.textContent=
-"Profil member belum ditemukan.";
-
-return;
-
-}
+    const form = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const btnLogin = document.getElementById("btn-login");
+    const message = document.getElementById("message");
+    const togglePassword = document.getElementById("toggle-password");
 
 
-if(member.status!=="Aktif"){
+    // =========================
+    // TAMPILKAN / SEMBUNYIKAN PASSWORD
+    // =========================
 
-await sb.auth.signOut();
+    togglePassword.addEventListener("click", () => {
 
-status.textContent=
-"Akun member sedang nonaktif.";
+      if(passwordInput.type === "password"){
 
-status.style.background="#fee2e2";
-status.style.color="#991b1b";
+        passwordInput.type = "text";
+        togglePassword.textContent = "🙈";
 
-return;
+      }else{
 
-}
+        passwordInput.type = "password";
+        togglePassword.textContent = "👁";
 
+      }
 
-window.location.href="member.html";
-
-}catch(error){
-
-await sb.auth.signOut();
-
-status.textContent=error.message;
-status.style.background="#fee2e2";
-status.style.color="#991b1b";
-
-}
-
-});
+    });
 
 
-</script>
+    // =========================
+    // PESAN
+    // =========================
+
+    function showMessage(text, type = "error"){
+
+      message.textContent = text;
+
+      message.className =
+        "message " + type;
+
+    }
+
+
+    function clearMessage(){
+
+      message.textContent = "";
+      message.className = "message";
+
+    }
+
+
+    // =========================
+    // CEK ROLE
+    // =========================
+
+    async function cekRole(userId){
+
+      // -------------------------
+      // 1. CEK ADMIN
+      // -------------------------
+
+      const adminResult =
+        await supabaseClient
+          .from("admin_users")
+          .select("user_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+
+      if(adminResult.error){
+
+        console.error(
+          "Cek admin:",
+          adminResult.error
+        );
+
+      }
+
+
+      if(adminResult.data){
+
+        return "admin";
+
+      }
+
+
+      // -------------------------
+      // 2. CEK PENGURUS
+      // -------------------------
+
+      const pengurusResult =
+        await supabaseClient
+          .from("pengurus_users")
+          .select("user_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+
+      if(pengurusResult.error){
+
+        console.error(
+          "Cek pengurus:",
+          pengurusResult.error
+        );
+
+      }
+
+
+      if(pengurusResult.data){
+
+        return "pengurus";
+
+      }
+
+
+      // -------------------------
+      // 3. CEK MEMBER
+      // -------------------------
+
+      const memberResult =
+        await supabaseClient
+          .from("member_profiles")
+          .select("user_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+
+      if(memberResult.error){
+
+        console.error(
+          "Cek member:",
+          memberResult.error
+        );
+
+      }
+
+
+      if(memberResult.data){
+
+        return "member";
+
+      }
+
+
+      return null;
+
+    }
+
+
+    // =========================
+    // LOGIN
+    // =========================
+
+    form.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+      clearMessage();
+
+      const email =
+        emailInput.value.trim();
+
+      const password =
+        passwordInput.value;
+
+
+      if(!email || !password){
+
+        showMessage(
+          "Email dan password wajib diisi."
+        );
+
+        return;
+
+      }
+
+
+      btnLogin.disabled = true;
+
+      btnLogin.innerHTML = `
+        <span class="loading">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </span>
+      `;
+
+
+      try{
+
+        // LOGIN SUPABASE
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+
+        if(error){
+
+          throw error;
+
+        }
+
+
+        if(!data.user){
+
+          throw new Error(
+            "Data akun tidak ditemukan."
+          );
+
+        }
+
+
+        // CEK ROLE
+
+        const role =
+          await cekRole(data.user.id);
+
+
+        console.log(
+          "Login berhasil:",
+          data.user.email,
+          "Role:",
+          role
+        );
+
+
+        // =========================
+        // REDIRECT SESUAI ROLE
+        // =========================
+
+        if(role === "admin"){
+
+          showMessage(
+            "Login berhasil. Mengarahkan ke halaman Admin...",
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "admin.html";
+
+          }, 500);
+
+          return;
+
+        }
+
+
+        if(role === "pengurus"){
+
+          showMessage(
+            "Login berhasil. Mengarahkan ke halaman Pengurus...",
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "pengurus.html";
+
+          }, 500);
+
+          return;
+
+        }
+
+
+        if(role === "member"){
+
+          showMessage(
+            "Login berhasil. Mengarahkan ke Dashboard Member...",
+            "success"
+          );
+
+          setTimeout(() => {
+
+            window.location.href =
+              "member.html";
+
+          }, 500);
+
+          return;
+
+        }
+
+
+        // AKUN AUTH ADA,
+        // TAPI BELUM PUNYA ROLE
+
+        await supabaseClient.auth.signOut();
+
+        showMessage(
+          "Akun berhasil login, tetapi belum memiliki akses SKEMA. Hubungi admin."
+        );
+
+
+      }catch(error){
+
+        console.error(
+          "Login error:",
+          error
+        );
+
+
+        let pesan =
+          "Login gagal. Periksa email dan password.";
+
+        if(
+          error.message &&
+          error.message.toLowerCase().includes("email not confirmed")
+        ){
+
+          pesan =
+            "Email belum dikonfirmasi. Silakan cek email kamu terlebih dahulu.";
+
+        }
+
+        else if(
+          error.message &&
+          error.message.toLowerCase().includes("invalid login credentials")
+        ){
+
+          pesan =
+            "Email atau password salah.";
+
+        }
+
+
+        showMessage(pesan);
+
+      }
+
+
+      btnLogin.disabled = false;
+
+      btnLogin.textContent =
+        "Login";
+
+    });
+
+
+    // =========================
+    // CEK SESSION SAAT HALAMAN DIBUKA
+    // =========================
+
+    async function cekSession(){
+
+      const {
+        data
+      } =
+        await supabaseClient.auth.getSession();
+
+
+      const user =
+        data?.session?.user;
+
+
+      if(!user){
+
+        return;
+
+      }
+
+
+      const role =
+        await cekRole(user.id);
+
+
+      if(role === "admin"){
+
+        window.location.href =
+          "admin.html";
+
+      }
+
+      else if(role === "pengurus"){
+
+        window.location.href =
+          "pengurus.html";
+
+      }
+
+      else if(role === "member"){
+
+        window.location.href =
+          "member.html";
+
+      }
+
+    }
+
+
+    cekSession();
+
+  </script>
 
 </body>
 </html>
