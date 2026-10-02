@@ -1,5 +1,6 @@
 /* =========================================================
-   SKEMA UNINDRA — SCRIPT UTAMA
+   SKEMA UNINDRA
+   SCRIPT UTAMA
    ========================================================= */
 
 
@@ -8,7 +9,9 @@
 ========================================================= */
 
 function escapeHTML(value) {
-  if (value === null || value === undefined) return "";
+  if (value === null || value === undefined) {
+    return "";
+  }
 
   return String(value)
     .replace(/&/g, "&amp;")
@@ -20,7 +23,9 @@ function escapeHTML(value) {
 
 
 function inisial(nama) {
-  if (!nama) return "?";
+  if (!nama) {
+    return "?";
+  }
 
   return String(nama)
     .trim()
@@ -35,95 +40,70 @@ function inisial(nama) {
    KARTU PENGURUS
 ========================================================= */
 
-function kartuOrang(o) {
+function kartuOrang(data) {
 
   const card = document.createElement("div");
   card.className = "person";
 
-  const nama = escapeHTML(o.nama || "Tanpa nama");
-  const jabatan = escapeHTML(o.jabatan || "");
-  const divisi = escapeHTML(o.divisi || "");
-  const prodi = escapeHTML(o.prodi || "");
-  const angkatan = escapeHTML(o.angkatan || "");
-
-  const foto =
-    o.foto &&
-    String(o.foto).trim()
-      ? String(o.foto).trim()
-      : "";
+  const nama = data.nama || "Tanpa nama";
+  const jabatan = data.jabatan || "";
+  const divisi = data.divisi || "";
+  const prodi = data.prodi || "";
+  const angkatan = data.angkatan || "";
 
   const avatar = document.createElement("div");
-
   avatar.className = "avatar";
-  avatar.textContent = inisial(o.nama);
+  avatar.textContent = inisial(nama);
 
-  if (foto) {
-
-    const img = document.createElement("img");
-
-    img.className = "person-photo";
-    img.src = foto;
-    img.alt = `Foto ${nama}`;
-
-    img.onload = function () {
-      avatar.style.display = "none";
-      img.style.display = "block";
-    };
-
-    img.onerror = function () {
-
-      console.error(
-        "Foto pengurus gagal dimuat:",
-        foto
-      );
-
-      img.remove();
-
-      avatar.style.display = "flex";
-    };
-
-    card.appendChild(img);
-  }
+  card.appendChild(avatar);
 
   const info = document.createElement("div");
-
   info.className = "info";
 
-  info.innerHTML = `
-    <strong>${nama}</strong>
+  const namaEl = document.createElement("strong");
+  namaEl.textContent = nama;
 
-    ${
-      jabatan
-        ? `<span class="role">${jabatan}</span>`
-        : ""
+  info.appendChild(namaEl);
+
+  if (jabatan) {
+    const role = document.createElement("span");
+    role.className = "role";
+    role.textContent = jabatan;
+
+    info.appendChild(role);
+  }
+
+  if (divisi) {
+    const metaDivisi = document.createElement("span");
+    metaDivisi.className = "meta";
+    metaDivisi.textContent = divisi;
+
+    info.appendChild(metaDivisi);
+  }
+
+  if (prodi || angkatan) {
+
+    const meta = document.createElement("span");
+    meta.className = "meta";
+
+    let teks = "";
+
+    if (prodi) {
+      teks += prodi;
     }
 
-    ${
-      divisi
-        ? `<span class="meta">${divisi}</span>`
-        : ""
+    if (prodi && angkatan) {
+      teks += " • ";
     }
 
-    ${
-      prodi || angkatan
-        ? `
-          <span class="meta">
-            ${prodi}
-            ${
-              prodi && angkatan
-                ? " • "
-                : ""
-            }
-            ${
-              angkatan
-                ? `Angkatan ${angkatan}`
-                : ""
-            }
-          </span>
-        `
-        : ""
+    if (angkatan) {
+      teks += "Angkatan " + angkatan;
     }
-  `;
+
+    meta.textContent = teks;
+
+    info.appendChild(meta);
+  }
 
   card.appendChild(info);
 
@@ -137,21 +117,11 @@ function kartuOrang(o) {
 
 function renderPengurus(data) {
 
-  const inti =
-    document.getElementById("inti");
-
-  const filter =
-    document.getElementById("filter-divisi");
-
-  const divisiBox =
-    document.getElementById("divisi");
+  const inti = document.getElementById("inti");
+  const filter = document.getElementById("filter-divisi");
+  const divisiBox = document.getElementById("divisi");
 
   if (!inti || !filter || !divisiBox) {
-
-    console.error(
-      "Element pengurus tidak ditemukan."
-    );
-
     return;
   }
 
@@ -159,24 +129,19 @@ function renderPengurus(data) {
   filter.innerHTML = "";
   divisiBox.innerHTML = "";
 
-  const pengurus =
-    Array.isArray(data)
-      ? data
-      : [];
+  const pengurus = Array.isArray(data) ? data : [];
 
 
-  /* PENGURUS INTI */
+  /* =====================================================
+     PENGURUS INTI
+  ===================================================== */
 
-  const pengurusInti =
-    pengurus.filter(
-      orang =>
-        !String(
-          orang.divisi || ""
-        ).trim()
-    );
+  const intiData = pengurus.filter(item => {
+    return !String(item.divisi || "").trim();
+  });
 
 
-  if (pengurusInti.length === 0) {
+  if (intiData.length === 0) {
 
     inti.innerHTML = `
       <p class="lead">
@@ -186,28 +151,23 @@ function renderPengurus(data) {
 
   } else {
 
-    pengurusInti.forEach(
-      orang => {
-
-        inti.appendChild(
-          kartuOrang(orang)
-        );
-
-      }
-    );
+    intiData.forEach(item => {
+      inti.appendChild(
+        kartuOrang(item)
+      );
+    });
   }
 
 
-  /* DAFTAR DIVISI */
+  /* =====================================================
+     DAFTAR DIVISI
+  ===================================================== */
 
   const daftarDivisi = [
     ...new Set(
       pengurus
-        .map(
-          orang =>
-            String(
-              orang.divisi || ""
-            ).trim()
+        .map(item =>
+          String(item.divisi || "").trim()
         )
         .filter(Boolean)
     )
@@ -226,46 +186,28 @@ function renderPengurus(data) {
   }
 
 
-  /* BUTTON SEMUA */
+  /* =====================================================
+     TAMPILKAN DATA DIVISI
+  ===================================================== */
 
-  const semuaBtn =
-    document.createElement("button");
-
-  semuaBtn.type = "button";
-  semuaBtn.textContent = "Semua";
-
-  semuaBtn.setAttribute(
-    "aria-pressed",
-    "true"
-  );
-
-  filter.appendChild(
-    semuaBtn
-  );
-
-
-  /* TAMPILKAN DIVISI */
-
-  function tampilkan(namaDivisi) {
+  function tampilkanDivisi(namaDivisi) {
 
     divisiBox.innerHTML = "";
 
-    const dataTampil =
-      namaDivisi === "Semua"
+    let dataTampil;
 
-        ? pengurus.filter(
-            orang =>
-              String(
-                orang.divisi || ""
-              ).trim()
-          )
+    if (namaDivisi === "Semua") {
 
-        : pengurus.filter(
-            orang =>
-              String(
-                orang.divisi || ""
-              ).trim() === namaDivisi
-          );
+      dataTampil = pengurus.filter(item => {
+        return String(item.divisi || "").trim();
+      });
+
+    } else {
+
+      dataTampil = pengurus.filter(item => {
+        return String(item.divisi || "").trim() === namaDivisi;
+      });
+    }
 
 
     if (dataTampil.length === 0) {
@@ -280,145 +222,117 @@ function renderPengurus(data) {
     }
 
 
-    const people =
-      document.createElement("div");
-
+    const people = document.createElement("div");
     people.className = "people";
 
+    dataTampil.forEach(item => {
+      people.appendChild(
+        kartuOrang(item)
+      );
+    });
 
-    dataTampil.forEach(
-      orang => {
+    divisiBox.appendChild(people);
+  }
 
-        people.appendChild(
-          kartuOrang(orang)
+
+  /* =====================================================
+     BUTTON SEMUA
+  ===================================================== */
+
+  const semua = document.createElement("button");
+
+  semua.type = "button";
+  semua.textContent = "Semua";
+  semua.setAttribute("aria-pressed", "true");
+
+  semua.addEventListener("click", function () {
+
+    filter
+      .querySelectorAll("button")
+      .forEach(button => {
+        button.setAttribute(
+          "aria-pressed",
+          "false"
+        );
+      });
+
+    semua.setAttribute(
+      "aria-pressed",
+      "true"
+    );
+
+    tampilkanDivisi("Semua");
+  });
+
+  filter.appendChild(semua);
+
+
+  /* =====================================================
+     BUTTON SETIAP DIVISI
+  ===================================================== */
+
+  daftarDivisi.forEach(namaDivisi => {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.textContent = namaDivisi;
+    button.setAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        filter
+          .querySelectorAll("button")
+          .forEach(btn => {
+            btn.setAttribute(
+              "aria-pressed",
+              "false"
+            );
+          });
+
+
+        button.setAttribute(
+          "aria-pressed",
+          "true"
         );
 
+
+        tampilkanDivisi(
+          namaDivisi
+        );
       }
     );
 
 
-    divisiBox.appendChild(
-      people
-    );
-  }
+    filter.appendChild(button);
+  });
 
 
-  /* CLICK SEMUA */
-
-  semuaBtn.addEventListener(
-    "click",
-    () => {
-
-      filter
-        .querySelectorAll("button")
-        .forEach(
-          button => {
-
-            button.setAttribute(
-              "aria-pressed",
-              "false"
-            );
-
-          }
-        );
-
-
-      semuaBtn.setAttribute(
-        "aria-pressed",
-        "true"
-      );
-
-
-      tampilkan("Semua");
-    }
-  );
-
-
-  /* BUTTON DIVISI */
-
-  daftarDivisi.forEach(
-    namaDivisi => {
-
-      const button =
-        document.createElement("button");
-
-      button.type = "button";
-
-      button.textContent =
-        namaDivisi;
-
-      button.setAttribute(
-        "aria-pressed",
-        "false"
-      );
-
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          filter
-            .querySelectorAll("button")
-            .forEach(
-              btn => {
-
-                btn.setAttribute(
-                  "aria-pressed",
-                  "false"
-                );
-
-              }
-            );
-
-
-          button.setAttribute(
-            "aria-pressed",
-            "true"
-          );
-
-
-          tampilkan(
-            namaDivisi
-          );
-        }
-      );
-
-
-      filter.appendChild(
-        button
-      );
-    }
-  );
-
-
-  tampilkan("Semua");
+  tampilkanDivisi("Semua");
 }
 
 
 /* =========================================================
    AGENDA
-   MENAMPILKAN:
-   - Foto
-   - Kegiatan
-   - Waktu
-   - Jenis
-
-   HTML YANG DIGUNAKAN:
-   <tbody id="agenda-body"></tbody>
 ========================================================= */
 
 function renderAgenda(data) {
 
   const tbody =
-    document.getElementById(
-      "agenda-body"
-    );
+    document.getElementById("agenda-body");
 
 
   if (!tbody) {
 
     console.error(
-      "Element #agenda-body tidak ditemukan."
+      "agenda-body tidak ditemukan."
     );
 
     return;
@@ -434,7 +348,9 @@ function renderAgenda(data) {
       : [];
 
 
-  /* BELUM ADA DATA */
+  /* =====================================================
+     KALAU KOSONG
+  ===================================================== */
 
   if (agenda.length === 0) {
 
@@ -445,178 +361,136 @@ function renderAgenda(data) {
       document.createElement("td");
 
     td.colSpan = 3;
-
     td.textContent =
       "Belum ada agenda.";
 
     tr.appendChild(td);
-
     tbody.appendChild(tr);
 
     return;
   }
 
 
-  /* TAMPILKAN SETIAP AGENDA */
+  /* =====================================================
+     TAMPILKAN AGENDA
+  ===================================================== */
 
-  agenda.forEach(
-    item => {
+  agenda.forEach(item => {
 
-      const tr =
-        document.createElement("tr");
-
-
-      /* =====================================================
-         KOLOM KEGIATAN
-      ===================================================== */
-
-      const tdKegiatan =
-        document.createElement("td");
+    const tr =
+      document.createElement("tr");
 
 
-      /* FOTO AGENDA */
+    /* -----------------------------------------------------
+       KEGIATAN
+    ----------------------------------------------------- */
 
-      if (
-        item.foto &&
-        String(item.foto).trim()
-      ) {
-
-        const img =
-          document.createElement("img");
-
-        img.src =
-          String(item.foto).trim();
-
-        img.alt =
-          item.kegiatan ||
-          "Foto agenda";
-
-        img.style.width =
-          "90px";
-
-        img.style.height =
-          "60px";
-
-        img.style.objectFit =
-          "cover";
-
-        img.style.borderRadius =
-          "8px";
-
-        img.style.display =
-          "block";
-
-        img.style.marginBottom =
-          "8px";
+    const tdKegiatan =
+      document.createElement("td");
 
 
-        img.onerror =
-          function () {
+    /* FOTO */
 
-            console.error(
-              "Foto agenda gagal dimuat:",
-              item.foto
-            );
+    if (
+      item.foto &&
+      String(item.foto).trim()
+    ) {
 
-            img.remove();
-          };
+      const img =
+        document.createElement("img");
+
+      img.src =
+        String(item.foto).trim();
+
+      img.alt =
+        item.kegiatan || "Agenda";
+
+      img.width = 90;
+      img.height = 60;
+
+      img.style.width = "90px";
+      img.style.height = "60px";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "8px";
+      img.style.display = "block";
+      img.style.marginBottom = "8px";
 
 
-        tdKegiatan.appendChild(
-          img
-        );
-      }
+      img.onerror = function () {
 
-
-      /* NAMA KEGIATAN */
-
-      const strong =
-        document.createElement(
-          "strong"
+        console.error(
+          "Foto agenda gagal:",
+          item.foto
         );
 
-      strong.textContent =
-        item.kegiatan ||
-        "-";
-
-      tdKegiatan.appendChild(
-        strong
-      );
+        this.remove();
+      };
 
 
-      /* =====================================================
-         KOLOM WAKTU
-      ===================================================== */
-
-      const tdWaktu =
-        document.createElement(
-          "td"
-        );
-
-      tdWaktu.textContent =
-        item.waktu ||
-        "-";
-
-
-      /* =====================================================
-         KOLOM JENIS
-      ===================================================== */
-
-      const tdJenis =
-        document.createElement(
-          "td"
-        );
-
-
-      if (
-        item.jenis &&
-        String(item.jenis).trim()
-      ) {
-
-        const tag =
-          document.createElement(
-            "span"
-          );
-
-        tag.className =
-          "tag";
-
-        tag.textContent =
-          item.jenis;
-
-        tdJenis.appendChild(
-          tag
-        );
-
-      } else {
-
-        tdJenis.textContent =
-          "-";
-      }
-
-
-      /* =====================================================
-         MASUKKAN KE BARIS TABLE
-      ===================================================== */
-
-      tr.appendChild(
-        tdKegiatan
-      );
-
-      tr.appendChild(
-        tdWaktu
-      );
-
-      tr.appendChild(
-        tdJenis
-      );
-
-
-      tbody.appendChild(
-        tr
-      );
+      tdKegiatan.appendChild(img);
     }
-  );
+
+
+    const namaKegiatan =
+      document.createElement("strong");
+
+    namaKegiatan.textContent =
+      item.kegiatan || "-";
+
+
+    tdKegiatan.appendChild(
+      namaKegiatan
+    );
+
+
+    /* -----------------------------------------------------
+       WAKTU
+    ----------------------------------------------------- */
+
+    const tdWaktu =
+      document.createElement("td");
+
+    tdWaktu.textContent =
+      item.waktu || "-";
+
+
+    /* -----------------------------------------------------
+       JENIS
+    ----------------------------------------------------- */
+
+    const tdJenis =
+      document.createElement("td");
+
+
+    if (
+      item.jenis &&
+      String(item.jenis).trim()
+    ) {
+
+      const tag =
+        document.createElement("span");
+
+      tag.className = "tag";
+      tag.textContent = item.jenis;
+
+      tdJenis.appendChild(tag);
+
+    } else {
+
+      tdJenis.textContent = "-";
+    }
+
+
+    /* -----------------------------------------------------
+       MASUKKAN KE TABLE
+    ----------------------------------------------------- */
+
+    tr.appendChild(tdKegiatan);
+    tr.appendChild(tdWaktu);
+    tr.appendChild(tdJenis);
+
+    tbody.appendChild(tr);
+  });
 
 
   console.log(
@@ -633,34 +507,25 @@ function renderAgenda(data) {
 function renderKarya(data) {
 
   const filter =
-    document.getElementById(
-      "filter-karya"
-    );
+    document.getElementById("filter-karya");
 
   const pub =
-    document.getElementById(
-      "pub"
-    );
+    document.getElementById("pub");
 
 
   if (!filter || !pub) {
-
-    console.error(
-      "Element karya tidak ditemukan."
-    );
-
     return;
   }
+
+
+  filter.innerHTML = "";
+  pub.innerHTML = "";
 
 
   const karya =
     Array.isArray(data)
       ? data
       : [];
-
-
-  filter.innerHTML = "";
-  pub.innerHTML = "";
 
 
   if (karya.length === 0) {
@@ -675,282 +540,231 @@ function renderKarya(data) {
   }
 
 
-  const jenis = [
+  /* =====================================================
+     JENIS KARYA
+  ===================================================== */
+
+  const daftarJenis = [
     ...new Set(
       karya
-        .map(
-          item =>
-            String(
-              item.jenis || ""
-            ).trim()
+        .map(item =>
+          String(item.jenis || "").trim()
         )
         .filter(Boolean)
     )
   ];
 
 
-  const semuaBtn =
-    document.createElement(
-      "button"
-    );
+  /* =====================================================
+     FUNGSI TAMPIL
+  ===================================================== */
 
-  semuaBtn.type =
-    "button";
-
-  semuaBtn.textContent =
-    "Semua";
-
-  semuaBtn.setAttribute(
-    "aria-pressed",
-    "true"
-  );
-
-  filter.appendChild(
-    semuaBtn
-  );
-
-
-  function tampilkan(jenisAktif) {
+  function tampilkanKarya(jenisAktif) {
 
     pub.innerHTML = "";
 
 
     const dataTampil =
       jenisAktif === "Semua"
-
         ? karya
-
-        : karya.filter(
-            item =>
-              String(
-                item.jenis || ""
-              ).trim() ===
-              jenisAktif
-          );
+        : karya.filter(item => {
+            return String(
+              item.jenis || ""
+            ).trim() === jenisAktif;
+          });
 
 
-    dataTampil.forEach(
-      item => {
+    dataTampil.forEach(item => {
 
-        const article =
-          document.createElement(
-            "article"
-          );
+      const article =
+        document.createElement("article");
 
 
-        /* FOTO KARYA */
+      /* FOTO */
 
-        if (
-          item.foto &&
-          String(item.foto).trim()
-        ) {
+      if (
+        item.foto &&
+        String(item.foto).trim()
+      ) {
 
-          const img =
-            document.createElement(
-              "img"
-            );
+        const img =
+          document.createElement("img");
 
-          img.src =
-            String(
-              item.foto
-            ).trim();
+        img.src =
+          String(item.foto).trim();
 
-          img.alt =
-            item.judul ||
-            "Foto karya";
+        img.alt =
+          item.judul || "Karya";
 
-          img.style.width =
-            "100%";
-
-          img.style.maxHeight =
-            "220px";
-
-          img.style.objectFit =
-            "cover";
-
-          img.style.borderRadius =
-            "12px";
-
-          img.style.display =
-            "block";
-
-          img.style.marginBottom =
-            "16px";
+        img.style.width = "100%";
+        img.style.maxHeight = "220px";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "12px";
+        img.style.display = "block";
+        img.style.marginBottom = "16px";
 
 
-          img.onerror =
-            function () {
-
-              console.error(
-                "Foto karya gagal dimuat:",
-                item.foto
-              );
-
-              img.remove();
-            };
+        img.onerror = function () {
+          this.remove();
+        };
 
 
-          article.appendChild(
-            img
-          );
-        }
+        article.appendChild(img);
+      }
 
 
-        /* JUDUL */
+      /* JUDUL */
 
-        const judul =
-          document.createElement(
-            "h3"
-          );
+      const judul =
+        document.createElement("h3");
 
-        judul.textContent =
-          item.judul ||
-          "Tanpa judul";
+      judul.textContent =
+        item.judul || "Tanpa judul";
 
-        article.appendChild(
-          judul
-        );
+      article.appendChild(judul);
 
 
-        /* JENIS + TAHUN */
+      /* JENIS + TAHUN */
 
-        const info =
-          document.createElement(
-            "p"
-          );
+      const info =
+        document.createElement("p");
 
-        info.textContent =
-          `${item.jenis || "Karya"}${
-            item.tahun
-              ? ` • ${item.tahun}`
-              : ""
-          }`;
+      let infoText =
+        item.jenis || "Karya";
+
+      if (item.tahun) {
+        infoText +=
+          " • " + item.tahun;
+      }
+
+      info.textContent =
+        infoText;
+
+      article.appendChild(info);
+
+
+      /* PENULIS */
+
+      if (item.penulis) {
+
+        const penulis =
+          document.createElement("p");
+
+        penulis.textContent =
+          "Oleh " + item.penulis;
+
+        penulis.style.marginTop =
+          "8px";
 
         article.appendChild(
-          info
-        );
-
-
-        /* PENULIS */
-
-        if (item.penulis) {
-
-          const penulis =
-            document.createElement(
-              "p"
-            );
-
-          penulis.style.marginTop =
-            "8px";
-
-          penulis.textContent =
-            `Oleh ${item.penulis}`;
-
-          article.appendChild(
-            penulis
-          );
-        }
-
-
-        pub.appendChild(
-          article
+          penulis
         );
       }
-    );
+
+
+      pub.appendChild(article);
+    });
   }
 
 
-  /* BUTTON SEMUA */
+  /* =====================================================
+     BUTTON SEMUA
+  ===================================================== */
 
-  semuaBtn.addEventListener(
+  const semua =
+    document.createElement("button");
+
+  semua.type = "button";
+  semua.textContent = "Semua";
+  semua.setAttribute(
+    "aria-pressed",
+    "true"
+  );
+
+
+  semua.addEventListener(
     "click",
-    () => {
+    function () {
 
       filter
         .querySelectorAll("button")
-        .forEach(
-          button =>
-            button.setAttribute(
-              "aria-pressed",
-              "false"
-            )
-        );
+        .forEach(button => {
+
+          button.setAttribute(
+            "aria-pressed",
+            "false"
+          );
+        });
 
 
-      semuaBtn.setAttribute(
+      semua.setAttribute(
         "aria-pressed",
         "true"
       );
 
 
-      tampilkan("Semua");
+      tampilkanKarya("Semua");
     }
   );
 
 
-  /* BUTTON JENIS */
+  filter.appendChild(semua);
 
-  jenis.forEach(
-    namaJenis => {
 
-      const button =
-        document.createElement(
-          "button"
+  /* =====================================================
+     BUTTON JENIS
+  ===================================================== */
+
+  daftarJenis.forEach(jenis => {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.textContent = jenis;
+
+    button.setAttribute(
+      "aria-pressed",
+      "false"
+    );
+
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        filter
+          .querySelectorAll("button")
+          .forEach(btn => {
+
+            btn.setAttribute(
+              "aria-pressed",
+              "false"
+            );
+          });
+
+
+        button.setAttribute(
+          "aria-pressed",
+          "true"
         );
 
-      button.type =
-        "button";
 
-      button.textContent =
-        namaJenis;
-
-      button.setAttribute(
-        "aria-pressed",
-        "false"
-      );
+        tampilkanKarya(jenis);
+      }
+    );
 
 
-      button.addEventListener(
-        "click",
-        () => {
-
-          filter
-            .querySelectorAll("button")
-            .forEach(
-              btn =>
-                btn.setAttribute(
-                  "aria-pressed",
-                  "false"
-                )
-            );
+    filter.appendChild(button);
+  });
 
 
-          button.setAttribute(
-            "aria-pressed",
-            "true"
-          );
-
-
-          tampilkan(
-            namaJenis
-          );
-        }
-      );
-
-
-      filter.appendChild(
-        button
-      );
-    }
-  );
-
-
-  tampilkan("Semua");
+  tampilkanKarya("Semua");
 }
 
 
 /* =========================================================
-   STATISTIK DASHBOARD
+   DASHBOARD STATISTIK
 ========================================================= */
 
 function renderStatistik(
@@ -1001,7 +815,9 @@ function renderStatistik(
       : [];
 
 
-  /* PENGURUS */
+  /* =====================================================
+     JUMLAH PENGURUS
+  ===================================================== */
 
   if (sPengurus) {
 
@@ -1010,29 +826,33 @@ function renderStatistik(
   }
 
 
-  /* DIVISI */
+  /* =====================================================
+     JUMLAH DIVISI
+  ===================================================== */
 
   if (sDivisi) {
 
-    const divisi =
-      new Set(
+    const daftarDivisi = [
+      ...new Set(
         dataPengurus
-          .map(
-            item =>
-              String(
-                item.divisi || ""
-              ).trim()
+          .map(item =>
+            String(
+              item.divisi || ""
+            ).trim()
           )
           .filter(Boolean)
-      );
+      )
+    ];
 
 
     sDivisi.textContent =
-      divisi.size;
+      daftarDivisi.length;
   }
 
 
-  /* AGENDA */
+  /* =====================================================
+     JUMLAH AGENDA
+  ===================================================== */
 
   if (sAgenda) {
 
@@ -1041,7 +861,9 @@ function renderStatistik(
   }
 
 
-  /* KARYA */
+  /* =====================================================
+     JUMLAH KARYA
+  ===================================================== */
 
   if (sKarya) {
 
@@ -1050,41 +872,19 @@ function renderStatistik(
   }
 
 
-  /* BAR KARYA */
+  /* =====================================================
+     GRAFIK KARYA
+  ===================================================== */
 
-  if (!barKarya) return;
+  if (!barKarya) {
+    return;
+  }
+
 
   barKarya.innerHTML = "";
 
 
-  const jenisMap = {};
-
-
-  dataKarya.forEach(
-    item => {
-
-      const jenis =
-        String(
-          item.jenis ||
-          "Lainnya"
-        ).trim();
-
-
-      jenisMap[jenis] =
-        (jenisMap[jenis] || 0) + 1;
-    }
-  );
-
-
-  const daftarJenis =
-    Object.entries(
-      jenisMap
-    );
-
-
-  if (
-    daftarJenis.length === 0
-  ) {
+  if (dataKarya.length === 0) {
 
     barKarya.innerHTML = `
       <p class="lead">
@@ -1096,51 +896,88 @@ function renderStatistik(
   }
 
 
+  const hitung = {};
+
+
+  dataKarya.forEach(item => {
+
+    const jenis =
+      String(
+        item.jenis || "Lainnya"
+      ).trim();
+
+
+    if (!hitung[jenis]) {
+      hitung[jenis] = 0;
+    }
+
+    hitung[jenis]++;
+  });
+
+
   const total =
     dataKarya.length;
 
 
-  daftarJenis.forEach(
-    ([jenis, jumlah]) => {
+  Object.entries(hitung)
+    .forEach(
+      ([jenis, jumlah]) => {
 
-      const persen =
-        Math.round(
-          (jumlah / total) * 100
-        );
-
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-      row.className =
-        "bar";
+        const persen =
+          Math.round(
+            (jumlah / total) * 100
+          );
 
 
-      row.innerHTML = `
-        <span>
-          ${escapeHTML(jenis)}
-        </span>
+        const row =
+          document.createElement("div");
 
-        <div class="track">
-          <div
-            class="fill"
-            style="width:${persen}%">
-          </div>
-        </div>
-
-        <b>
-          ${jumlah}
-        </b>
-      `;
+        row.className =
+          "bar";
 
 
-      barKarya.appendChild(
-        row
-      );
-    }
-  );
+        const nama =
+          document.createElement("span");
+
+        nama.textContent =
+          jenis;
+
+
+        const track =
+          document.createElement("div");
+
+        track.className =
+          "track";
+
+
+        const fill =
+          document.createElement("div");
+
+        fill.className =
+          "fill";
+
+        fill.style.width =
+          persen + "%";
+
+
+        track.appendChild(fill);
+
+
+        const jumlahEl =
+          document.createElement("b");
+
+        jumlahEl.textContent =
+          jumlah;
+
+
+        row.appendChild(nama);
+        row.appendChild(track);
+        row.appendChild(jumlahEl);
+
+
+        barKarya.appendChild(row);
+      }
+    );
 }
 
 
@@ -1150,13 +987,21 @@ function renderStatistik(
 
 function renderKajian(data) {
 
+  /*
+     Bagian bidang kajian di index.html
+     sudah punya 4 bidang bawaan.
+
+     Jadi kalau tabel kajian belum ada,
+     tidak perlu menghapus apa pun.
+  */
+
   const fields =
-    document.querySelector(
-      ".fields"
-    );
+    document.querySelector(".fields");
 
 
-  if (!fields) return;
+  if (!fields) {
+    return;
+  }
 
 
   const kajian =
@@ -1166,40 +1011,38 @@ function renderKajian(data) {
 
 
   /*
-     Kalau tabel kajian belum ada
-     atau belum ada data,
-     gunakan bidang bawaan index.html.
+     Kalau tidak ada data dari database,
+     biarkan tampilan bawaan index.html.
   */
 
-  if (
-    kajian.length === 0
-  ) {
+  if (kajian.length === 0) {
     return;
   }
 
 
+  /*
+     Kalau database kajian punya data,
+     coba gunakan data tersebut.
+  */
+
   const aktif =
-    kajian.filter(
-      item => {
+    kajian.filter(item => {
 
-        const status =
-          String(
-            item.status ||
-            "Aktif"
-          )
-            .trim()
-            .toLowerCase();
+      const status =
+        String(
+          item.status || "aktif"
+        )
+          .trim()
+          .toLowerCase();
 
-
-        return status ===
-          "aktif";
-      }
-    );
+      return (
+        status === "aktif" ||
+        status === "active"
+      );
+    });
 
 
-  if (
-    aktif.length === 0
-  ) {
+  if (aktif.length === 0) {
     return;
   }
 
@@ -1207,84 +1050,90 @@ function renderKajian(data) {
   fields.innerHTML = "";
 
 
-  aktif.forEach(
-    item => {
+  aktif.forEach(item => {
 
-      const field =
-        document.createElement(
-          "div"
-        );
+    const field =
+      document.createElement("div");
 
-      field.className =
-        "field";
+    field.className =
+      "field";
 
 
-      field.innerHTML = `
-        <h3>
-          ${escapeHTML(
-            item.judul ||
-            item.bidang ||
-            "Bidang Kajian"
-          )}
-        </h3>
+    const judul =
+      document.createElement("h3");
 
-        <p>
-          ${escapeHTML(
-            item.deskripsi || ""
-          )}
-        </p>
-      `;
+    judul.textContent =
+      item.judul ||
+      item.bidang ||
+      item.nama ||
+      "Bidang Kajian";
 
 
-      fields.appendChild(
-        field
-      );
-    }
-  );
+    const deskripsi =
+      document.createElement("p");
+
+    deskripsi.textContent =
+      item.deskripsi ||
+      item.keterangan ||
+      "";
+
+
+    field.appendChild(judul);
+    field.appendChild(deskripsi);
+
+    fields.appendChild(field);
+  });
 }
 
 
 /* =========================================================
-   MULAI
+   MULAI APLIKASI
 ========================================================= */
 
 async function mulai() {
 
+  console.log(
+    "SKEMA: mulai..."
+  );
+
+
   try {
 
-    console.log(
-      "SKEMA: mulai memuat data..."
-    );
+    const hasil =
+      await Promise.all([
+
+        ambil(
+          "pengurus",
+          "urutan"
+        ),
+
+        ambil(
+          "agenda",
+          "id"
+        ),
+
+        ambil(
+          "karya",
+          "tahun"
+        )
+
+      ]);
 
 
-    const [
-      pengurus,
-      agenda,
-      karya,
-      kajian
-    ] = await Promise.all([
+    const pengurus =
+      Array.isArray(hasil[0])
+        ? hasil[0]
+        : [];
 
-      ambil(
-        "pengurus",
-        "urutan"
-      ),
+    const agenda =
+      Array.isArray(hasil[1])
+        ? hasil[1]
+        : [];
 
-      ambil(
-        "agenda",
-        "id"
-      ),
-
-      ambil(
-        "karya",
-        "tahun"
-      ),
-
-      ambil(
-        "kajian",
-        "urutan"
-      )
-
-    ]);
+    const karya =
+      Array.isArray(hasil[2])
+        ? hasil[2]
+        : [];
 
 
     console.log(
@@ -1300,11 +1149,6 @@ async function mulai() {
     console.log(
       "DATA KARYA:",
       karya
-    );
-
-    console.log(
-      "DATA KAJIAN:",
-      kajian
     );
 
 
@@ -1334,20 +1178,22 @@ async function mulai() {
     );
 
 
-    renderKajian(
-      kajian
-    );
+    /*
+       Kajian tidak lagi dipanggil dari Supabase.
+       Bidang kajian di index.html tetap menggunakan
+       4 bidang bawaan.
+    */
 
 
     console.log(
-      "SKEMA: semua data berhasil diproses."
+      "SKEMA: selesai."
     );
 
 
   } catch (error) {
 
     console.error(
-      "Gagal memuat data SKEMA:",
+      "SKEMA ERROR:",
       error
     );
 
@@ -1377,8 +1223,7 @@ async function mulai() {
 ========================================================= */
 
 if (
-  document.readyState ===
-  "loading"
+  document.readyState === "loading"
 ) {
 
   document.addEventListener(
