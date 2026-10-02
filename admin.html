@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Admin SKEMA UNINDRA</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f5f7;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 21px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-primary {
+      background: #111;
+      color: white;
+    }
+
+    .btn-edit {
+      background: #eee;
+      color: #111;
+    }
+
+    .btn-delete {
+      background: #d33;
+      color: white;
+    }
+
+    .btn-logout {
+      background: white;
+      color: #111;
+    }
+
+    .container {
+      width: min(1200px, 94%);
+      margin: 30px auto;
+    }
+
+    .login-box {
+      width: min(420px, 92%);
+      margin: 80px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    }
+
+    .login-box h2 {
+      margin-top: 0;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px;
+      margin-top: 6px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .error {
+      color: #d00;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .success {
+      color: #087a25;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    #admin-app {
+      display: none;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 25px;
+    }
+
+    .tab {
+      background: white;
+      border: 1px solid #ddd;
+      color: #222;
+    }
+
+    .tab.active {
+      background: #111;
+      color: white;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.05);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0 18px;
+    }
+
+    .form-full {
+      grid-column: 1 / -1;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 750px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f7f7f7;
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .preview-img {
+      width: 70px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #eee;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 25px;
+      color: #777;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-full {
+        grid-column: auto;
+      }
+
+      header {
+        gap: 15px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= LOGIN ================= -->
+
+  <div id="login-page">
+
+    <div class="login-box">
+
+      <h2>Login Pengurus</h2>
+
+      <p>
+        Masuk untuk mengelola data SKEMA UNINDRA.
+      </p>
+
+      <form id="login-form">
+
+        <label>Email</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Email"
+          required
+        >
+
+        <label>Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          required
+        >
+
+        <button
+          type="submit"
+          class="btn-primary"
+          style="width:100%;"
+        >
+          Masuk
+        </button>
+
+      </form>
+
+      <div id="login-error" class="error"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ================= ADMIN APP ================= -->
+
+  <div id="admin-app">
+
+    <header>
+
+      <h1>SKEMA UNINDRA — Admin</h1>
+
+      <button
+        id="logout"
+        class="btn-logout"
+      >
+        Keluar
+      </button>
+
+    </header>
+
+
+    <main class="container">
+
+      <!-- TABS -->
+
+      <div class="tabs">
+
+        <button
+          class="tab active"
+          data-tab="pengurus"
+        >
+          Pengurus
+        </button>
+
+        <button
+          class="tab"
+          data-tab="agenda"
+        >
+          Agenda
+        </button>
+
+        <button
+          class="tab"
+          data-tab="karya"
+        >
+          Karya
+        </button>
+
+        <button
+          class="tab"
+          data-tab="kajian"
+        >
+          Kajian
+        </button>
+
+      </div>
+
+
+      <!-- ================= PENGURUS ================= -->
+
+      <section
+        id="panel-pengurus"
+        class="panel active"
+      >
+
+        <div class="card">
+
+          <h2>Tambah Pengurus</h2>
+
+          <form id="form-pengurus">
+
+            <div class="form-grid">
+
+              <div>
+                <label>Nama</label>
+                <input
+                  name="nama"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Jabatan</label>
+                <input
+                  name="jabatan"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Divisi</label>
+                <input
+                  name="divisi"
+                  placeholder="Kosongkan untuk pengurus inti"
+                >
+              </div>
+
+              <div>
+                <label>Prodi</label>
+                <input name="prodi">
+              </div>
+
+              <div>
+                <label>Angkatan</label>
+                <input
+                  name="angkatan"
+                  type="number"
+                >
+              </div>
+
+              <div>
+                <label>Urutan Tampil</label>
+                <input
+                  name="urutan"
+                  type="number"
+                  value="0"
+                >
+              </div>
+
+              <div>
+                <label>Link Foto</label>
+                <input
+                  name="foto"
+                  type="url"
+                  placeholder="https://..."
+                >
+              </div>
+
+              <div>
+                <label>Link Instagram</label>
+                <input
+                  name="instagram"
+                  type="url"
+                  placeholder="https://instagram.com/..."
+                >
+              </div>
+
+              <div>
+                <label>Link TikTok</label>
+                <input
+                  name="tiktok"
+                  type="url"
+                  placeholder="https://tiktok.com/@..."
+                >
+              </div>
+
+              <div>
+                <label>Link LinkedIn</label>
+                <input
+                  name="linkedin"
+                  type="url"
+                  placeholder="https://linkedin.com/in/..."
+                >
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              class="btn-primary"
+            >
+              Tambah Pengurus
+            </button>
+
+          </form>
+
+          <div id="pesan-pengurus"></div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Data Pengurus</h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Foto</th>
+                  <th>Nama</th>
+                  <th>Jabatan</th>
+                  <th>Divisi</th>
+                  <th>Prodi</th>
+                  <th>Angkatan</th>
+                  <th>Urutan</th>
+                  <th>Aksi</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="data-pengurus"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= AGENDA ================= -->
+
+      <section
+        id="panel-agenda"
+        class="panel"
+      >
+
+        <div class="card">
+
+          <h2>Tambah Agenda</h2>
+
+          <form id="form-agenda">
+
+            <div class="form-grid">
+
+              <div>
+                <label>Kegiatan</label>
+                <input
+                  name="kegiatan"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Waktu</label>
+                <input
+                  name="waktu"
+                  placeholder="Contoh: 10 Oktober 2026, 09.00 WIB"
+                >
+              </div>
+
+              <div>
+                <label>Jenis</label>
+                <input
+                  name="jenis"
+                  placeholder="Seminar / Diskusi / Rapat"
+                >
+              </div>
+
+              <div>
+                <label>Link Foto Dokumentasi</label>
+                <input
+                  name="foto"
+                  type="url"
+                  placeholder="https://..."
+                >
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              class="btn-primary"
+            >
+              Tambah Agenda
+            </button>
+
+          </form>
+
+          <div id="pesan-agenda"></div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Data Agenda</h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Foto</th>
+                  <th>Kegiatan</th>
+                  <th>Waktu</th>
+                  <th>Jenis</th>
+                  <th>Aksi</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="data-agenda"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= KARYA ================= -->
+
+      <section
+        id="panel-karya"
+        class="panel"
+      >
+
+        <div class="card">
+
+          <h2>Tambah Karya</h2>
+
+          <form id="form-karya">
+
+            <div class="form-grid">
+
+              <div>
+                <label>Judul</label>
+                <input
+                  name="judul"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Jenis</label>
+                <input
+                  name="jenis"
+                  placeholder="Artikel / Policy brief / Poster"
+                >
+              </div>
+
+              <div>
+                <label>Penulis</label>
+                <input name="penulis">
+              </div>
+
+              <div>
+                <label>Tahun</label>
+                <input
+                  name="tahun"
+                  type="number"
+                >
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              class="btn-primary"
+            >
+              Tambah Karya
+            </button>
+
+          </form>
+
+          <div id="pesan-karya"></div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Data Karya</h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Judul</th>
+                  <th>Jenis</th>
+                  <th>Penulis</th>
+                  <th>Tahun</th>
+                  <th>Aksi</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="data-karya"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= KAJIAN ================= -->
+
+      <section
+        id="panel-kajian"
+        class="panel"
+      >
+
+        <div class="card">
+
+          <h2>Tambah Kajian</h2>
+
+          <form id="form-kajian">
+
+            <div class="form-grid">
+
+              <div>
+                <label>Judul Kajian</label>
+                <input
+                  name="judul"
+                  required
+                >
+              </div>
+
+              <div>
+                <label>Bidang Kajian</label>
+                <input
+                  name="bidang"
+                  placeholder="Pendidikan & Pembelajaran"
+                  required
+                >
+              </div>
+
+              <div class="form-full">
+
+                <label>Deskripsi</label>
+
+                <textarea
+                  name="deskripsi"
+                  placeholder="Deskripsi singkat kajian..."
+                ></textarea>
+
+              </div>
+
+              <div>
+                <label>Penulis</label>
+                <input name="penulis">
+              </div>
+
+              <div>
+                <label>Tahun</label>
+                <input
+                  name="tahun"
+                  type="number"
+                >
+              </div>
+
+              <div>
+                <label>Status</label>
+
+                <select name="status">
+
+                  <option value="Aktif">
+                    Aktif
+                  </option>
+
+                  <option value="Selesai">
+                    Selesai
+                  </option>
+
+                  <option value="Draft">
+                    Draft
+                  </option>
+
+                </select>
+
+              </div>
+
+              <div>
+                <label>Urutan Tampil</label>
+
+                <input
+                  name="urutan"
+                  type="number"
+                  value="0"
+                >
+
+              </div>
+
+            </div>
+
+            <button
+              type="submit"
+              class="btn-primary"
+            >
+              Tambah Kajian
+            </button>
+
+          </form>
+
+          <div id="pesan-kajian"></div>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>Data Kajian</h2>
+
+          <div class="table-wrap">
+
+            <table>
+
+              <thead>
+
+                <tr>
+                  <th>Judul</th>
+                  <th>Bidang</th>
+                  <th>Deskripsi</th>
+                  <th>Penulis</th>
+                  <th>Tahun</th>
+                  <th>Status</th>
+                  <th>Urutan</th>
+                  <th>Aksi</th>
+                </tr>
+
+              </thead>
+
+              <tbody id="data-kajian"></tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </div>
+
+
+  <!-- ================= JAVASCRIPT ================= -->
+
+  <script>
+
+    // ==========================================
+    // KONEKSI SUPABASE
+    // ==========================================
+
+    let sb = null;
+
+    if (
+      typeof SUPABASE_URL !== "undefined" &&
+      typeof SUPABASE_ANON_KEY !== "undefined" &&
+      SUPABASE_URL &&
+      SUPABASE_ANON_KEY
+    ) {
+
+      sb = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+    }
+
+
+    // ==========================================
+    // CEK SUPABASE
+    // ==========================================
+
+    if (!sb) {
+
+      document.getElementById("login-error").textContent =
+        "Supabase belum terhubung. Cek config.js";
+
+    }
+
+
+    // ==========================================
+    // ELEMENT
+    // ==========================================
+
+    const loginPage =
+      document.getElementById("login-page");
+
+    const adminApp =
+      document.getElementById("admin-app");
+
+    const loginForm =
+      document.getElementById("login-form");
+
+    const loginError =
+      document.getElementById("login-error");
+
+    const logoutBtn =
+      document.getElementById("logout");
+
+
+    // ==========================================
+    // LOGIN
+    // ==========================================
+
+    loginForm.addEventListener(
+      "submit",
+      async function(e) {
+
+        e.preventDefault();
+
+        if (!sb) {
+
+          loginError.textContent =
+            "Supabase belum terhubung.";
+
+          return;
+
+        }
+
+        loginError.textContent = "Memproses...";
+
+        const email =
+          document.getElementById("email").value.trim();
+
+        const password =
+          document.getElementById("password").value;
+
+
+        const {
+          data,
+          error
+        } = await sb.auth.signInWithPassword({
+          email,
+          password
+        });
+
+
+        if (error) {
+
+          loginError.textContent =
+            error.message;
+
+          return;
+
+        }
+
+
+        const userId =
+          data.user.id;
+
+
+        // CEK APAKAH USER ADALAH PENGURUS / ADMIN
+
+        const {
+          data: adminData,
+          error: adminError
+        } = await sb
+          .from("admin_users")
+          .select("user_id")
+          .eq("user_id", userId)
+          .maybeSingle();
+
+
+        if (adminError) {
+
+          await sb.auth.signOut();
+
+          loginError.textContent =
+            "Gagal mengecek akses pengurus: " +
+            adminError.message;
+
+          return;
+
+        }
+
+
+        if (!adminData) {
+
+          await sb.auth.signOut();
+
+          loginError.textContent =
+            "Akun ini belum terdaftar sebagai pengurus.";
+
+          return;
+
+        }
+
+
+        loginError.textContent = "";
+
+        loginPage.style.display = "none";
+        adminApp.style.display = "block";
+
+
+        await muatSemua();
+
+      }
+    );
+
+
+    // ==========================================
+    // LOGOUT
+    // ==========================================
+
+    logoutBtn.addEventListener(
+      "click",
+      async function() {
+
+        if (sb) {
+          await sb.auth.signOut();
+        }
+
+        adminApp.style.display = "none";
+        loginPage.style.display = "block";
+
+      }
+    );
+
+
+    // ==========================================
+    // TAB
+    // ==========================================
+
+    document.querySelectorAll(".tab")
+      .forEach(function(tab) {
+
+        tab.addEventListener(
+          "click",
+          function() {
+
+            document.querySelectorAll(".tab")
+              .forEach(function(t) {
+                t.classList.remove("active");
+              });
+
+            document.querySelectorAll(".panel")
+              .forEach(function(p) {
+                p.classList.remove("active");
+              });
+
+
+            tab.classList.add("active");
+
+
+            const nama =
+              tab.dataset.tab;
+
+            document
+              .getElementById("panel-" + nama)
+              .classList.add("active");
+
+          }
+        );
+
+      });
+
+
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
+
+    function esc(value) {
+
+      if (value === null || value === undefined) {
+        return "";
+      }
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    // ==========================================
+    // LINK AMAN
+    // ==========================================
+
+    function link(url, text) {
+
+      if (!url) {
+        return "-";
+      }
+
+      return `
+        <a
+          href="${esc(url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ${esc(text || url)}
+        </a>
+      `;
+
+    }
+
+
+    // ==========================================
+    // PESAN
+    // ==========================================
+
+    function pesan(id, text, sukses = true) {
+
+      const el =
+        document.getElementById(id);
+
+      el.className =
+        sukses ? "success" : "error";
+
+      el.textContent = text;
+
+      setTimeout(function() {
+        el.textContent = "";
+      }, 3000);
+
+    }
+
+
+    // ==========================================
+    // MUAT SEMUA DATA
+    // ==========================================
+
+    async function muatSemua() {
+
+      await muatPengurus();
+      await muatAgenda();
+      await muatKarya();
+      await muatKajian();
+
+    }
+
+
+    // ==========================================
+    // PENGURUS
+    // ==========================================
+
+    async function muatPengurus() {
+
+      const tbody =
+        document.getElementById("data-pengurus");
+
+      tbody.innerHTML =
+        `<tr><td colspan="8">Memuat...</td></tr>`;
+
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("pengurus")
+        .select("*")
+        .order("urutan", {
+          ascending: true
+        });
+
+
+      if (error) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="8" class="error">
+              ${esc(error.message)}
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="8" class="empty">
+              Belum ada data pengurus.
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      tbody.innerHTML =
+        data.map(function(row) {
+
+          const foto =
+            row.foto
+              ? `<img
+                  src="${esc(row.foto)}"
+                  class="preview-img"
+                  onerror="this.style.display='none'"
+                >`
+              : "-";
+
+
+          return `
+            <tr>
+
+              <td>${foto}</td>
+
+              <td>
+                <strong>${esc(row.nama)}</strong>
+              </td>
+
+              <td>${esc(row.jabatan)}</td>
+
+              <td>${esc(row.divisi || "-")}</td>
+
+              <td>${esc(row.prodi || "-")}</td>
+
+              <td>${esc(row.angkatan || "-")}</td>
+
+              <td>${esc(row.urutan ?? 0)}</td>
+
+              <td>
+
+                <div class="actions">
+
+                  <button
+                    class="btn-edit"
+                    onclick="editPengurus(${row.id})"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    class="btn-delete"
+                    onclick="hapusData('pengurus', ${row.id})"
+                  >
+                    Hapus
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+          `;
+
+        }).join("");
+
+    }
+
+
+    // ==========================================
+    // TAMBAH PENGURUS
+    // ==========================================
+
+    document
+      .getElementById("form-pengurus")
+      .addEventListener(
+        "submit",
+        async function(e) {
+
+          e.preventDefault();
+
+          const form =
+            e.target;
+
+          const data =
+            Object.fromEntries(
+              new FormData(form)
+            );
+
+
+          data.angkatan =
+            data.angkatan
+              ? Number(data.angkatan)
+              : null;
+
+          data.urutan =
+            data.urutan
+              ? Number(data.urutan)
+              : 0;
+
+
+          const {
+            error
+          } = await sb
+            .from("pengurus")
+            .insert(data);
+
+
+          if (error) {
+
+            pesan(
+              "pesan-pengurus",
+              error.message,
+              false
+            );
+
+            return;
+
+          }
+
+
+          form.reset();
+
+          pesan(
+            "pesan-pengurus",
+            "Pengurus berhasil ditambahkan."
+          );
+
+          muatPengurus();
+
+        }
+      );
+
+
+    // ==========================================
+    // EDIT PENGURUS
+    // ==========================================
+
+    async function editPengurus(id) {
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("pengurus")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+      if (error) {
+
+        alert(error.message);
+        return;
+
+      }
+
+
+      const nama =
+        prompt("Nama:", data.nama);
+
+      if (nama === null) return;
+
+
+      const jabatan =
+        prompt("Jabatan:", data.jabatan);
+
+      if (jabatan === null) return;
+
+
+      const divisi =
+        prompt("Divisi:", data.divisi || "");
+
+      if (divisi === null) return;
+
+
+      const prodi =
+        prompt("Prodi:", data.prodi || "");
+
+      if (prodi === null) return;
+
+
+      const angkatan =
+        prompt("Angkatan:", data.angkatan || "");
+
+      if (angkatan === null) return;
+
+
+      const urutan =
+        prompt("Urutan:", data.urutan || 0);
+
+      if (urutan === null) return;
+
+
+      const foto =
+        prompt("Link Foto:", data.foto || "");
+
+      if (foto === null) return;
+
+
+      const instagram =
+        prompt("Link Instagram:", data.instagram || "");
+
+      if (instagram === null) return;
+
+
+      const tiktok =
+        prompt("Link TikTok:", data.tiktok || "");
+
+      if (tiktok === null) return;
+
+
+      const linkedin =
+        prompt("Link LinkedIn:", data.linkedin || "");
+
+      if (linkedin === null) return;
+
+
+      const {
+        error: updateError
+      } = await sb
+        .from("pengurus")
+        .update({
+          nama,
+          jabatan,
+          divisi,
+          prodi,
+          angkatan: angkatan
+            ? Number(angkatan)
+            : null,
+          urutan: urutan
+            ? Number(urutan)
+            : 0,
+          foto,
+          instagram,
+          tiktok,
+          linkedin
+        })
+        .eq("id", id);
+
+
+      if (updateError) {
+
+        alert(updateError.message);
+        return;
+
+      }
+
+
+      muatPengurus();
+
+    }
+
+
+    // ==========================================
+    // AGENDA
+    // ==========================================
+
+    async function muatAgenda() {
+
+      const tbody =
+        document.getElementById("data-agenda");
+
+      tbody.innerHTML =
+        `<tr><td colspan="5">Memuat...</td></tr>`;
+
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("agenda")
+        .select("*")
+        .order("id", {
+          ascending: false
+        });
+
+
+      if (error) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="5" class="error">
+              ${esc(error.message)}
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="5" class="empty">
+              Belum ada agenda.
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      tbody.innerHTML =
+        data.map(function(row) {
+
+          const foto =
+            row.foto
+              ? `<img
+                  src="${esc(row.foto)}"
+                  class="preview-img"
+                  onerror="this.style.display='none'"
+                >`
+              : "-";
+
+
+          return `
+            <tr>
+
+              <td>${foto}</td>
+
+              <td>
+                <strong>${esc(row.kegiatan)}</strong>
+              </td>
+
+              <td>${esc(row.waktu || "-")}</td>
+
+              <td>${esc(row.jenis || "-")}</td>
+
+              <td>
+
+                <div class="actions">
+
+                  <button
+                    class="btn-edit"
+                    onclick="editAgenda(${row.id})"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    class="btn-delete"
+                    onclick="hapusData('agenda', ${row.id})"
+                  >
+                    Hapus
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+          `;
+
+        }).join("");
+
+    }
+
+
+    // ==========================================
+    // TAMBAH AGENDA
+    // ==========================================
+
+    document
+      .getElementById("form-agenda")
+      .addEventListener(
+        "submit",
+        async function(e) {
+
+          e.preventDefault();
+
+          const form =
+            e.target;
+
+          const data =
+            Object.fromEntries(
+              new FormData(form)
+            );
+
+
+          const {
+            error
+          } = await sb
+            .from("agenda")
+            .insert(data);
+
+
+          if (error) {
+
+            pesan(
+              "pesan-agenda",
+              error.message,
+              false
+            );
+
+            return;
+
+          }
+
+
+          form.reset();
+
+          pesan(
+            "pesan-agenda",
+            "Agenda berhasil ditambahkan."
+          );
+
+          muatAgenda();
+
+        }
+      );
+
+
+    // ==========================================
+    // EDIT AGENDA
+    // ==========================================
+
+    async function editAgenda(id) {
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("agenda")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+      if (error) {
+
+        alert(error.message);
+        return;
+
+      }
+
+
+      const kegiatan =
+        prompt(
+          "Kegiatan:",
+          data.kegiatan
+        );
+
+      if (kegiatan === null) return;
+
+
+      const waktu =
+        prompt(
+          "Waktu:",
+          data.waktu || ""
+        );
+
+      if (waktu === null) return;
+
+
+      const jenis =
+        prompt(
+          "Jenis:",
+          data.jenis || ""
+        );
+
+      if (jenis === null) return;
+
+
+      const foto =
+        prompt(
+          "Link Foto Dokumentasi:",
+          data.foto || ""
+        );
+
+      if (foto === null) return;
+
+
+      const {
+        error: updateError
+      } = await sb
+        .from("agenda")
+        .update({
+          kegiatan,
+          waktu,
+          jenis,
+          foto
+        })
+        .eq("id", id);
+
+
+      if (updateError) {
+
+        alert(updateError.message);
+        return;
+
+      }
+
+
+      muatAgenda();
+
+    }
+
+
+    // ==========================================
+    // KARYA
+    // ==========================================
+
+    async function muatKarya() {
+
+      const tbody =
+        document.getElementById("data-karya");
+
+      tbody.innerHTML =
+        `<tr><td colspan="5">Memuat...</td></tr>`;
+
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("karya")
+        .select("*")
+        .order("id", {
+          ascending: false
+        });
+
+
+      if (error) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="5" class="error">
+              ${esc(error.message)}
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="5" class="empty">
+              Belum ada karya.
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      tbody.innerHTML =
+        data.map(function(row) {
+
+          return `
+            <tr>
+
+              <td>
+                <strong>
+                  ${esc(row.judul)}
+                </strong>
+              </td>
+
+              <td>${esc(row.jenis || "-")}</td>
+
+              <td>${esc(row.penulis || "-")}</td>
+
+              <td>${esc(row.tahun || "-")}</td>
+
+              <td>
+
+                <div class="actions">
+
+                  <button
+                    class="btn-edit"
+                    onclick="editKarya(${row.id})"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    class="btn-delete"
+                    onclick="hapusData('karya', ${row.id})"
+                  >
+                    Hapus
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+          `;
+
+        }).join("");
+
+    }
+
+
+    // ==========================================
+    // TAMBAH KARYA
+    // ==========================================
+
+    document
+      .getElementById("form-karya")
+      .addEventListener(
+        "submit",
+        async function(e) {
+
+          e.preventDefault();
+
+          const form =
+            e.target;
+
+          const data =
+            Object.fromEntries(
+              new FormData(form)
+            );
+
+
+          data.tahun =
+            data.tahun
+              ? Number(data.tahun)
+              : null;
+
+
+          const {
+            error
+          } = await sb
+            .from("karya")
+            .insert(data);
+
+
+          if (error) {
+
+            pesan(
+              "pesan-karya",
+              error.message,
+              false
+            );
+
+            return;
+
+          }
+
+
+          form.reset();
+
+          pesan(
+            "pesan-karya",
+            "Karya berhasil ditambahkan."
+          );
+
+          muatKarya();
+
+        }
+      );
+
+
+    // ==========================================
+    // EDIT KARYA
+    // ==========================================
+
+    async function editKarya(id) {
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("karya")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+      if (error) {
+
+        alert(error.message);
+        return;
+
+      }
+
+
+      const judul =
+        prompt(
+          "Judul:",
+          data.judul
+        );
+
+      if (judul === null) return;
+
+
+      const jenis =
+        prompt(
+          "Jenis:",
+          data.jenis || ""
+        );
+
+      if (jenis === null) return;
+
+
+      const penulis =
+        prompt(
+          "Penulis:",
+          data.penulis || ""
+        );
+
+      if (penulis === null) return;
+
+
+      const tahun =
+        prompt(
+          "Tahun:",
+          data.tahun || ""
+        );
+
+      if (tahun === null) return;
+
+
+      const {
+        error: updateError
+      } = await sb
+        .from("karya")
+        .update({
+          judul,
+          jenis,
+          penulis,
+          tahun: tahun
+            ? Number(tahun)
+            : null
+        })
+        .eq("id", id);
+
+
+      if (updateError) {
+
+        alert(updateError.message);
+        return;
+
+      }
+
+
+      muatKarya();
+
+    }
+
+
+    // ==========================================
+    // KAJIAN
+    // ==========================================
+
+    async function muatKajian() {
+
+      const tbody =
+        document.getElementById("data-kajian");
+
+      tbody.innerHTML =
+        `<tr><td colspan="8">Memuat...</td></tr>`;
+
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("kajian")
+        .select("*")
+        .order("urutan", {
+          ascending: true
+        });
+
+
+      if (error) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="8" class="error">
+              ${esc(error.message)}
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      if (!data || data.length === 0) {
+
+        tbody.innerHTML =
+          `<tr>
+            <td colspan="8" class="empty">
+              Belum ada kajian.
+            </td>
+          </tr>`;
+
+        return;
+
+      }
+
+
+      tbody.innerHTML =
+        data.map(function(row) {
+
+          return `
+            <tr>
+
+              <td>
+                <strong>
+                  ${esc(row.judul)}
+                </strong>
+              </td>
+
+              <td>${esc(row.bidang)}</td>
+
+              <td>
+                ${esc(row.deskripsi || "-")}
+              </td>
+
+              <td>${esc(row.penulis || "-")}</td>
+
+              <td>${esc(row.tahun || "-")}</td>
+
+              <td>${esc(row.status || "-")}</td>
+
+              <td>${esc(row.urutan ?? 0)}</td>
+
+              <td>
+
+                <div class="actions">
+
+                  <button
+                    class="btn-edit"
+                    onclick="editKajian(${row.id})"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    class="btn-delete"
+                    onclick="hapusData('kajian', ${row.id})"
+                  >
+                    Hapus
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+          `;
+
+        }).join("");
+
+    }
+
+
+    // ==========================================
+    // TAMBAH KAJIAN
+    // ==========================================
+
+    document
+      .getElementById("form-kajian")
+      .addEventListener(
+        "submit",
+        async function(e) {
+
+          e.preventDefault();
+
+          const form =
+            e.target;
+
+          const data =
+            Object.fromEntries(
+              new FormData(form)
+            );
+
+
+          data.tahun =
+            data.tahun
+              ? Number(data.tahun)
+              : null;
+
+          data.urutan =
+            data.urutan
+              ? Number(data.urutan)
+              : 0;
+
+
+          const {
+            error
+          } = await sb
+            .from("kajian")
+            .insert(data);
+
+
+          if (error) {
+
+            pesan(
+              "pesan-kajian",
+              error.message,
+              false
+            );
+
+            return;
+
+          }
+
+
+          form.reset();
+
+          pesan(
+            "pesan-kajian",
+            "Kajian berhasil ditambahkan."
+          );
+
+          muatKajian();
+
+        }
+      );
+
+
+    // ==========================================
+    // EDIT KAJIAN
+    // ==========================================
+
+    async function editKajian(id) {
+
+      const {
+        data,
+        error
+      } = await sb
+        .from("kajian")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+
+      if (error) {
+
+        alert(error.message);
+        return;
+
+      }
+
+
+      const judul =
+        prompt(
+          "Judul Kajian:",
+          data.judul
+        );
+
+      if (judul === null) return;
+
+
+      const bidang =
+        prompt(
+          "Bidang Kajian:",
+          data.bidang
+        );
+
+      if (bidang === null) return;
+
+
+      const deskripsi =
+        prompt(
+          "Deskripsi:",
+          data.deskripsi || ""
+        );
+
+      if (deskripsi === null) return;
+
+
+      const penulis =
+        prompt(
+          "Penulis:",
+          data.penulis || ""
+        );
+
+      if (penulis === null) return;
+
+
+      const tahun =
+        prompt(
+          "Tahun:",
+          data.tahun || ""
+        );
+
+      if (tahun === null) return;
+
+
+      const status =
+        prompt(
+          "Status:",
+          data.status || "Aktif"
+        );
+
+      if (status === null) return;
+
+
+      const urutan =
+        prompt(
+          "Urutan:",
+          data.urutan || 0
+        );
+
+      if (urutan === null) return;
+
+
+      const {
+        error: updateError
+      } = await sb
+        .from("kajian")
+        .update({
+          judul,
+          bidang,
+          deskripsi,
+          penulis,
+          tahun: tahun
+            ? Number(tahun)
+            : null,
+          status,
+          urutan: urutan
+            ? Number(urutan)
+            : 0
+        })
+        .eq("id", id);
+
+
+      if (updateError) {
+
+        alert(updateError.message);
+        return;
+
+      }
+
+
+      muatKajian();
+
+    }
+
+
+    // ==========================================
+    // HAPUS DATA
+    // ==========================================
+
+    async function hapusData(
+      tabel,
+      id
+    ) {
+
+      const yakin =
+        confirm(
+          "Yakin ingin menghapus data ini?"
+        );
+
+
+      if (!yakin) return;
+
+
+      const {
+        error
+      } = await sb
+        .from(tabel)
+        .delete()
+        .eq("id", id);
+
+
+      if (error) {
+
+        alert(
+          "Gagal menghapus: " +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      if (tabel === "pengurus") {
+        muatPengurus();
+      }
+
+      if (tabel === "agenda") {
+        muatAgenda();
+      }
+
+      if (tabel === "karya") {
+        muatKarya();
+      }
+
+      if (tabel === "kajian") {
+        muatKajian();
+      }
+
+    }
+
+
+    // ==========================================
+    // CEK SESSION SAAT HALAMAN DIBUKA
+    // ==========================================
+
+    async function cekSession() {
+
+      if (!sb) return;
+
+
+      const {
+        data
+      } = await sb.auth.getSession();
+
+
+      if (!data.session) {
+        return;
+      }
+
+
+      const userId =
+        data.session.user.id;
+
+
+      const {
+        data: adminData
+      } = await sb
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+
+      if (adminData) {
+
+        loginPage.style.display = "none";
+        adminApp.style.display = "block";
+
+        await muatSemua();
+
+      }
+
+    }
+
+
+    cekSession();
+
+  </script>
+
+</body>
+</html>
