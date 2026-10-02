@@ -48,6 +48,7 @@ th{background:#f9fafb}
 .status{margin-top:15px;padding:12px;border-radius:9px;background:#f3f4f6}
 .badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:bold;background:#dcfce7;color:#166534}
 .badge.off{background:#fee2e2;color:#991b1b}
+
 @media(max-width:700px){
 .form-grid{grid-template-columns:1fr}
 .full{grid-column:auto}
@@ -67,21 +68,25 @@ header{align-items:flex-start;flex-direction:column}
 <p>Masuk menggunakan akun pengurus.</p>
 
 <form id="login-form">
+
 <label>Email</label>
 <input id="email" type="email" required>
 
 <br><br>
 
-<label>Password</label> <input id="password" type="password" required>
+<label>Password</label>
+<input id="password" type="password" required>
 
 <div class="actions">
 <button class="btn btn-primary" type="submit">Masuk</button>
 </div>
 
 <div id="login-status" class="status hidden"></div>
+
 </form>
 </div>
 </section>
+
 
 <section id="admin-app" class="app hidden">
 
@@ -90,70 +95,135 @@ header{align-items:flex-start;flex-direction:column}
 <button id="btn-logout" class="btn btn-danger">Keluar</button>
 </header>
 
+
 <main class="container">
 
 <div class="tabs">
-<button class="tab active" data-tab="agenda-panel">Agenda</button>
-<button class="tab" data-tab="pengurus-panel">Pengurus</button>
-<button class="tab" data-tab="kajian-panel">Kajian</button>
-<button class="tab" data-tab="member-panel">Member</button>
+
+<button class="tab active" data-tab="agenda-panel">
+Agenda
+</button>
+
+<button class="tab" data-tab="pengurus-panel">
+Pengurus
+</button>
+
+<button class="tab" data-tab="kajian-panel">
+Kajian
+</button>
+
+<button class="tab" data-tab="karya-panel">
+Karya
+</button>
+
+<button class="tab" data-tab="member-panel">
+Member
+</button>
+
 </div>
 
-<!-- AGENDA -->
+
+<!-- ================= AGENDA ================= -->
 
 <section id="agenda-panel" class="tab-panel">
 
 <div class="panel">
-<h2 id="agenda-form-title">Tambah Agenda</h2>
+
+<h2 id="agenda-form-title">
+Tambah Agenda
+</h2>
 
 <form id="agenda-form">
+
 <input type="hidden" id="agenda-id">
 
 <div class="form-grid">
 
 <div class="full">
+
 <label>Nama Kegiatan</label>
 <input id="kegiatan" type="text" required>
+
 </div>
 
+
 <div>
+
 <label>Waktu</label>
 <input id="waktu" type="text">
+
 </div>
 
+
 <div>
+
 <label>Jenis</label>
+
 <select id="jenis">
+
 <option value="Seminar">Seminar</option>
 <option value="Diskusi">Diskusi</option>
 <option value="Riset">Riset</option>
 <option value="Workshop">Workshop</option>
 <option value="Lainnya">Lainnya</option>
+
 </select>
+
 </div>
+
 
 <div class="full">
+
 <label>Foto Agenda</label>
-<input id="foto-agenda" type="file" accept="image/*">
+
+<input
+id="foto-agenda"
+type="file"
+accept="image/*"
+>
+
 <div id="preview-foto" class="preview"></div>
+
 </div>
 
 </div>
+
 
 <div class="actions">
-<button id="btn-simpan-agenda" class="btn btn-primary">Simpan Agenda</button>
-<button id="btn-batal-agenda" type="button" class="btn btn-secondary hidden">Batal Edit</button>
+
+<button
+id="btn-simpan-agenda"
+class="btn btn-primary">
+Simpan Agenda
+</button>
+
+<button
+id="btn-batal-agenda"
+type="button"
+class="btn btn-secondary hidden">
+Batal Edit
+</button>
+
 </div>
+
 
 <div id="agenda-status" class="status hidden"></div>
+
 </form>
+
 </div>
 
+
 <div class="panel">
+
 <h2>Data Agenda</h2>
+
 <div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Foto</th>
 <th>Kegiatan</th>
@@ -161,94 +231,160 @@ header{align-items:flex-start;flex-direction:column}
 <th>Jenis</th>
 <th>Aksi</th>
 </tr>
+
 </thead>
+
 <tbody id="data-agenda"></tbody>
+
 </table>
+
 </div>
+
 </div>
 
 </section>
 
-<!-- PENGURUS -->
+
+<!-- ================= PENGURUS ================= -->
 
 <section id="pengurus-panel" class="tab-panel hidden">
 
 <div class="panel">
-<h2 id="pengurus-form-title">Tambah Pengurus</h2>
+
+<h2 id="pengurus-form-title">
+Tambah Pengurus
+</h2>
 
 <form id="pengurus-form">
+
 <input type="hidden" id="pengurus-id">
 
 <div class="form-grid">
 
 <div>
+
 <label>Nama</label>
 <input id="pengurus-nama" required>
+
 </div>
 
+
 <div>
+
 <label>Jabatan</label>
 <input id="pengurus-jabatan" required>
+
 </div>
 
+
 <div>
+
 <label>Divisi</label>
 <input id="pengurus-divisi">
+
 </div>
 
+
 <div>
+
 <label>Program Studi</label>
 <input id="pengurus-prodi">
+
 </div>
 
+
 <div>
+
 <label>Angkatan</label>
 <input id="pengurus-angkatan" type="number">
+
 </div>
 
+
 <div>
+
 <label>Urutan</label>
 <input id="pengurus-urutan" type="number" value="0">
+
 </div>
+
 
 <div class="full">
+
 <label>Foto Pengurus</label>
-<input id="foto-pengurus" type="file" accept="image/*">
+
+<input
+id="foto-pengurus"
+type="file"
+accept="image/*"
+>
+
 <div id="preview-pengurus" class="preview"></div>
+
 </div>
 
+
 <div>
+
 <label>Instagram</label>
 <input id="pengurus-instagram" type="url">
+
 </div>
 
+
 <div>
+
 <label>TikTok</label>
 <input id="pengurus-tiktok" type="url">
+
 </div>
+
 
 <div>
+
 <label>LinkedIn</label>
 <input id="pengurus-linkedin" type="url">
+
 </div>
 
 </div>
+
 
 <div class="actions">
-<button id="btn-simpan-pengurus" class="btn btn-primary">Simpan Pengurus</button>
-<button id="btn-batal-pengurus" type="button" class="btn btn-secondary hidden">Batal Edit</button>
+
+<button
+id="btn-simpan-pengurus"
+class="btn btn-primary">
+Simpan Pengurus
+</button>
+
+<button
+id="btn-batal-pengurus"
+type="button"
+class="btn btn-secondary hidden">
+Batal Edit
+</button>
+
 </div>
+
 
 <div id="pengurus-status" class="status hidden"></div>
+
 </form>
+
 </div>
 
+
 <div class="panel">
+
 <h2>Data Pengurus</h2>
 
 <div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Foto</th>
 <th>Nama</th>
@@ -258,87 +394,158 @@ header{align-items:flex-start;flex-direction:column}
 <th>Angkatan</th>
 <th>Aksi</th>
 </tr>
+
 </thead>
+
 <tbody id="data-pengurus"></tbody>
+
 </table>
+
 </div>
+
 </div>
 
 </section>
 
-<!-- KAJIAN -->
+
+<!-- ================= KAJIAN ================= -->
 
 <section id="kajian-panel" class="tab-panel hidden">
 
 <div class="panel">
-<h2 id="kajian-form-title">Tambah Kajian</h2>
+
+<h2 id="kajian-form-title">
+Tambah Kajian
+</h2>
 
 <form id="kajian-form">
+
 <input type="hidden" id="kajian-id">
 
 <div class="form-grid">
 
 <div class="full">
+
 <label>Judul Kajian</label>
 <input id="kajian-judul" required>
+
 </div>
 
+
 <div>
+
 <label>Bidang Kajian</label>
+
 <select id="kajian-bidang" required>
-<option value="">Pilih bidang</option>
-<option>Pendidikan & Pembelajaran</option>
-<option>Sosial & Kebijakan</option>
-<option>Sains & Teknologi</option>
-<option>Bahasa & Budaya</option>
+
+<option value="">
+Pilih bidang
+</option>
+
+<option>
+Pendidikan & Pembelajaran
+</option>
+
+<option>
+Sosial & Kebijakan
+</option>
+
+<option>
+Sains & Teknologi
+</option>
+
+<option>
+Bahasa & Budaya
+</option>
+
 </select>
+
 </div>
 
+
 <div>
+
 <label>Penulis</label>
 <input id="kajian-penulis">
+
 </div>
 
+
 <div>
+
 <label>Tahun</label>
 <input id="kajian-tahun" type="number">
+
 </div>
 
+
 <div>
+
 <label>Status</label>
+
 <select id="kajian-status">
+
 <option>Aktif</option>
 <option>Nonaktif</option>
+
 </select>
+
 </div>
+
 
 <div>
+
 <label>Urutan</label>
 <input id="kajian-urutan" type="number" value="0">
+
 </div>
+
 
 <div class="full">
+
 <label>Deskripsi</label>
 <textarea id="kajian-deskripsi"></textarea>
+
 </div>
 
 </div>
+
 
 <div class="actions">
-<button id="btn-simpan-kajian" class="btn btn-primary">Simpan Kajian</button>
-<button id="btn-batal-kajian" type="button" class="btn btn-secondary hidden">Batal Edit</button>
+
+<button
+id="btn-simpan-kajian"
+class="btn btn-primary">
+Simpan Kajian
+</button>
+
+<button
+id="btn-batal-kajian"
+type="button"
+class="btn btn-secondary hidden">
+Batal Edit
+</button>
+
 </div>
+
 
 <div id="kajian-status" class="status hidden"></div>
+
 </form>
+
 </div>
 
+
 <div class="panel">
+
 <h2>Data Kajian</h2>
 
 <div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Judul</th>
 <th>Bidang</th>
@@ -347,28 +554,206 @@ header{align-items:flex-start;flex-direction:column}
 <th>Status</th>
 <th>Aksi</th>
 </tr>
+
 </thead>
+
 <tbody id="data-kajian"></tbody>
+
 </table>
+
 </div>
+
 </div>
 
 </section>
 
-<!-- MEMBER -->
+
+<!-- ================= KARYA ================= -->
+
+<section id="karya-panel" class="tab-panel hidden">
+
+<div class="panel">
+
+<h2 id="karya-form-title">
+Tambah Karya
+</h2>
+
+<form id="karya-form">
+
+<input type="hidden" id="karya-id">
+
+<div class="form-grid">
+
+<div class="full">
+
+<label>Judul Karya</label>
+
+<input
+id="karya-judul"
+type="text"
+required
+>
+
+</div>
+
+
+<div>
+
+<label>Jenis Karya</label>
+
+<select id="karya-jenis">
+
+<option value="Artikel">
+Artikel
+</option>
+
+<option value="Jurnal">
+Jurnal
+</option>
+
+<option value="Esai">
+Esai
+</option>
+
+<option value="Laporan Riset">
+Laporan Riset
+</option>
+
+<option value="Makalah">
+Makalah
+</option>
+
+<option value="Lainnya">
+Lainnya
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>Penulis</label>
+
+<input
+id="karya-penulis"
+type="text"
+>
+
+</div>
+
+
+<div>
+
+<label>Tahun</label>
+
+<input
+id="karya-tahun"
+type="number"
+>
+
+</div>
+
+
+<div class="full">
+
+<label>Foto Karya</label>
+
+<input
+id="foto-karya"
+type="file"
+accept="image/*"
+>
+
+<div id="preview-karya" class="preview"></div>
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+<button
+id="btn-simpan-karya"
+class="btn btn-primary"
+type="submit">
+Simpan Karya
+</button>
+
+<button
+id="btn-batal-karya"
+type="button"
+class="btn btn-secondary hidden">
+Batal Edit
+</button>
+
+</div>
+
+
+<div id="karya-status" class="status hidden"></div>
+
+</form>
+
+</div>
+
+
+<div class="panel">
+
+<h2>Data Karya</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Foto</th>
+<th>Judul</th>
+<th>Jenis</th>
+<th>Penulis</th>
+<th>Tahun</th>
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+<tbody id="data-karya"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= MEMBER ================= -->
 
 <section id="member-panel" class="tab-panel hidden">
 
 <div class="panel">
+
 <h2>Data Member</h2>
+
 <p class="muted">
 Kelola data dan status akun member SKEMA.
 </p>
 
+
 <div class="table-wrap">
+
 <table>
+
 <thead>
+
 <tr>
+
 <th>Nama</th>
 <th>Email</th>
 <th>Prodi</th>
@@ -376,23 +761,33 @@ Kelola data dan status akun member SKEMA.
 <th>Status</th>
 <th>Terdaftar</th>
 <th>Aksi</th>
+
 </tr>
+
 </thead>
+
 <tbody id="data-member"></tbody>
+
 </table>
+
 </div>
 
+
 <div id="member-status" class="status hidden"></div>
+
 </div>
 
 </section>
 
 </main>
+
 </section>
+
 
 <script>
 
 let sb = null;
+
 
 if(
 typeof SUPABASE_URL !== "undefined" &&
@@ -400,10 +795,12 @@ typeof SUPABASE_ANON_KEY !== "undefined" &&
 SUPABASE_URL &&
 SUPABASE_ANON_KEY
 ){
+
 sb = supabase.createClient(
 SUPABASE_URL,
 SUPABASE_ANON_KEY
 );
+
 }
 
 
@@ -419,10 +816,19 @@ const box=$(id);
 if(!box)return;
 
 box.textContent=message;
+
 box.classList.remove("hidden");
 
-box.style.background=error?"#fee2e2":"#ecfdf5";
-box.style.color=error?"#991b1b":"#065f46";
+box.style.background=
+error
+?"#fee2e2"
+:"#ecfdf5";
+
+box.style.color=
+error
+?"#991b1b"
+:"#065f46";
+
 }
 
 
@@ -430,7 +836,8 @@ function hideStatus(id){
 
 const box=$(id);
 
-if(box)box.classList.add("hidden");
+if(box)
+box.classList.add("hidden");
 
 }
 
@@ -447,7 +854,7 @@ return String(value ?? "")
 }
 
 
-/* LOGIN */
+/* ================= LOGIN ================= */
 
 async function cekAdmin(userId){
 
@@ -458,11 +865,14 @@ const {data,error}=await sb
 .maybeSingle();
 
 if(error){
+
 console.error(error);
 return false;
+
 }
 
 return !!data;
+
 }
 
 
@@ -483,14 +893,18 @@ true
 );
 
 return;
+
 }
 
 $("login-page").classList.add("hidden");
+
 $("admin-app").classList.remove("hidden");
+
 
 await loadAgenda();
 await loadPengurus();
 await loadKajian();
+await loadKarya();
 await loadMember();
 
 }
@@ -503,19 +917,28 @@ e.preventDefault();
 hideStatus("login-status");
 
 const email=$("email").value.trim();
+
 const password=$("password").value;
+
 
 const {data,error}=await sb.auth.signInWithPassword({
 email,
 password
 });
 
+
 if(error){
 
-showStatus("login-status",error.message,true);
+showStatus(
+"login-status",
+error.message,
+true
+);
+
 return;
 
 }
+
 
 await tampilkanApp(data.user);
 
@@ -525,22 +948,29 @@ await tampilkanApp(data.user);
 $("btn-logout").addEventListener("click",async()=>{
 
 await sb.auth.signOut();
+
 location.reload();
 
 });
 
 
-/* TABS */
+/* ================= TABS ================= */
 
 document.querySelectorAll(".tab").forEach(button=>{
 
 button.addEventListener("click",()=>{
 
 document.querySelectorAll(".tab")
-.forEach(x=>x.classList.remove("active"));
+.forEach(x=>
+x.classList.remove("active")
+);
+
 
 document.querySelectorAll(".tab-panel")
-.forEach(x=>x.classList.add("hidden"));
+.forEach(x=>
+x.classList.add("hidden")
+);
+
 
 button.classList.add("active");
 
@@ -552,7 +982,7 @@ $(button.dataset.tab)
 });
 
 
-/* STORAGE */
+/* ================= STORAGE ================= */
 
 function ambilPath(url,bucket){
 
@@ -565,7 +995,9 @@ const index=url.indexOf(marker);
 
 if(index===-1)return null;
 
-return url.substring(index+marker.length);
+return url.substring(
+index+marker.length
+);
 
 }
 
@@ -583,7 +1015,7 @@ await sb.storage
 }
 
 
-/* AGENDA */
+/* ================= AGENDA ================= */
 
 let agendaFotoLama="";
 
@@ -592,13 +1024,21 @@ async function uploadFotoAgenda(file){
 
 if(!file)return "";
 
-const ext=file.name.split(".").pop().toLowerCase();
+const ext=
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
 
 const path=
 "agenda/"+
 Date.now()+"-"+
-Math.random().toString(36).substring(2,9)+
+Math.random()
+.toString(36)
+.substring(2,9)+
 "."+ext;
+
 
 const {error}=await sb.storage
 .from("agenda-foto")
@@ -607,16 +1047,21 @@ cacheControl:"3600",
 upsert:false
 });
 
+
 if(error)throw error;
+
 
 return sb.storage
 .from("agenda-foto")
-.getPublicUrl(path).data.publicUrl;
+.getPublicUrl(path)
+.data.publicUrl;
 
 }
 
 
-$("foto-agenda").addEventListener("change",function(){
+$("foto-agenda").addEventListener(
+"change",
+function(){
 
 const file=this.files[0];
 
@@ -624,38 +1069,69 @@ $("preview-foto").innerHTML="";
 
 if(!file)return;
 
-const img=document.createElement("img");
-img.src=URL.createObjectURL(file);
+const img=
+document.createElement("img");
 
-$("preview-foto").appendChild(img);
+img.src=
+URL.createObjectURL(file);
+
+$("preview-foto")
+.appendChild(img);
 
 });
 
 
-$("agenda-form").addEventListener("submit",async e=>{
+$("agenda-form").addEventListener(
+"submit",
+async e=>{
 
 e.preventDefault();
 
 try{
 
-$("btn-simpan-agenda").disabled=true;
+$("btn-simpan-agenda")
+.disabled=true;
+
 
 let foto=agendaFotoLama;
 
-const file=$("foto-agenda").files[0];
+const file=
+$("foto-agenda")
+.files[0];
+
 
 if(file){
-foto=await uploadFotoAgenda(file);
+
+foto=
+await uploadFotoAgenda(file);
+
 }
 
+
 const payload={
-kegiatan:$("kegiatan").value.trim(),
-waktu:$("waktu").value.trim(),
-jenis:$("jenis").value,
+
+kegiatan:
+$("kegiatan")
+.value
+.trim(),
+
+waktu:
+$("waktu")
+.value
+.trim(),
+
+jenis:
+$("jenis")
+.value,
+
 foto
+
 };
 
-const id=$("agenda-id").value;
+
+const id=
+$("agenda-id").value;
+
 
 if(id){
 
@@ -676,13 +1152,17 @@ if(error)throw error;
 
 }
 
+
 resetAgendaForm();
+
 await loadAgenda();
+
 
 showStatus(
 "agenda-status",
 "Agenda berhasil disimpan."
 );
+
 
 }catch(error){
 
@@ -694,7 +1174,8 @@ true
 
 }finally{
 
-$("btn-simpan-agenda").disabled=false;
+$("btn-simpan-agenda")
+.disabled=false;
 
 }
 
@@ -708,53 +1189,80 @@ const {data,error}=await sb
 .select("*")
 .order("id",{ascending:true});
 
+
 if(error){
 
-showStatus("agenda-status",error.message,true);
+showStatus(
+"agenda-status",
+error.message,
+true
+);
+
 return;
 
 }
 
+
 const tbody=$("data-agenda");
+
 tbody.innerHTML="";
+
 
 if(!data?.length){
 
 tbody.innerHTML=
-`<tr><td colspan="5">Belum ada agenda.</td></tr>`;
+`<tr><td colspan="5">
+Belum ada agenda.
+</td></tr>`;
 
 return;
 
 }
 
+
 data.forEach(a=>{
 
-const tr=document.createElement("tr");
+const tr=
+document.createElement("tr");
+
 
 tr.innerHTML=`
 
 <td>
-${a.foto
-?`<img class="thumb" src="${escapeHtml(a.foto)}">`
-:"-"}
+${
+a.foto
+?
+`<img class="thumb"
+src="${escapeHtml(a.foto)}">`
+:
+"-"
+}
 </td>
 
 <td>${escapeHtml(a.kegiatan)}</td>
+
 <td>${escapeHtml(a.waktu)}</td>
+
 <td>${escapeHtml(a.jenis)}</td>
 
 <td>
-<button class="btn btn-secondary"
+
+<button
+class="btn btn-secondary"
 onclick="editAgenda(${a.id})">
 Edit
 </button>
 
-<button class="btn btn-danger"
+<button
+class="btn btn-danger"
 onclick="hapusAgenda(${a.id})">
 Hapus
 </button>
+
 </td>
+
 `;
+
 
 tbody.appendChild(tr);
 
@@ -771,33 +1279,59 @@ const {data,error}=await sb
 .eq("id",id)
 .single();
 
+
 if(error){
+
 alert(error.message);
 return;
+
 }
 
-$("agenda-id").value=data.id;
-$("kegiatan").value=data.kegiatan||"";
-$("waktu").value=data.waktu||"";
-$("jenis").value=data.jenis||"";
 
-agendaFotoLama=data.foto||"";
+$("agenda-id").value=data.id;
+
+$("kegiatan").value=
+data.kegiatan||"";
+
+$("waktu").value=
+data.waktu||"";
+
+$("jenis").value=
+data.jenis||"";
+
+
+agendaFotoLama=
+data.foto||"";
+
 
 $("preview-foto").innerHTML=
 data.foto
-?`<img src="${escapeHtml(data.foto)}">`
-:"";
+?
+`<img src="${escapeHtml(data.foto)}">`
+:
+"";
 
-$("agenda-form-title").textContent="Edit Agenda";
-$("btn-simpan-agenda").textContent="Update Agenda";
-$("btn-batal-agenda").classList.remove("hidden");
 
-window.scrollTo({top:0,behavior:"smooth"});
+$("agenda-form-title")
+.textContent="Edit Agenda";
+
+$("btn-simpan-agenda")
+.textContent="Update Agenda";
+
+$("btn-batal-agenda")
+.classList.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
 
-$("btn-batal-agenda").addEventListener(
+$("btn-batal-agenda")
+.addEventListener(
 "click",
 resetAgendaForm
 );
@@ -806,20 +1340,31 @@ resetAgendaForm
 function resetAgendaForm(){
 
 $("agenda-form").reset();
+
 $("agenda-id").value="";
+
 $("preview-foto").innerHTML="";
+
 agendaFotoLama="";
 
-$("agenda-form-title").textContent="Tambah Agenda";
-$("btn-simpan-agenda").textContent="Simpan Agenda";
-$("btn-batal-agenda").classList.add("hidden");
+
+$("agenda-form-title")
+.textContent="Tambah Agenda";
+
+$("btn-simpan-agenda")
+.textContent="Simpan Agenda";
+
+$("btn-batal-agenda")
+.classList.add("hidden");
 
 }
 
 
 async function hapusAgenda(id){
 
-if(!confirm("Hapus agenda ini?"))return;
+if(!confirm("Hapus agenda ini?"))
+return;
+
 
 const {data,error}=await sb
 .from("agenda")
@@ -827,31 +1372,45 @@ const {data,error}=await sb
 .eq("id",id)
 .single();
 
+
 if(error){
+
 alert(error.message);
 return;
+
 }
+
 
 const {error:deleteError}=await sb
 .from("agenda")
 .delete()
 .eq("id",id);
 
+
 if(deleteError){
+
 alert(deleteError.message);
 return;
+
 }
 
+
 if(data?.foto){
-await hapusFoto(data.foto,"agenda-foto");
+
+await hapusFoto(
+data.foto,
+"agenda-foto"
+);
+
 }
+
 
 await loadAgenda();
 
 }
 
 
-/* PENGURUS */
+/* ================= PENGURUS ================= */
 
 let pengurusFotoLama="";
 
@@ -860,13 +1419,21 @@ async function uploadFotoPengurus(file){
 
 if(!file)return "";
 
-const ext=file.name.split(".").pop().toLowerCase();
+const ext=
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
 
 const path=
 "pengurus/"+
 Date.now()+"-"+
-Math.random().toString(36).substring(2,9)+
+Math.random()
+.toString(36)
+.substring(2,9)+
 "."+ext;
+
 
 const {error}=await sb.storage
 .from("pengurus-foto")
@@ -875,65 +1442,143 @@ cacheControl:"3600",
 upsert:false
 });
 
+
 if(error)throw error;
+
 
 return sb.storage
 .from("pengurus-foto")
-.getPublicUrl(path).data.publicUrl;
+.getPublicUrl(path)
+.data.publicUrl;
 
 }
 
 
-$("foto-pengurus").addEventListener("change",function(){
+$("foto-pengurus")
+.addEventListener(
+"change",
+function(){
 
 const file=this.files[0];
 
-$("preview-pengurus").innerHTML="";
+$("preview-pengurus")
+.innerHTML="";
+
 
 if(!file)return;
 
-const img=document.createElement("img");
-img.src=URL.createObjectURL(file);
 
-$("preview-pengurus").appendChild(img);
+const img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+
+$("preview-pengurus")
+.appendChild(img);
 
 });
 
 
-$("pengurus-form").addEventListener("submit",async e=>{
+$("pengurus-form")
+.addEventListener(
+"submit",
+async e=>{
 
 e.preventDefault();
 
+
 try{
 
-$("btn-simpan-pengurus").disabled=true;
+$("btn-simpan-pengurus")
+.disabled=true;
 
-let foto=pengurusFotoLama;
 
-const file=$("foto-pengurus").files[0];
+let foto=
+pengurusFotoLama;
+
+
+const file=
+$("foto-pengurus")
+.files[0];
+
 
 if(file){
-foto=await uploadFotoPengurus(file);
+
+foto=
+await uploadFotoPengurus(file);
+
 }
 
+
 const payload={
-nama:$("pengurus-nama").value.trim(),
-jabatan:$("pengurus-jabatan").value.trim(),
-divisi:$("pengurus-divisi").value.trim(),
-prodi:$("pengurus-prodi").value.trim(),
-angkatan:$("pengurus-angkatan").value
-?Number($("pengurus-angkatan").value)
-:null,
-urutan:$("pengurus-urutan").value
-?Number($("pengurus-urutan").value)
-:0,
+
+nama:
+$("pengurus-nama")
+.value
+.trim(),
+
+jabatan:
+$("pengurus-jabatan")
+.value
+.trim(),
+
+divisi:
+$("pengurus-divisi")
+.value
+.trim(),
+
+prodi:
+$("pengurus-prodi")
+.value
+.trim(),
+
+angkatan:
+$("pengurus-angkatan")
+.value
+?
+Number(
+$("pengurus-angkatan")
+.value
+)
+:
+null,
+
+urutan:
+$("pengurus-urutan")
+.value
+?
+Number(
+$("pengurus-urutan")
+.value
+)
+:
+0,
+
 foto,
-instagram:$("pengurus-instagram").value.trim(),
-tiktok:$("pengurus-tiktok").value.trim(),
-linkedin:$("pengurus-linkedin").value.trim()
+
+instagram:
+$("pengurus-instagram")
+.value
+.trim(),
+
+tiktok:
+$("pengurus-tiktok")
+.value
+.trim(),
+
+linkedin:
+$("pengurus-linkedin")
+.value
+.trim()
+
 };
 
-const id=$("pengurus-id").value;
+
+const id=
+$("pengurus-id").value;
+
 
 if(id){
 
@@ -954,13 +1599,17 @@ if(error)throw error;
 
 }
 
+
 resetPengurusForm();
+
 await loadPengurus();
+
 
 showStatus(
 "pengurus-status",
 "Pengurus berhasil disimpan."
 );
+
 
 }catch(error){
 
@@ -972,7 +1621,8 @@ true
 
 }finally{
 
-$("btn-simpan-pengurus").disabled=false;
+$("btn-simpan-pengurus")
+.disabled=false;
 
 }
 
@@ -987,55 +1637,85 @@ const {data,error}=await sb
 .order("urutan",{ascending:true})
 .order("id",{ascending:true});
 
+
 if(error){
 
-showStatus("pengurus-status",error.message,true);
+showStatus(
+"pengurus-status",
+error.message,
+true
+);
+
 return;
 
 }
 
-const tbody=$("data-pengurus");
+
+const tbody=
+$("data-pengurus");
+
 tbody.innerHTML="";
+
 
 if(!data?.length){
 
 tbody.innerHTML=
-`<tr><td colspan="7">Belum ada pengurus.</td></tr>`;
+`<tr><td colspan="7">
+Belum ada pengurus.
+</td></tr>`;
 
 return;
 
 }
 
+
 data.forEach(p=>{
 
-const tr=document.createElement("tr");
+const tr=
+document.createElement("tr");
+
 
 tr.innerHTML=`
 
 <td>
-${p.foto
-?`<img class="thumb" src="${escapeHtml(p.foto)}">`
-:"-"}
+${
+p.foto
+?
+`<img class="thumb"
+src="${escapeHtml(p.foto)}">`
+:
+"-"
+}
 </td>
 
 <td>${escapeHtml(p.nama)}</td>
+
 <td>${escapeHtml(p.jabatan)}</td>
+
 <td>${escapeHtml(p.divisi)}</td>
+
 <td>${escapeHtml(p.prodi)}</td>
+
 <td>${p.angkatan??"-"}</td>
 
 <td>
-<button class="btn btn-secondary"
+
+<button
+class="btn btn-secondary"
 onclick="editPengurus('${p.id}')">
 Edit
 </button>
 
-<button class="btn btn-danger"
+<button
+class="btn btn-danger"
 onclick="hapusPengurus('${p.id}')">
 Hapus
 </button>
+
 </td>
+
 `;
+
 
 tbody.appendChild(tr);
 
@@ -1052,39 +1732,78 @@ const {data,error}=await sb
 .eq("id",id)
 .single();
 
+
 if(error){
+
 alert(error.message);
 return;
+
 }
 
-$("pengurus-id").value=data.id;
-$("pengurus-nama").value=data.nama||"";
-$("pengurus-jabatan").value=data.jabatan||"";
-$("pengurus-divisi").value=data.divisi||"";
-$("pengurus-prodi").value=data.prodi||"";
-$("pengurus-angkatan").value=data.angkatan??"";
-$("pengurus-urutan").value=data.urutan??0;
-$("pengurus-instagram").value=data.instagram||"";
-$("pengurus-tiktok").value=data.tiktok||"";
-$("pengurus-linkedin").value=data.linkedin||"";
 
-pengurusFotoLama=data.foto||"";
+$("pengurus-id").value=data.id;
+
+$("pengurus-nama").value=
+data.nama||"";
+
+$("pengurus-jabatan").value=
+data.jabatan||"";
+
+$("pengurus-divisi").value=
+data.divisi||"";
+
+$("pengurus-prodi").value=
+data.prodi||"";
+
+$("pengurus-angkatan").value=
+data.angkatan??"";
+
+$("pengurus-urutan").value=
+data.urutan??0;
+
+
+$("pengurus-instagram").value=
+data.instagram||"";
+
+$("pengurus-tiktok").value=
+data.tiktok||"";
+
+$("pengurus-linkedin").value=
+data.linkedin||"";
+
+
+pengurusFotoLama=
+data.foto||"";
+
 
 $("preview-pengurus").innerHTML=
 data.foto
-?`<img src="${escapeHtml(data.foto)}">`
-:"";
+?
+`<img src="${escapeHtml(data.foto)}">`
+:
+"";
 
-$("pengurus-form-title").textContent="Edit Pengurus";
-$("btn-simpan-pengurus").textContent="Update Pengurus";
-$("btn-batal-pengurus").classList.remove("hidden");
 
-window.scrollTo({top:0,behavior:"smooth"});
+$("pengurus-form-title")
+.textContent="Edit Pengurus";
+
+$("btn-simpan-pengurus")
+.textContent="Update Pengurus";
+
+$("btn-batal-pengurus")
+.classList.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
 
-$("btn-batal-pengurus").addEventListener(
+$("btn-batal-pengurus")
+.addEventListener(
 "click",
 resetPengurusForm
 );
@@ -1093,21 +1812,34 @@ resetPengurusForm
 function resetPengurusForm(){
 
 $("pengurus-form").reset();
+
 $("pengurus-id").value="";
+
 $("pengurus-urutan").value=0;
-$("preview-pengurus").innerHTML="";
+
+$("preview-pengurus")
+.innerHTML="";
+
 pengurusFotoLama="";
 
-$("pengurus-form-title").textContent="Tambah Pengurus";
-$("btn-simpan-pengurus").textContent="Simpan Pengurus";
-$("btn-batal-pengurus").classList.add("hidden");
+
+$("pengurus-form-title")
+.textContent="Tambah Pengurus";
+
+$("btn-simpan-pengurus")
+.textContent="Simpan Pengurus";
+
+$("btn-batal-pengurus")
+.classList.add("hidden");
 
 }
 
 
 async function hapusPengurus(id){
 
-if(!confirm("Hapus pengurus ini?"))return;
+if(!confirm("Hapus pengurus ini?"))
+return;
+
 
 const {data,error}=await sb
 .from("pengurus")
@@ -1115,55 +1847,113 @@ const {data,error}=await sb
 .eq("id",id)
 .single();
 
+
 if(error){
+
 alert(error.message);
 return;
+
 }
+
 
 const {error:deleteError}=await sb
 .from("pengurus")
 .delete()
 .eq("id",id);
 
+
 if(deleteError){
+
 alert(deleteError.message);
 return;
+
 }
 
+
 if(data?.foto){
-await hapusFoto(data.foto,"pengurus-foto");
+
+await hapusFoto(
+data.foto,
+"pengurus-foto"
+);
+
 }
+
 
 await loadPengurus();
 
 }
 
 
-/* KAJIAN */
+/* ================= KAJIAN ================= */
 
-$("kajian-form").addEventListener("submit",async e=>{
+$("kajian-form")
+.addEventListener(
+"submit",
+async e=>{
 
 e.preventDefault();
 
+
 try{
 
-$("btn-simpan-kajian").disabled=true;
+$("btn-simpan-kajian")
+.disabled=true;
+
 
 const payload={
-judul:$("kajian-judul").value.trim(),
-bidang:$("kajian-bidang").value,
-deskripsi:$("kajian-deskripsi").value.trim(),
-penulis:$("kajian-penulis").value.trim(),
-tahun:$("kajian-tahun").value
-?Number($("kajian-tahun").value)
-:null,
-status:$("kajian-status").value,
-urutan:$("kajian-urutan").value
-?Number($("kajian-urutan").value)
-:0
+
+judul:
+$("kajian-judul")
+.value
+.trim(),
+
+bidang:
+$("kajian-bidang")
+.value,
+
+deskripsi:
+$("kajian-deskripsi")
+.value
+.trim(),
+
+penulis:
+$("kajian-penulis")
+.value
+.trim(),
+
+tahun:
+$("kajian-tahun")
+.value
+?
+Number(
+$("kajian-tahun")
+.value
+)
+:
+null,
+
+status:
+$("kajian-status")
+.value,
+
+urutan:
+$("kajian-urutan")
+.value
+?
+Number(
+$("kajian-urutan")
+.value
+)
+:
+0
+
 };
 
-const id=$("kajian-id").value;
+
+const id=
+$("kajian-id").value;
+
 
 if(id){
 
@@ -1184,13 +1974,17 @@ if(error)throw error;
 
 }
 
+
 resetKajianForm();
+
 await loadKajian();
+
 
 showStatus(
 "kajian-status",
 "Kajian berhasil disimpan."
 );
+
 
 }catch(error){
 
@@ -1202,7 +1996,8 @@ true
 
 }finally{
 
-$("btn-simpan-kajian").disabled=false;
+$("btn-simpan-kajian")
+.disabled=false;
 
 }
 
@@ -1217,49 +2012,74 @@ const {data,error}=await sb
 .order("urutan",{ascending:true})
 .order("id",{ascending:true});
 
+
 if(error){
 
-showStatus("kajian-status",error.message,true);
+showStatus(
+"kajian-status",
+error.message,
+true
+);
+
 return;
 
 }
 
-const tbody=$("data-kajian");
+
+const tbody=
+$("data-kajian");
+
 tbody.innerHTML="";
+
 
 if(!data?.length){
 
 tbody.innerHTML=
-`<tr><td colspan="6">Belum ada kajian.</td></tr>`;
+`<tr><td colspan="6">
+Belum ada kajian.
+</td></tr>`;
 
 return;
 
 }
 
+
 data.forEach(k=>{
 
-const tr=document.createElement("tr");
+const tr=
+document.createElement("tr");
+
 
 tr.innerHTML=`
 
 <td>${escapeHtml(k.judul)}</td>
+
 <td>${escapeHtml(k.bidang)}</td>
+
 <td>${escapeHtml(k.penulis||"-")}</td>
+
 <td>${k.tahun??"-"}</td>
+
 <td>${escapeHtml(k.status||"Aktif")}</td>
 
 <td>
-<button class="btn btn-secondary"
+
+<button
+class="btn btn-secondary"
 onclick="editKajian('${k.id}')">
 Edit
 </button>
 
-<button class="btn btn-danger"
+<button
+class="btn btn-danger"
 onclick="hapusKajian('${k.id}')">
 Hapus
 </button>
+
 </td>
+
 `;
+
 
 tbody.appendChild(tr);
 
@@ -1276,30 +2096,59 @@ const {data,error}=await sb
 .eq("id",id)
 .single();
 
+
 if(error){
+
 alert(error.message);
 return;
+
 }
+
 
 $("kajian-id").value=data.id;
-$("kajian-judul").value=data.judul||"";
-$("kajian-bidang").value=data.bidang||"";
-$("kajian-deskripsi").value=data.deskripsi||"";
-$("kajian-penulis").value=data.penulis||"";
-$("kajian-tahun").value=data.tahun??"";
-$("kajian-status").value=data.status||"Aktif";
-$("kajian-urutan").value=data.urutan??0;
 
-$("kajian-form-title").textContent="Edit Kajian";
-$("btn-simpan-kajian").textContent="Update Kajian";
-$("btn-batal-kajian").classList.remove("hidden");
+$("kajian-judul").value=
+data.judul||"";
 
-window.scrollTo({top:0,behavior:"smooth"});
+$("kajian-bidang").value=
+data.bidang||"";
+
+$("kajian-deskripsi").value=
+data.deskripsi||"";
+
+$("kajian-penulis").value=
+data.penulis||"";
+
+$("kajian-tahun").value=
+data.tahun??"";
+
+$("kajian-status").value=
+data.status||"Aktif";
+
+$("kajian-urutan").value=
+data.urutan??0;
+
+
+$("kajian-form-title")
+.textContent="Edit Kajian";
+
+$("btn-simpan-kajian")
+.textContent="Update Kajian";
+
+$("btn-batal-kajian")
+.classList.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 }
 
 
-$("btn-batal-kajian").addEventListener(
+$("btn-batal-kajian")
+.addEventListener(
 "click",
 resetKajianForm
 );
@@ -1308,36 +2157,492 @@ resetKajianForm
 function resetKajianForm(){
 
 $("kajian-form").reset();
+
 $("kajian-id").value="";
+
 $("kajian-urutan").value=0;
 
-$("kajian-form-title").textContent="Tambah Kajian";
-$("btn-simpan-kajian").textContent="Simpan Kajian";
-$("btn-batal-kajian").classList.add("hidden");
+
+$("kajian-form-title")
+.textContent="Tambah Kajian";
+
+$("btn-simpan-kajian")
+.textContent="Simpan Kajian";
+
+$("btn-batal-kajian")
+.classList.add("hidden");
 
 }
 
 
 async function hapusKajian(id){
 
-if(!confirm("Hapus kajian ini?"))return;
+if(!confirm("Hapus kajian ini?"))
+return;
+
 
 const {error}=await sb
 .from("kajian")
 .delete()
 .eq("id",id);
 
+
 if(error){
+
 alert(error.message);
 return;
+
 }
+
 
 await loadKajian();
 
 }
 
 
-/* MEMBER */
+/* ================= KARYA ================= */
+
+let karyaFotoLama="";
+
+
+async function uploadFotoKarya(file){
+
+if(!file)return "";
+
+
+const ext=
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
+
+const path=
+"karya/"+
+Date.now()+"-"+
+Math.random()
+.toString(36)
+.substring(2,9)+
+"."+ext;
+
+
+const {error}=await sb.storage
+.from("karya-foto")
+.upload(path,file,{
+cacheControl:"3600",
+upsert:false
+});
+
+
+if(error)throw error;
+
+
+return sb.storage
+.from("karya-foto")
+.getPublicUrl(path)
+.data.publicUrl;
+
+}
+
+
+$("foto-karya")
+.addEventListener(
+"change",
+function(){
+
+const file=this.files[0];
+
+$("preview-karya").innerHTML="";
+
+
+if(!file)return;
+
+
+const img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+
+$("preview-karya")
+.appendChild(img);
+
+});
+
+
+$("karya-form")
+.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+
+try{
+
+$("btn-simpan-karya")
+.disabled=true;
+
+
+let foto=
+karyaFotoLama;
+
+
+const file=
+$("foto-karya")
+.files[0];
+
+
+if(file){
+
+foto=
+await uploadFotoKarya(file);
+
+}
+
+
+const payload={
+
+judul:
+$("karya-judul")
+.value
+.trim(),
+
+jenis:
+$("karya-jenis")
+.value,
+
+penulis:
+$("karya-penulis")
+.value
+.trim(),
+
+tahun:
+$("karya-tahun")
+.value
+?
+Number(
+$("karya-tahun")
+.value
+)
+:
+null,
+
+foto
+
+};
+
+
+const id=
+$("karya-id").value;
+
+
+if(id){
+
+const {error}=await sb
+.from("karya")
+.update(payload)
+.eq("id",id);
+
+if(error)throw error;
+
+}else{
+
+const {error}=await sb
+.from("karya")
+.insert(payload);
+
+if(error)throw error;
+
+}
+
+
+resetKaryaForm();
+
+await loadKarya();
+
+
+showStatus(
+"karya-status",
+"Karya berhasil disimpan."
+);
+
+
+}catch(error){
+
+showStatus(
+"karya-status",
+error.message,
+true
+);
+
+}finally{
+
+$("btn-simpan-karya")
+.disabled=false;
+
+}
+
+});
+
+
+async function loadKarya(){
+
+const {data,error}=await sb
+.from("karya")
+.select("*")
+.order("tahun",{ascending:false})
+.order("id",{ascending:true});
+
+
+if(error){
+
+showStatus(
+"karya-status",
+error.message,
+true
+);
+
+return;
+
+}
+
+
+const tbody=
+$("data-karya");
+
+tbody.innerHTML="";
+
+
+if(!data?.length){
+
+tbody.innerHTML=
+`<tr><td colspan="6">
+Belum ada karya.
+</td></tr>`;
+
+return;
+
+}
+
+
+data.forEach(k=>{
+
+const tr=
+document.createElement("tr");
+
+
+tr.innerHTML=`
+
+<td>
+
+${
+k.foto
+?
+`<img
+class="thumb"
+src="${escapeHtml(k.foto)}"
+alt="Foto karya">`
+:
+"-"
+}
+
+</td>
+
+
+<td>
+${escapeHtml(k.judul)}
+</td>
+
+
+<td>
+${escapeHtml(k.jenis||"-")}
+</td>
+
+
+<td>
+${escapeHtml(k.penulis||"-")}
+</td>
+
+
+<td>
+${k.tahun??"-"}
+</td>
+
+
+<td>
+
+<button
+class="btn btn-secondary"
+onclick="editKarya('${k.id}')">
+Edit
+</button>
+
+
+<button
+class="btn btn-danger"
+onclick="hapusKarya('${k.id}')">
+Hapus
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(tr);
+
+});
+
+}
+
+
+async function editKarya(id){
+
+const {data,error}=await sb
+.from("karya")
+.select("*")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+
+$("karya-id").value=
+data.id;
+
+$("karya-judul").value=
+data.judul||"";
+
+$("karya-jenis").value=
+data.jenis||"";
+
+$("karya-penulis").value=
+data.penulis||"";
+
+$("karya-tahun").value=
+data.tahun??"";
+
+
+karyaFotoLama=
+data.foto||"";
+
+
+$("preview-karya").innerHTML=
+data.foto
+?
+`<img src="${escapeHtml(data.foto)}">`
+:
+"";
+
+
+$("karya-form-title")
+.textContent="Edit Karya";
+
+$("btn-simpan-karya")
+.textContent="Update Karya";
+
+$("btn-batal-karya")
+.classList.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+$("btn-batal-karya")
+.addEventListener(
+"click",
+resetKaryaForm
+);
+
+
+function resetKaryaForm(){
+
+$("karya-form").reset();
+
+$("karya-id").value="";
+
+$("preview-karya")
+.innerHTML="";
+
+karyaFotoLama="";
+
+
+$("karya-form-title")
+.textContent="Tambah Karya";
+
+$("btn-simpan-karya")
+.textContent="Simpan Karya";
+
+$("btn-batal-karya")
+.classList.add("hidden");
+
+}
+
+
+async function hapusKarya(id){
+
+if(!confirm("Hapus karya ini?"))
+return;
+
+
+const {data,error}=await sb
+.from("karya")
+.select("foto")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+
+const {error:deleteError}=await sb
+.from("karya")
+.delete()
+.eq("id",id);
+
+
+if(deleteError){
+
+alert(deleteError.message);
+return;
+
+}
+
+
+if(data?.foto){
+
+await hapusFoto(
+data.foto,
+"karya-foto"
+);
+
+}
+
+
+await loadKarya();
+
+}
+
+
+/* ================= MEMBER ================= */
 
 async function loadMember(){
 
@@ -1346,9 +2651,11 @@ const {data,error}=await sb
 .select("*")
 .order("created_at",{ascending:false});
 
+
 if(error){
 
 console.error(error);
+
 
 showStatus(
 "member-status",
@@ -1360,54 +2667,104 @@ return;
 
 }
 
-const tbody=$("data-member");
+
+const tbody=
+$("data-member");
+
 tbody.innerHTML="";
+
 
 if(!data?.length){
 
 tbody.innerHTML=
-`<tr><td colspan="7">Belum ada member.</td></tr>`;
+`<tr><td colspan="7">
+Belum ada member.
+</td></tr>`;
 
 return;
 
 }
 
+
 data.forEach(m=>{
 
-const status=m.status||"Aktif";
+const status=
+m.status||"Aktif";
+
 
 const badge=
 status==="Aktif"
-?`<span class="badge">Aktif</span>`
-:`<span class="badge off">Nonaktif</span>`;
+?
+`<span class="badge">
+Aktif
+</span>`
+:
+`<span class="badge off">
+Nonaktif
+</span>`;
 
-const tanggal=m.created_at
-?new Date(m.created_at).toLocaleDateString("id-ID")
-:"-";
 
-const tr=document.createElement("tr");
+const tanggal=
+m.created_at
+?
+new Date(
+m.created_at
+).toLocaleDateString("id-ID")
+:
+"-";
+
+
+const tr=
+document.createElement("tr");
+
 
 tr.innerHTML=`
 
-<td>${escapeHtml(m.nama)}</td>
+<td>
+${escapeHtml(m.nama)}
+</td>
 
-<td>${escapeHtml(m.email||"-")}</td>
+<td>
+${escapeHtml(m.email||"-")}
+</td>
 
-<td>${escapeHtml(m.prodi||"-")}</td>
+<td>
+${escapeHtml(m.prodi||"-")}
+</td>
 
-<td>${m.angkatan??"-"}</td>
+<td>
+${m.angkatan??"-"}
+</td>
 
-<td>${badge}</td>
+<td>
+${badge}
+</td>
 
-<td>${tanggal}</td>
+<td>
+${tanggal}
+</td>
 
 <td>
 
 <button
-class="btn ${status==="Aktif"?"btn-warning":"btn-primary"}"
-onclick="ubahStatusMember('${m.id}','${status}')">
-${status==="Aktif"?"Nonaktifkan":"Aktifkan"}
+class="btn ${
+status==="Aktif"
+?"btn-warning"
+:"btn-primary"
+}"
+onclick="ubahStatusMember(
+'${m.id}',
+'${status}'
+)">
+${
+status==="Aktif"
+?
+"Nonaktifkan"
+:
+"Aktifkan"
+}
 </button>
+
 
 <button
 class="btn btn-danger"
@@ -1416,7 +2773,9 @@ Hapus
 </button>
 
 </td>
+
 `;
+
 
 tbody.appendChild(tr);
 
@@ -1429,8 +2788,11 @@ async function ubahStatusMember(id,status){
 
 const nextStatus=
 status==="Aktif"
-?"Nonaktif"
-:"Aktif";
+?
+"Nonaktif"
+:
+"Aktif";
+
 
 const {error}=await sb
 .from("member_profiles")
@@ -1439,12 +2801,14 @@ status:nextStatus
 })
 .eq("id",id);
 
+
 if(error){
 
 alert(error.message);
 return;
 
 }
+
 
 await loadMember();
 
@@ -1456,13 +2820,17 @@ async function hapusMember(id){
 if(!confirm(
 "Hapus data profil member ini? Akun login Supabase tidak ikut terhapus."
 )){
+
 return;
+
 }
+
 
 const {error}=await sb
 .from("member_profiles")
 .delete()
 .eq("id",id);
+
 
 if(error){
 
@@ -1471,12 +2839,13 @@ return;
 
 }
 
+
 await loadMember();
 
 }
 
 
-/* SESSION */
+/* ================= SESSION ================= */
 
 async function cekSession(){
 
@@ -1492,17 +2861,22 @@ return;
 
 }
 
+
 const {
 data:{session}
 }=await sb.auth.getSession();
 
+
 if(session?.user){
 
-await tampilkanApp(session.user);
+await tampilkanApp(
+session.user
+);
 
 }
 
 }
+
 
 cekSession();
 
