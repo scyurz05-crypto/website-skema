@@ -26,9 +26,7 @@ function inisial(nama) {
     .trim()
     .split(/\s+/)
     .slice(0, 2)
-    .map(kata =>
-      kata.charAt(0).toUpperCase()
-    )
+    .map(kata => kata.charAt(0).toUpperCase())
     .join("");
 }
 
@@ -84,7 +82,7 @@ function kartuOrang(o) {
       avatar.style.display = "flex";
     };
 
-    card.insertBefore(img, avatar);
+    card.appendChild(img);
   }
 
   const info = document.createElement("div");
@@ -241,7 +239,9 @@ function renderPengurus(data) {
     "true"
   );
 
-  filter.appendChild(semuaBtn);
+  filter.appendChild(
+    semuaBtn
+  );
 
 
   /* TAMPILKAN DIVISI */
@@ -397,8 +397,13 @@ function renderPengurus(data) {
 
 /* =========================================================
    AGENDA
-   PERBAIKAN UTAMA
-   index.html menggunakan:
+   MENAMPILKAN:
+   - Foto
+   - Kegiatan
+   - Waktu
+   - Jenis
+
+   HTML YANG DIGUNAKAN:
    <tbody id="agenda-body"></tbody>
 ========================================================= */
 
@@ -420,13 +425,13 @@ function renderAgenda(data) {
   }
 
 
+  tbody.innerHTML = "";
+
+
   const agenda =
     Array.isArray(data)
       ? data
       : [];
-
-
-  tbody.innerHTML = "";
 
 
   /* BELUM ADA DATA */
@@ -452,7 +457,7 @@ function renderAgenda(data) {
   }
 
 
-  /* TAMPILKAN AGENDA */
+  /* TAMPILKAN SETIAP AGENDA */
 
   agenda.forEach(
     item => {
@@ -461,13 +466,74 @@ function renderAgenda(data) {
         document.createElement("tr");
 
 
-      /* KEGIATAN */
+      /* =====================================================
+         KOLOM KEGIATAN
+      ===================================================== */
 
       const tdKegiatan =
         document.createElement("td");
 
+
+      /* FOTO AGENDA */
+
+      if (
+        item.foto &&
+        String(item.foto).trim()
+      ) {
+
+        const img =
+          document.createElement("img");
+
+        img.src =
+          String(item.foto).trim();
+
+        img.alt =
+          item.kegiatan ||
+          "Foto agenda";
+
+        img.style.width =
+          "90px";
+
+        img.style.height =
+          "60px";
+
+        img.style.objectFit =
+          "cover";
+
+        img.style.borderRadius =
+          "8px";
+
+        img.style.display =
+          "block";
+
+        img.style.marginBottom =
+          "8px";
+
+
+        img.onerror =
+          function () {
+
+            console.error(
+              "Foto agenda gagal dimuat:",
+              item.foto
+            );
+
+            img.remove();
+          };
+
+
+        tdKegiatan.appendChild(
+          img
+        );
+      }
+
+
+      /* NAMA KEGIATAN */
+
       const strong =
-        document.createElement("strong");
+        document.createElement(
+          "strong"
+        );
 
       strong.textContent =
         item.kegiatan ||
@@ -478,20 +544,28 @@ function renderAgenda(data) {
       );
 
 
-      /* WAKTU */
+      /* =====================================================
+         KOLOM WAKTU
+      ===================================================== */
 
       const tdWaktu =
-        document.createElement("td");
+        document.createElement(
+          "td"
+        );
 
       tdWaktu.textContent =
         item.waktu ||
         "-";
 
 
-      /* JENIS */
+      /* =====================================================
+         KOLOM JENIS
+      ===================================================== */
 
       const tdJenis =
-        document.createElement("td");
+        document.createElement(
+          "td"
+        );
 
 
       if (
@@ -500,9 +574,12 @@ function renderAgenda(data) {
       ) {
 
         const tag =
-          document.createElement("span");
+          document.createElement(
+            "span"
+          );
 
-        tag.className = "tag";
+        tag.className =
+          "tag";
 
         tag.textContent =
           item.jenis;
@@ -517,6 +594,10 @@ function renderAgenda(data) {
           "-";
       }
 
+
+      /* =====================================================
+         MASUKKAN KE BARIS TABLE
+      ===================================================== */
 
       tr.appendChild(
         tdKegiatan
@@ -539,7 +620,7 @@ function renderAgenda(data) {
 
 
   console.log(
-    "AGENDA BERHASIL DIMUAT:",
+    "Agenda berhasil ditampilkan:",
     agenda
   );
 }
@@ -609,10 +690,15 @@ function renderKarya(data) {
 
 
   const semuaBtn =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
-  semuaBtn.type = "button";
-  semuaBtn.textContent = "Semua";
+  semuaBtn.type =
+    "button";
+
+  semuaBtn.textContent =
+    "Semua";
 
   semuaBtn.setAttribute(
     "aria-pressed",
@@ -638,7 +724,8 @@ function renderKarya(data) {
             item =>
               String(
                 item.jenis || ""
-              ).trim() === jenisAktif
+              ).trim() ===
+              jenisAktif
           );
 
 
@@ -655,9 +742,7 @@ function renderKarya(data) {
 
         if (
           item.foto &&
-          String(
-            item.foto
-          ).trim()
+          String(item.foto).trim()
         ) {
 
           const img =
@@ -671,10 +756,8 @@ function renderKarya(data) {
             ).trim();
 
           img.alt =
-            `Foto ${
-              item.judul ||
-              "Karya"
-            }`;
+            item.judul ||
+            "Foto karya";
 
           img.style.width =
             "100%";
@@ -815,7 +898,8 @@ function renderKarya(data) {
           "button"
         );
 
-      button.type = "button";
+      button.type =
+        "button";
 
       button.textContent =
         namaJenis;
@@ -1082,8 +1166,9 @@ function renderKajian(data) {
 
 
   /*
-     Kalau tabel kajian belum ada / kosong,
-     biarkan 4 bidang bawaan dari index.html.
+     Kalau tabel kajian belum ada
+     atau belum ada data,
+     gunakan bidang bawaan index.html.
   */
 
   if (
@@ -1224,7 +1309,7 @@ async function mulai() {
 
 
     /* =====================================================
-       RENDER SEMUA DATA
+       RENDER
     ===================================================== */
 
     renderPengurus(
@@ -1267,9 +1352,6 @@ async function mulai() {
     );
 
 
-    /* Kalau terjadi error pada proses utama,
-       tetap tampilkan pesan pada agenda. */
-
     const agendaBody =
       document.getElementById(
         "agenda-body"
@@ -1291,7 +1373,7 @@ async function mulai() {
 
 
 /* =========================================================
-   JALANKAN SETELAH HTML SELESAI
+   JALANKAN
 ========================================================= */
 
 if (
@@ -1309,4 +1391,3 @@ if (
   mulai();
 
 }
-
