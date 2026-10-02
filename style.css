@@ -32,6 +32,7 @@ SKEMA UNINDRA — MODERN STYLE
 0 20px 45px rgba(20,33,61,.14);
 }
 
+
 /* =========================================================
 DASAR
 ========================================================= */
@@ -101,6 +102,7 @@ color:var(--muted);
 
 margin:0 0 38px;
 }
+
 
 /* =========================================================
 HEADER
@@ -181,8 +183,7 @@ padding:9px 11px;
 
 border-radius:10px;
 
-transition:
-.2s ease;
+transition:.2s ease;
 }
 
 .links a:hover{
@@ -204,6 +205,7 @@ box-shadow:
 background:var(--accent-light);
 }
 
+
 /* =========================================================
 HERO
 ========================================================= */
@@ -217,30 +219,28 @@ border-bottom:1px solid var(--line);
 
 background:
 
-```
 radial-gradient(
-  circle at 82% 25%,
-  rgba(37,73,214,.14),
-  transparent 25%
+circle at 82% 25%,
+rgba(37,73,214,.14),
+transparent 25%
 ),
 
 radial-gradient(
-  circle at 20% 75%,
-  rgba(255,216,77,.12),
-  transparent 20%
+circle at 20% 75%,
+rgba(255,216,77,.12),
+transparent 20%
 ),
 
 linear-gradient(
-  var(--grid) 1px,
-  transparent 1px
+var(--grid) 1px,
+transparent 1px
 ),
 
 linear-gradient(
-  90deg,
-  var(--grid) 1px,
-  transparent 1px
+90deg,
+var(--grid) 1px,
+transparent 1px
 );
-```
 
 background-size:
 auto,
@@ -311,6 +311,7 @@ color:var(--muted);
 margin:0 0 34px;
 }
 
+
 /* =========================================================
 BUTTON
 ========================================================= */
@@ -371,6 +372,7 @@ box-shadow:none;
 .btn.alt:hover{
 background:white;
 }
+
 
 /* =========================================================
 DASHBOARD
@@ -460,6 +462,7 @@ var(--head);
 color:var(--muted);
 }
 
+
 /* =========================================================
 BAR KARYA
 ========================================================= */
@@ -510,6 +513,7 @@ var(--accent-light)
 transition:
 width .5s ease;
 }
+
 
 /* =========================================================
 BIDANG KAJIAN
@@ -605,6 +609,7 @@ font-size:17px;
 color:var(--muted);
 }
 
+
 /* =========================================================
 CARA KERJA
 ========================================================= */
@@ -679,6 +684,7 @@ font-family:var(--head);
 color:var(--ink);
 }
 
+
 /* =========================================================
 PENGURUS
 ========================================================= */
@@ -691,6 +697,9 @@ repeat(auto-fill,minmax(260px,1fr));
 
 gap:16px;
 }
+
+
+/* KARTU PENGURUS */
 
 .person{
 display:flex;
@@ -727,6 +736,35 @@ border-color:
 rgba(37,73,214,.28);
 }
 
+
+/* FOTO PENGURUS DARI SUPABASE */
+
+.person-photo{
+flex:none;
+
+width:54px;
+height:54px;
+
+border-radius:15px;
+
+object-fit:cover;
+
+display:block;
+
+background:
+linear-gradient(
+135deg,
+var(--accent),
+var(--accent-light)
+);
+
+box-shadow:
+0 7px 18px rgba(37,73,214,.20);
+}
+
+
+/* AVATAR JIKA FOTO KOSONG */
+
 .avatar{
 flex:none;
 
@@ -753,6 +791,9 @@ text-align:center;
 box-shadow:
 0 7px 18px rgba(37,73,214,.2);
 }
+
+
+/* INFORMASI PENGURUS */
 
 .info{
 display:flex;
@@ -790,6 +831,9 @@ font-size:13px;
 color:var(--muted);
 }
 
+
+/* DIVISI */
+
 .divisi{
 margin-top:48px;
 }
@@ -817,6 +861,7 @@ text-transform:uppercase;
 
 letter-spacing:.08em;
 }
+
 
 /* =========================================================
 FILTER TABS
@@ -870,6 +915,7 @@ border-color:var(--ink);
 box-shadow:
 0 6px 15px rgba(17,27,51,.12);
 }
+
 
 /* =========================================================
 AGENDA
@@ -948,6 +994,7 @@ border-radius:999px;
 white-space:nowrap;
 }
 
+
 /* =========================================================
 KARYA
 ========================================================= */
@@ -1007,6 +1054,7 @@ font-size:15px;
 color:var(--muted);
 }
 
+
 /* =========================================================
 GABUNG
 ========================================================= */
@@ -1017,21 +1065,20 @@ position:relative;
 overflow:hidden;
 
 background:
+
 radial-gradient(
 circle at 85% 20%,
 rgba(255,216,77,.22),
 transparent 25%
 ),
 
-```
 radial-gradient(
-  circle at 15% 80%,
-  rgba(79,111,240,.25),
-  transparent 30%
+circle at 15% 80%,
+rgba(79,111,240,.25),
+transparent 30%
 ),
 
 var(--ink);
-```
 
 color:white;
 
@@ -1065,6 +1112,7 @@ border-color:white;
 
 box-shadow:none;
 }
+
 
 /* =========================================================
 FOOTER
@@ -1127,6 +1175,7 @@ background:
 rgba(255,255,255,.08);
 }
 
+
 /* =========================================================
 RESPONSIVE
 ========================================================= */
@@ -1141,10 +1190,7 @@ gap:2px;
 padding:
 8px 8px;
 
-```
 font-size:13px;
-```
-
 }
 
 .stats{
@@ -1160,12 +1206,11 @@ repeat(2,1fr);
 .cols{
 grid-template-columns:1fr;
 
-```
 gap:35px;
-```
+}
 
 }
-}
+
 
 @media (max-width:760px){
 
@@ -1205,10 +1250,7 @@ h1{
 font-size:
 clamp(48px,14vw,72px);
 
-```
 letter-spacing:-.045em;
-```
-
 }
 
 .hero p{
@@ -1231,10 +1273,7 @@ grid-template-columns:1fr;
 grid-template-columns:
 90px 1fr 28px;
 
-```
 font-size:13px;
-```
-
 }
 
 footer .wrap{
@@ -1249,17 +1288,16 @@ calc(100% - 55px);
 footer .wrap a{
 margin-left:0;
 }
+
 }
+
 
 @media (max-width:480px){
 
 .stats{
 grid-template-columns:1fr 1fr;
 
-```
 gap:10px;
-```
-
 }
 
 .stat{
@@ -1278,12 +1316,24 @@ padding:24px;
 padding:15px;
 }
 
+.person-photo,
+.avatar{
+width:54px;
+height:54px;
+}
+
 .agenda th,
 .agenda td{
 padding:
 14px;
 }
+
 }
+
+
+/* =========================================================
+REDUCED MOTION
+========================================================= */
 
 @media (prefers-reduced-motion:reduce){
 
@@ -1296,7 +1346,9 @@ scroll-behavior:auto;
 *::after{
 transition:none !important;
 }
+
 }
+
 
 /* =========================================================
 DARK MODE
@@ -1309,7 +1361,6 @@ DARK MODE
 --surface:#141E32;
 --surface-soft:#182641;
 
-```
 --ink:#F2F5FF;
 --muted:#AAB5CC;
 
@@ -1322,8 +1373,6 @@ DARK MODE
 --hl-ink:#111B33;
 
 --grid:rgba(141,166,255,.07);
-```
-
 }
 
 body{
@@ -1340,40 +1389,28 @@ header{
 background:
 rgba(12,19,34,.82);
 
-```
 border-color:
-  rgba(41,54,83,.9);
-```
-
+rgba(41,54,83,.9);
 }
 
 .links a:last-child{
 background:var(--accent);
 
-```
 color:#10182A;
-```
-
 }
 
 .btn{
 background:white;
 
-```
 color:#10182A;
-```
-
 }
 
 .btn.alt{
 background:transparent;
 
-```
 color:white;
 
 border-color:white;
-```
-
 }
 
 .stat,
@@ -1398,4 +1435,6 @@ background:#293653;
 footer{
 background:#070D18;
 }
+
 }
+
