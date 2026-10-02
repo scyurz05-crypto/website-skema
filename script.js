@@ -1,473 +1,466 @@
-// ======================================================
-// SKEMA UNINDRA - SCRIPT UTAMA
-// Cocok dengan index.html versi lama
-// ======================================================
+/* =========================================================
+   SKEMA UNINDRA — SCRIPT UTAMA
+   ========================================================= */
 
+/* ---------------------------------------------------------
+   HELPER
+--------------------------------------------------------- */
 
-// ======================================================
-// PENGURUS
-// ======================================================
+function $(selector) {
+  return document.querySelector(selector);
+}
+
+function el(tag, className = "", html = "") {
+  const node = document.createElement(tag);
+
+  if (className) {
+    node.className = className;
+  }
+
+  if (html) {
+    node.innerHTML = html;
+  }
+
+  return node;
+}
+
+/* ---------------------------------------------------------
+   ESCAPE HTML
+--------------------------------------------------------- */
+
+function escapeHTML(value) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/* ---------------------------------------------------------
+   INISIAL NAMA
+--------------------------------------------------------- */
 
 function inisial(nama) {
   if (!nama) return "?";
 
-  return nama
+  return String(nama)
     .trim()
     .split(/\s+/)
     .slice(0, 2)
-    .map(kata => kata[0])
-    .join("")
-    .toUpperCase();
+    .map(kata => kata.charAt(0).toUpperCase())
+    .join("");
 }
 
+/* ---------------------------------------------------------
+   KARTU PENGURUS
+--------------------------------------------------------- */
 
 function kartuOrang(o) {
-  const nama = o.nama || "Nama belum diisi";
-  const jabatan = o.jabatan || "";
-  const prodi = o.prodi || "";
-  const angkatan = o.angkatan || "";
+  const nama = escapeHTML(o.nama || "Tanpa nama");
+  const jabatan = escapeHTML(o.jabatan || "");
+  const divisi = escapeHTML(o.divisi || "");
+  const prodi = escapeHTML(o.prodi || "");
+  const angkatan = escapeHTML(o.angkatan || "");
+  const foto = o.foto ? String(o.foto).trim() : "";
 
-  let foto = "";
+  const card = el("div", "person");
 
-  if (o.foto) {
-    foto = `
-      <img
-        src="${o.foto}"
-        alt="${nama}"
-        class="person-photo"
-        onerror="this.style.display='none'"
-      >
-    `;
-  } else {
-    foto = `
-      <div class="avatar">
-        ${inisial(nama)}
-      </div>
-    `;
+  /* FOTO DARI SUPABASE */
+  if (foto) {
+    const img = document.createElement("img");
+
+    img.className = "person-photo";
+    img.src = foto;
+    img.alt = `Foto ${nama}`;
+
+    img.onerror = function () {
+      this.style.display = "none";
+      avatar.style.display = "flex";
+    };
+
+    card.appendChild(img);
   }
 
-  return `
-    <article class="person-card">
+  /* AVATAR FALLBACK */
+  const avatar = el("div", "avatar");
+  avatar.textContent = inisial(o.nama);
 
-      ${foto}
+  if (foto) {
+    avatar.style.display = "none";
+  }
 
-      <div class="person-content">
+  card.appendChild(avatar);
 
-        <h3>${nama}</h3>
+  /* INFORMASI */
+  const info = el("div", "info");
 
-        <p class="role">
-          ${jabatan}
+  info.innerHTML = `
+    <strong>${nama}</strong>
+    ${jabatan ? `<span class="role">${jabatan}</span>` : ""}
+    ${
+      divisi
+        ? `<span class="meta">${divisi}</span>`
+        : ""
+    }
+    ${
+      prodi || angkatan
+        ? `<span class="meta">
+            ${prodi}${prodi && angkatan ? " • " : ""}${angkatan ? `Angkatan ${angkatan}` : ""}
+          </span>`
+        : ""
+    }
+  `;
+
+  card.appendChild(info);
+
+  return card;
+}
+
+/* ---------------------------------------------------------
+   RENDER PENGURUS
+--------------------------------------------------------- */
+
+function renderPengurus(data) {
+  const inti = $("#inti");
+  const filter = $("#filter-divisi");
+  const divisiBox = $("#divisi");
+
+  if (!inti || !filter || !divisiBox) {
+    return;
+  }
+
+  inti.innerHTML = "";
+  filter.innerHTML = "";
+  divisiBox.innerHTML = "";
+
+  const pengurus = Array.isArray(data) ? data : [];
+
+  /* -----------------------------------------------
+     PENGURUS INTI
+  ------------------------------------------------ */
+
+  const pengurusInti = pengurus.filter(
+    orang => !String(orang.divisi || "").trim()
+  );
+
+  if (pengurusInti.length === 0) {
+    inti.innerHTML = `
+      <p class="lead">
+        Belum ada data pengurus inti.
+      </p>
+    `;
+  } else {
+    pengurusInti.forEach(orang => {
+      inti.appendChild(kartuOrang(orang));
+    });
+  }
+
+  /* -----------------------------------------------
+     DAFTAR DIVISI
+  ------------------------------------------------ */
+
+  const daftarDivisi = [
+    ...new Set(
+      pengurus
+        .map(orang => String(orang.divisi || "").trim())
+        .filter(Boolean)
+    )
+  ];
+
+  if (daftarDivisi.length === 0) {
+    divisiBox.innerHTML = `
+      <p class="lead">
+        Belum ada data divisi.
+      </p>
+    `;
+    return;
+  }
+
+  /* -----------------------------------------------
+     TOMBOL SEMUA
+  ------------------------------------------------ */
+
+  const semuaBtn = document.createElement("button");
+
+  semuaBtn.type = "button";
+  semuaBtn.textContent = "Semua";
+  semuaBtn.setAttribute("aria-pressed", "true");
+
+  filter.appendChild(semuaBtn);
+
+  /* -----------------------------------------------
+     ISI DIVISI
+  ------------------------------------------------ */
+
+  const tampilkan = namaDivisi => {
+    divisiBox.innerHTML = "";
+
+    const dataTampil =
+      namaDivisi === "Semua"
+        ? pengurus.filter(
+            orang => String(orang.divisi || "").trim()
+          )
+        : pengurus.filter(
+            orang =>
+              String(orang.divisi || "").trim() === namaDivisi
+          );
+
+    if (dataTampil.length === 0) {
+      divisiBox.innerHTML = `
+        <p class="lead">
+          Belum ada anggota di divisi ini.
+        </p>
+      `;
+      return;
+    }
+
+    const people = el("div", "people");
+
+    dataTampil.forEach(orang => {
+      people.appendChild(kartuOrang(orang));
+    });
+
+    divisiBox.appendChild(people);
+  };
+
+  semuaBtn.addEventListener("click", () => {
+    filter
+      .querySelectorAll("button")
+      .forEach(button =>
+        button.setAttribute("aria-pressed", "false")
+      );
+
+    semuaBtn.setAttribute("aria-pressed", "true");
+
+    tampilkan("Semua");
+  });
+
+  daftarDivisi.forEach(namaDivisi => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = namaDivisi;
+    button.setAttribute("aria-pressed", "false");
+
+    button.addEventListener("click", () => {
+      filter
+        .querySelectorAll("button")
+        .forEach(btn =>
+          btn.setAttribute("aria-pressed", "false")
+        );
+
+      button.setAttribute("aria-pressed", "true");
+
+      tampilkan(namaDivisi);
+    });
+
+    filter.appendChild(button);
+  });
+
+  tampilkan("Semua");
+}
+
+/* ---------------------------------------------------------
+   RENDER AGENDA
+--------------------------------------------------------- */
+
+function renderAgenda(data) {
+  const box = $("#agenda-list");
+
+  if (!box) return;
+
+  const agenda = Array.isArray(data) ? data : [];
+
+  if (agenda.length === 0) {
+    box.innerHTML = `
+      <p class="lead">
+        Belum ada agenda.
+      </p>
+    `;
+    return;
+  }
+
+  const wrap = el("div", "wrap-x");
+
+  const table = document.createElement("table");
+  table.className = "agenda";
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Kegiatan</th>
+        <th>Waktu</th>
+        <th>Jenis</th>
+      </tr>
+    </thead>
+  `;
+
+  const tbody = document.createElement("tbody");
+
+  agenda.forEach(item => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>
+        <strong>${escapeHTML(item.kegiatan || "-")}</strong>
+      </td>
+
+      <td>
+        ${escapeHTML(item.waktu || "-")}
+      </td>
+
+      <td>
+        ${
+          item.jenis
+            ? `<span class="tag">${escapeHTML(item.jenis)}</span>`
+            : "-"
+        }
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  box.appendChild(wrap);
+}
+
+/* ---------------------------------------------------------
+   RENDER KARYA
+--------------------------------------------------------- */
+
+function renderKarya(data) {
+  const filter = $("#filter-karya");
+  const pub = $("#pub");
+
+  if (!filter || !pub) return;
+
+  const karya = Array.isArray(data) ? data : [];
+
+  filter.innerHTML = "";
+  pub.innerHTML = "";
+
+  if (karya.length === 0) {
+    pub.innerHTML = `
+      <p class="lead">
+        Belum ada karya.
+      </p>
+    `;
+    return;
+  }
+
+  const jenis = [
+    ...new Set(
+      karya
+        .map(item => String(item.jenis || "").trim())
+        .filter(Boolean)
+    )
+  ];
+
+  const semuaBtn = document.createElement("button");
+
+  semuaBtn.type = "button";
+  semuaBtn.textContent = "Semua";
+  semuaBtn.setAttribute("aria-pressed", "true");
+
+  filter.appendChild(semuaBtn);
+
+  const tampilkan = jenisAktif => {
+    pub.innerHTML = "";
+
+    const dataTampil =
+      jenisAktif === "Semua"
+        ? karya
+        : karya.filter(
+            item =>
+              String(item.jenis || "").trim() === jenisAktif
+          );
+
+    dataTampil.forEach(item => {
+      const article = document.createElement("article");
+
+      article.innerHTML = `
+        <h3>
+          ${escapeHTML(item.judul || "Tanpa judul")}
+        </h3>
+
+        <p>
+          ${escapeHTML(item.jenis || "Karya")}
+          ${
+            item.tahun
+              ? ` • ${escapeHTML(item.tahun)}`
+              : ""
+          }
         </p>
 
         ${
-          prodi || angkatan
+          item.penulis
             ? `
-              <p class="muted">
-                ${prodi}${prodi && angkatan ? " · " : ""}${angkatan}
+              <p style="margin-top:8px;">
+                Oleh ${escapeHTML(item.penulis)}
               </p>
             `
             : ""
         }
-
-        <div class="socials">
-
-          ${
-            o.instagram
-              ? `<a href="${o.instagram}" target="_blank" rel="noopener">Instagram</a>`
-              : ""
-          }
-
-          ${
-            o.tiktok
-              ? `<a href="${o.tiktok}" target="_blank" rel="noopener">TikTok</a>`
-              : ""
-          }
-
-          ${
-            o.linkedin
-              ? `<a href="${o.linkedin}" target="_blank" rel="noopener">LinkedIn</a>`
-              : ""
-          }
-
-        </div>
-
-      </div>
-
-    </article>
-  `;
-}
-
-
-function renderPengurus(data) {
-
-  const inti = $("#inti");
-  const divisi = $("#divisi");
-  const filter = $("#filter-divisi");
-
-  if (!inti || !divisi || !filter) return;
-
-  const semua = Array.isArray(data) ? data : [];
-
-  // ----------------------------------------------
-  // PENGURUS INTI
-  // ----------------------------------------------
-
-  const dataInti = semua.filter(o => {
-    return !o.divisi || String(o.divisi).trim() === "";
-  });
-
-  inti.innerHTML = dataInti.length
-    ? dataInti.map(kartuOrang).join("")
-    : `<p class="muted">Belum ada data pengurus inti.</p>`;
-
-
-  // ----------------------------------------------
-  // DATA DIVISI
-  // ----------------------------------------------
-
-  const dataDivisi = semua.filter(o => {
-    return o.divisi && String(o.divisi).trim() !== "";
-  });
-
-
-  if (!dataDivisi.length) {
-
-    filter.innerHTML = "";
-
-    divisi.innerHTML = `
-      <p class="muted">
-        Belum ada data divisi.
-      </p>
-    `;
-
-    return;
-  }
-
-
-  // Ambil nama divisi unik
-  const daftarDivisi = [
-    ...new Set(
-      dataDivisi.map(o => String(o.divisi).trim())
-    )
-  ];
-
-
-  // ----------------------------------------------
-  // BUTTON FILTER DIVISI
-  // ----------------------------------------------
-
-  filter.innerHTML = `
-    <button
-      type="button"
-      class="active"
-      data-divisi="Semua">
-      Semua
-    </button>
-
-    ${daftarDivisi
-      .map(div => `
-        <button
-          type="button"
-          data-divisi="${escapeHTML(div)}">
-          ${escapeHTML(div)}
-        </button>
-      `)
-      .join("")
-    }
-  `;
-
-
-  // ----------------------------------------------
-  // TAMPILKAN SEMUA DIVISI
-  // ----------------------------------------------
-
-  function tampilkanDivisi(namaDivisi) {
-
-    let hasil;
-
-    if (namaDivisi === "Semua") {
-      hasil = dataDivisi;
-    } else {
-      hasil = dataDivisi.filter(o =>
-        String(o.divisi).trim() === namaDivisi
-      );
-    }
-
-    divisi.innerHTML = hasil.length
-      ? hasil.map(kartuOrang).join("")
-      : `<p class="muted">Belum ada pengurus di divisi ini.</p>`;
-  }
-
-
-  tampilkanDivisi("Semua");
-
-
-  // ----------------------------------------------
-  // EVENT FILTER
-  // ----------------------------------------------
-
-  filter.querySelectorAll("button").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      filter
-        .querySelectorAll("button")
-        .forEach(b => b.classList.remove("active"));
-
-      button.classList.add("active");
-
-      tampilkanDivisi(
-        button.dataset.divisi
-      );
-
-    });
-
-  });
-
-}
-
-
-// ======================================================
-// AGENDA
-// ======================================================
-
-function renderAgenda(data) {
-
-  const target = $("#agenda-list");
-
-  if (!target) return;
-
-  const agenda = Array.isArray(data) ? data : [];
-
-
-  if (!agenda.length) {
-
-    target.innerHTML = `
-      <p class="muted">
-        Belum ada agenda.
-      </p>
-    `;
-
-    return;
-  }
-
-
-  target.innerHTML = agenda.map(a => {
-
-    const kegiatan = a.kegiatan || "Kegiatan SKEMA";
-    const waktu = a.waktu || "";
-    const jenis = a.jenis || "";
-
-    const foto = a.foto
-      ? `
-        <img
-          src="${a.foto}"
-          alt="${kegiatan}"
-          class="agenda-photo"
-          onerror="this.style.display='none'"
-        >
-      `
-      : "";
-
-
-    return `
-      <article class="agenda-card">
-
-        ${foto}
-
-        <div>
-
-          ${
-            jenis
-              ? `<span class="agenda-type">${jenis}</span>`
-              : ""
-          }
-
-          <h3>
-            ${kegiatan}
-          </h3>
-
-          ${
-            waktu
-              ? `<p class="muted">${waktu}</p>`
-              : ""
-          }
-
-        </div>
-
-      </article>
-    `;
-
-  }).join("");
-
-}
-
-
-// ======================================================
-// KARYA
-// ======================================================
-
-function renderKarya(data) {
-
-  const target = $("#pub");
-  const filter = $("#filter-karya");
-
-  if (!target || !filter) return;
-
-  const karya = Array.isArray(data) ? data : [];
-
-
-  if (!karya.length) {
-
-    filter.innerHTML = "";
-
-    target.innerHTML = `
-      <p class="muted">
-        Belum ada karya.
-      </p>
-    `;
-
-    return;
-  }
-
-
-  // ----------------------------------------------
-  // JENIS KARYA UNIK
-  // ----------------------------------------------
-
-  const jenisKarya = [
-    ...new Set(
-      karya
-        .map(k => k.jenis)
-        .filter(Boolean)
-        .map(j => String(j).trim())
-    )
-  ];
-
-
-  // ----------------------------------------------
-  // FILTER
-  // ----------------------------------------------
-
-  filter.innerHTML = `
-    <button
-      type="button"
-      class="active"
-      data-karya="Semua">
-      Semua
-    </button>
-
-    ${jenisKarya
-      .map(jenis => `
-        <button
-          type="button"
-          data-karya="${escapeHTML(jenis)}">
-          ${escapeHTML(jenis)}
-        </button>
-      `)
-      .join("")
-    }
-  `;
-
-
-  function tampilkanKarya(jenis) {
-
-    let hasil;
-
-    if (jenis === "Semua") {
-      hasil = karya;
-    } else {
-      hasil = karya.filter(k =>
-        String(k.jenis || "").trim() === jenis
-      );
-    }
-
-
-    target.innerHTML = hasil.length
-      ? hasil.map(k => {
-
-          const judul = k.judul || "Tanpa judul";
-          const penulis = k.penulis || "";
-          const tahun = k.tahun || "";
-          const tipe = k.jenis || "";
-
-
-          return `
-            <article class="pub-card">
-
-              ${
-                tipe
-                  ? `<span class="pub-type">${tipe}</span>`
-                  : ""
-              }
-
-              <h3>
-                ${judul}
-              </h3>
-
-              ${
-                penulis
-                  ? `<p class="muted">${penulis}</p>`
-                  : ""
-              }
-
-              ${
-                tahun
-                  ? `<p class="muted">${tahun}</p>`
-                  : ""
-              }
-
-            </article>
-          `;
-
-        }).join("")
-      : `
-        <p class="muted">
-          Belum ada karya dengan jenis tersebut.
-        </p>
       `;
-  }
 
+      pub.appendChild(article);
+    });
+  };
 
-  tampilkanKarya("Semua");
-
-
-  // ----------------------------------------------
-  // EVENT FILTER
-  // ----------------------------------------------
-
-  filter.querySelectorAll("button").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      filter
-        .querySelectorAll("button")
-        .forEach(b => b.classList.remove("active"));
-
-      button.classList.add("active");
-
-      tampilkanKarya(
-        button.dataset.karya
+  semuaBtn.addEventListener("click", () => {
+    filter
+      .querySelectorAll("button")
+      .forEach(button =>
+        button.setAttribute("aria-pressed", "false")
       );
 
-    });
+    semuaBtn.setAttribute("aria-pressed", "true");
 
+    tampilkan("Semua");
   });
 
+  jenis.forEach(namaJenis => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = namaJenis;
+    button.setAttribute("aria-pressed", "false");
+
+    button.addEventListener("click", () => {
+      filter
+        .querySelectorAll("button")
+        .forEach(btn =>
+          btn.setAttribute("aria-pressed", "false")
+        );
+
+      button.setAttribute("aria-pressed", "true");
+
+      tampilkan(namaJenis);
+    });
+
+    filter.appendChild(button);
+  });
+
+  tampilkan("Semua");
 }
 
-
-// ======================================================
-// STATISTIK DASHBOARD
-// ======================================================
+/* ---------------------------------------------------------
+   STATISTIK DASHBOARD
+--------------------------------------------------------- */
 
 function renderStatistik(pengurus, agenda, karya) {
-
   const sPengurus = $("#s-pengurus");
   const sDivisi = $("#s-divisi");
   const sAgenda = $("#s-agenda");
   const sKarya = $("#s-karya");
-
+  const barKarya = $("#bar-karya");
 
   const dataPengurus = Array.isArray(pengurus)
     ? pengurus
@@ -481,322 +474,184 @@ function renderStatistik(pengurus, agenda, karya) {
     ? karya
     : [];
 
-
-  // Jumlah pengurus
+  /* JUMLAH PENGURUS */
   if (sPengurus) {
-    sPengurus.textContent =
-      dataPengurus.length;
+    sPengurus.textContent = dataPengurus.length;
   }
 
-
-  // Jumlah divisi unik
-  const jumlahDivisi = new Set(
-    dataPengurus
-      .map(o => o.divisi)
-      .filter(Boolean)
-      .map(d => String(d).trim())
-  ).size;
-
-
+  /* JUMLAH DIVISI */
   if (sDivisi) {
-    sDivisi.textContent =
-      jumlahDivisi;
+    const divisi = new Set(
+      dataPengurus
+        .map(item => String(item.divisi || "").trim())
+        .filter(Boolean)
+    );
+
+    sDivisi.textContent = divisi.size;
   }
 
-
-  // Jumlah agenda
+  /* JUMLAH KEGIATAN */
   if (sAgenda) {
-    sAgenda.textContent =
-      dataAgenda.length;
+    sAgenda.textContent = dataAgenda.length;
   }
 
-
-  // Jumlah karya
+  /* JUMLAH KARYA */
   if (sKarya) {
-    sKarya.textContent =
-      dataKarya.length;
+    sKarya.textContent = dataKarya.length;
   }
 
+  /* BAR KARYA */
+  if (barKarya) {
+    barKarya.innerHTML = "";
 
-  // ----------------------------------------------
-  // BAR KARYA
-  // ----------------------------------------------
+    const jenisMap = {};
 
-  const barTarget = $("#bar-karya");
+    dataKarya.forEach(item => {
+      const jenis = String(item.jenis || "Lainnya").trim();
 
-  if (!barTarget) return;
+      if (!jenisMap[jenis]) {
+        jenisMap[jenis] = 0;
+      }
 
+      jenisMap[jenis]++;
+    });
 
-  if (!dataKarya.length) {
+    const daftarJenis = Object.entries(jenisMap);
 
-    barTarget.innerHTML = `
-      <p class="muted">
-        Belum ada data karya.
+    if (daftarJenis.length === 0) {
+      barKarya.innerHTML = `
+        <p class="lead">
+          Belum ada data karya.
+        </p>
+      `;
+      return;
+    }
+
+    const total = dataKarya.length;
+
+    daftarJenis.forEach(([jenis, jumlah]) => {
+      const persen = Math.round(
+        (jumlah / total) * 100
+      );
+
+      const row = document.createElement("div");
+      row.className = "bar";
+
+      row.innerHTML = `
+        <span>
+          ${escapeHTML(jenis)}
+        </span>
+
+        <div class="track">
+          <div
+            class="fill"
+            style="width:${persen}%">
+          </div>
+        </div>
+
+        <b>
+          ${jumlah}
+        </b>
+      `;
+
+      barKarya.appendChild(row);
+    });
+  }
+}
+
+/* ---------------------------------------------------------
+   BIDANG KAJIAN
+--------------------------------------------------------- */
+
+function renderKajian(data) {
+  const fields = document.querySelector(".fields");
+
+  if (!fields) return;
+
+  const kajian = Array.isArray(data) ? data : [];
+
+  /*
+    Kalau tabel kajian kosong, desain awal tetap dipakai.
+  */
+  if (kajian.length === 0) {
+    return;
+  }
+
+  /*
+    Hanya tampilkan kajian yang statusnya Aktif.
+  */
+  const aktif = kajian.filter(item => {
+    const status = String(item.status || "Aktif")
+      .trim()
+      .toLowerCase();
+
+    return status === "aktif";
+  });
+
+  if (aktif.length === 0) {
+    return;
+  }
+
+  fields.innerHTML = "";
+
+  aktif.forEach(item => {
+    const field = document.createElement("div");
+
+    field.className = "field";
+
+    field.innerHTML = `
+      <h3>
+        ${escapeHTML(item.judul || item.bidang || "Bidang Kajian")}
+      </h3>
+
+      <p>
+        ${escapeHTML(item.deskripsi || "")}
       </p>
     `;
 
-    return;
-  }
-
-
-  const jumlahJenis = {};
-
-  dataKarya.forEach(k => {
-
-    const jenis =
-      k.jenis || "Lainnya";
-
-    jumlahJenis[jenis] =
-      (jumlahJenis[jenis] || 0) + 1;
-
+    fields.appendChild(field);
   });
-
-
-  const total = dataKarya.length;
-
-
-  barTarget.innerHTML = Object.entries(jumlahJenis)
-    .map(([jenis, jumlah]) => {
-
-      const persen =
-        Math.round((jumlah / total) * 100);
-
-      return `
-        <div style="margin-bottom:14px">
-
-          <div
-            style="
-              display:flex;
-              justify-content:space-between;
-              margin-bottom:5px;
-            ">
-
-            <span>
-              ${escapeHTML(jenis)}
-            </span>
-
-            <span>
-              ${jumlah}
-            </span>
-
-          </div>
-
-          <div
-            style="
-              width:100%;
-              height:8px;
-              background:#eee;
-              border-radius:20px;
-              overflow:hidden;
-            ">
-
-            <div
-              style="
-                width:${persen}%;
-                height:100%;
-                background:currentColor;
-                border-radius:20px;
-              ">
-            </div>
-
-          </div>
-
-        </div>
-      `;
-
-    })
-    .join("");
-
 }
 
-
-// ======================================================
-// KAJIAN
-// ======================================================
-
-function renderKajian(data) {
-
-  const container =
-    document.querySelector(".fields");
-
-  if (!container) return;
-
-
-  const kajian =
-    Array.isArray(data) ? data : [];
-
-
-  // Kalau tabel kajian kosong,
-  // biarkan 4 bidang bawaan dari index.html.
-  if (!kajian.length) {
-    return;
-  }
-
-
-  // Hanya tampilkan data yang statusnya aktif
-  const aktif = kajian.filter(k => {
-
-    const status =
-      String(k.status || "Aktif")
-        .toLowerCase()
-        .trim();
-
-    return status === "aktif";
-
-  });
-
-
-  if (!aktif.length) {
-    return;
-  }
-
-
-  // Kelompokkan berdasarkan bidang
-  const kelompok = {};
-
-
-  aktif.forEach(k => {
-
-    const bidang =
-      k.bidang || "Bidang Kajian";
-
-    if (!kelompok[bidang]) {
-      kelompok[bidang] = [];
-    }
-
-    kelompok[bidang].push(k);
-
-  });
-
-
-  container.innerHTML =
-    Object.entries(kelompok)
-      .map(([bidang, daftar]) => {
-
-        const deskripsi =
-          daftar
-            .map(k => k.deskripsi)
-            .filter(Boolean)
-            .join(" ");
-
-        return `
-          <div class="field">
-
-            <h3>
-              ${escapeHTML(bidang)}
-            </h3>
-
-            <p>
-              ${
-                escapeHTML(
-                  deskripsi ||
-                  "Kajian dan riset mahasiswa SKEMA."
-                )
-              }
-            </p>
-
-          </div>
-        `;
-
-      })
-      .join("");
-
-}
-
-
-// ======================================================
-// ESCAPE HTML
-// Supaya data dari database aman ditampilkan
-// ======================================================
-
-function escapeHTML(value) {
-
-  if (value === null || value === undefined) {
-    return "";
-  }
-
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
-// ======================================================
-// MULAI
-// ======================================================
+/* ---------------------------------------------------------
+   MULAI
+--------------------------------------------------------- */
 
 async function mulai() {
-
   try {
-
     const [
       pengurus,
       agenda,
       karya,
       kajian
     ] = await Promise.all([
-
       ambil("pengurus", "urutan"),
-
       ambil("agenda", "id"),
-
       ambil("karya", "tahun"),
-
       ambil("kajian", "urutan")
-
     ]);
 
-
-    // Dashboard
+    renderPengurus(pengurus);
+    renderAgenda(agenda);
+    renderKarya(karya);
     renderStatistik(
       pengurus,
       agenda,
       karya
     );
-
-
-    // Pengurus
-    renderPengurus(
-      pengurus
-    );
-
-
-    // Agenda
-    renderAgenda(
-      agenda
-    );
-
-
-    // Karya
-    renderKarya(
-      karya
-    );
-
-
-    // Kajian
-    renderKajian(
-      kajian
-    );
-
+    renderKajian(kajian);
 
   } catch (error) {
-
     console.error(
       "Gagal memuat data SKEMA:",
       error
     );
-
   }
-
 }
 
-
-// ======================================================
-// JALANKAN SAAT HALAMAN SELESAI DIMUAT
-// ======================================================
+/* ---------------------------------------------------------
+   JALANKAN SETELAH HTML SELESAI
+--------------------------------------------------------- */
 
 document.addEventListener(
   "DOMContentLoaded",
