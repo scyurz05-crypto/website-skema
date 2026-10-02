@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin SKEMA UNINDRA</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+</head>
+
+<body>
+
+  <main class="wrap" style="max-width:720px; padding-top:40px; padding-bottom:60px;">
+
+    <!-- LOGIN -->
+    <section id="loginBox">
+
+      <div style="text-align:center; margin-bottom:30px;">
+        <img
+          src="skema.jpg"
+          alt="Logo SKEMA"
+          style="width:90px;height:90px;object-fit:cover;border-radius:20px;"
+        >
+
+        <h1 style="margin-bottom:8px;">Pengurus SKEMA</h1>
+
+        <p style="color:#666;">
+          Masuk untuk mengelola data SKEMA UNINDRA.
+        </p>
+      </div>
+
+      <div class="card">
+
+        <label>Email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="Email"
+          autocomplete="email"
+        >
+
+        <label>Password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+        >
+
+        <button
+          class="btn"
+          id="loginBtn"
+          type="button"
+          style="margin-top:15px;"
+        >
+          Login
+        </button>
+
+        <p
+          id="loginMsg"
+          style="margin-top:15px;"
+        ></p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ADMIN -->
+    <section id="adminBox" style="display:none;">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px;">
+
+        <div>
+          <h1 style="margin:0;">Dashboard Pengurus</h1>
+          <p id="adminEmail" style="color:#666;margin:5px 0 0;"></p>
+        </div>
+
+        <button
+          class="btn alt"
+          id="logoutBtn"
+          type="button"
+        >
+          Logout
+        </button>
+
+      </div>
+
+
+      <!-- TABS -->
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
+          margin-bottom:20px;
+        "
+      >
+
+        <button class="btn tabBtn" data-tab="pengurus" type="button">
+          Pengurus
+        </button>
+
+        <button class="btn tabBtn" data-tab="agenda" type="button">
+          Agenda
+        </button>
+
+        <button class="btn tabBtn" data-tab="karya" type="button">
+          Karya
+        </button>
+
+        <button class="btn tabBtn" data-tab="kajian" type="button">
+          Kajian
+        </button>
+
+      </div>
+
+
+      <!-- PANEL -->
+      <div class="card">
+
+        <div
+          style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            margin-bottom:20px;
+          "
+        >
+
+          <h2 id="panelTitle" style="margin:0;">
+            Pengurus
+          </h2>
+
+          <button
+            class="btn"
+            id="tambahBtn"
+            type="button"
+          >
+            + Tambah
+          </button>
+
+        </div>
+
+
+        <!-- FORM -->
+        <div
+          id="formBox"
+          style="
+            display:none;
+            margin-bottom:25px;
+            padding:20px;
+            border:1px solid #ddd;
+            border-radius:14px;
+          "
+        >
+
+          <h3 id="formTitle" style="margin-top:0;">
+            Tambah Data
+          </h3>
+
+          <div id="formFields"></div>
+
+          <div
+            style="
+              display:flex;
+              gap:10px;
+              margin-top:15px;
+              flex-wrap:wrap;
+            "
+          >
+
+            <button
+              class="btn"
+              id="simpanBtn"
+              type="button"
+            >
+              Simpan
+            </button>
+
+            <button
+              class="btn alt"
+              id="batalBtn"
+              type="button"
+            >
+              Batal
+            </button>
+
+          </div>
+
+          <p id="formMsg" style="margin-top:12px;"></p>
+
+        </div>
+
+
+        <!-- DATA -->
+        <div id="dataList"></div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+<script>
+
+const SUPABASE_URL =
+  window.SUPABASE_URL || "";
+
+const SUPABASE_ANON_KEY =
+  window.SUPABASE_ANON_KEY || "";
+
+let sb = null;
+
+if (
+  SUPABASE_URL &&
+  SUPABASE_ANON_KEY &&
+  !SUPABASE_URL.includes("ISI_") &&
+  !SUPABASE_ANON_KEY.includes("ISI_")
+) {
+  sb = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+}
+
+
+const S = {
+
+  pengurus: {
+    urut: "urutan",
+
+    f: [
+      ["nama", "Nama"],
+      ["jabatan", "Jabatan"],
+      ["divisi", "Divisi (kosongkan untuk pengurus inti)"],
+      ["prodi", "Prodi"],
+      ["angkatan", "Angkatan", "number"],
+      ["urutan", "Urutan tampil", "number"],
+      ["foto", "Link Foto"],
+      ["instagram", "Link Instagram"],
+      ["tiktok", "Link TikTok"],
+      ["linkedin", "Link LinkedIn"]
+    ]
+  },
+
+
+  agenda: {
+    urut: "id",
+
+    f: [
+      ["kegiatan", "Kegiatan"],
+      ["waktu", "Waktu"],
+      ["jenis", "Jenis"],
+      ["foto", "Link Foto Dokumentasi"]
+    ]
+  },
+
+
+  karya: {
+    urut: "id",
+
+    f: [
+      ["judul", "Judul"],
+      ["jenis", "Jenis (Artikel / Policy brief / Poster)"],
+      ["penulis", "Penulis"],
+      ["tahun", "Tahun", "number"]
+    ]
+  },
+
+
+  kajian: {
+    urut: "urutan",
+
+    f: [
+      ["judul", "Judul Kajian"],
+      ["bidang", "Bidang Kajian"],
+      ["deskripsi", "Deskripsi"],
+      ["penulis", "Penulis"],
+      ["tahun", "Tahun", "number"],
+      ["status", "Status"],
+      ["urutan", "Urutan Tampil", "number"]
+    ]
+  }
+
+};
+
+
+let tabelAktif = "pengurus";
+let editId = null;
+
+
+const $ = id =>
+  document.getElementById(id);
+
+
+/* =========================
+   LOGIN
+========================= */
+
+async function login() {
+
+  const email =
+    $("email").value.trim();
+
+  const password =
+    $("password").value;
+
+  const msg =
+    $("loginMsg");
+
+  msg.textContent =
+    "Memproses login...";
+
+  if (!sb) {
+
+    msg.textContent =
+      "Supabase belum dikonfigurasi.";
+
+    return;
+  }
+
+  try {
+
+    const { data, error } =
+      await sb.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    const user =
+      data.user;
+
+    if (!user) {
+      throw new Error(
+        "User tidak ditemukan."
+      );
+    }
+
+
+    const { data: admin, error: adminError } =
+      await sb
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+
+    if (adminError) {
+      throw adminError;
+    }
+
+
+    if (!admin) {
+
+      await sb.auth.signOut();
+
+      throw new Error(
+        "Akun ini bukan akun pengurus."
+      );
+    }
+
+
+    $("loginBox").style.display =
+      "none";
+
+    $("adminBox").style.display =
+      "block";
+
+    $("adminEmail").textContent =
+      user.email || "";
+
+    await muat(tabelAktif);
+
+  } catch (err) {
+
+    msg.textContent =
+      err.message || "Login gagal.";
+
+  }
+
+}
+
+
+$("loginBtn")
+  .addEventListener("click", login);
+
+
+$("password")
+  .addEventListener("keydown", e => {
+
+    if (e.key === "Enter") {
+      login();
+    }
+
+  });
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+$("logoutBtn")
+  .addEventListener("click", async () => {
+
+    if (sb) {
+      await sb.auth.signOut();
+    }
+
+    $("adminBox").style.display =
+      "none";
+
+    $("loginBox").style.display =
+      "block";
+
+  });
+
+
+/* =========================
+   TABS
+========================= */
+
+document
+  .querySelectorAll(".tabBtn")
+  .forEach(btn => {
+
+    btn.addEventListener("click", async () => {
+
+      tabelAktif =
+        btn.dataset.tab;
+
+      editId =
+        null;
+
+      $("formBox").style.display =
+        "none";
+
+      $("panelTitle").textContent =
+        btn.textContent.trim();
+
+      await muat(tabelAktif);
+
+    });
+
+  });
+
+
+/* =========================
+   FORM
+========================= */
+
+function buatForm(tabel, data = {}) {
+
+  const box =
+    $("formFields");
+
+  box.innerHTML = "";
+
+  S[tabel].f.forEach(
+    ([key, label, type]) => {
+
+      const wrap =
+        document.createElement("div");
+
+      wrap.style.marginBottom =
+        "14px";
+
+
+      const lab =
+        document.createElement("label");
+
+      lab.textContent =
+        label;
+
+      lab.style.display =
+        "block";
+
+      lab.style.marginBottom =
+        "6px";
+
+      wrap.appendChild(lab);
+
+
+      let input;
+
+
+      if (
+        key === "deskripsi"
+      ) {
+
+        input =
+          document.createElement("textarea");
+
+        input.rows = 5;
+
+      } else {
+
+        input =
+          document.createElement("input");
+
+        input.type =
+          type || "text";
+
+      }
+
+
+      input.id =
+        "field_" + key;
+
+      input.value =
+        data[key] ?? "";
+
+      input.style.width =
+        "100%";
+
+      input.style.boxSizing =
+        "border-box";
+
+
+      if (
+        key === "foto"
+      ) {
+
+        input.placeholder =
+          "Tempel link foto di sini";
+
+      }
+
+
+      if (
+        key === "instagram" ||
+        key === "tiktok" ||
+        key === "linkedin"
+      ) {
+
+        input.placeholder =
+          "https://...";
+
+      }
+
+
+      wrap.appendChild(input);
+
+      box.appendChild(wrap);
+
+    }
+  );
+
+}
+
+
+/* =========================
+   AMBIL DATA FORM
+========================= */
+
+function ambilDataForm(tabel) {
+
+  const data = {};
+
+  S[tabel].f.forEach(
+    ([key, label, type]) => {
+
+      const input =
+        $("field_" + key);
+
+      if (!input) return;
+
+
+      let value =
+        input.value.trim();
+
+
+      if (
+        type === "number"
+      ) {
+
+        value =
+          value === ""
+            ? null
+            : Number(value);
+
+      }
+
+
+      data[key] =
+        value;
+
+    }
+  );
+
+
+  return data;
+
+}
+
+
+/* =========================
+   TAMBAH
+========================= */
+
+async function tambah() {
+
+  const msg =
+    $("formMsg");
+
+  msg.textContent =
+    "Menyimpan...";
+
+
+  const data =
+    ambilDataForm(tabelAktif);
+
+
+  try {
+
+    const { error } =
+      await sb
+        .from(tabelAktif)
+        .insert(data);
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    msg.textContent =
+      "Data berhasil ditambahkan.";
+
+    $("formBox").style.display =
+      "none";
+
+
+    await muat(tabelAktif);
+
+  } catch (err) {
+
+    msg.textContent =
+      err.message ||
+      "Gagal menyimpan data.";
+
+  }
+
+}
+
+
+/* =========================
+   MULAI EDIT
+========================= */
+
+function mulaiEdit(id, row) {
+
+  editId =
+    id;
+
+  $("formTitle").textContent =
+    "Edit Data";
+
+  buatForm(
+    tabelAktif,
+    row
+  );
+
+  $("formBox").style.display =
+    "block";
+
+  $("formBox").scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+}
+
+
+/* =========================
+   SIMPAN EDIT
+========================= */
+
+async function simpanEdit() {
+
+  if (!editId) return;
+
+
+  const msg =
+    $("formMsg");
+
+  msg.textContent =
+    "Menyimpan perubahan...";
+
+
+  const data =
+    ambilDataForm(tabelAktif);
+
+
+  try {
+
+    const { error } =
+      await sb
+        .from(tabelAktif)
+        .update(data)
+        .eq("id", editId);
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    msg.textContent =
+      "Perubahan berhasil disimpan.";
+
+    editId =
+      null;
+
+    $("formBox").style.display =
+      "none";
+
+
+    await muat(tabelAktif);
+
+  } catch (err) {
+
+    msg.textContent =
+      err.message ||
+      "Gagal menyimpan perubahan.";
+
+  }
+
+}
+
+
+/* =========================
+   HAPUS
+========================= */
+
+async function hapusData(id) {
+
+  const yakin =
+    confirm(
+      "Yakin ingin menghapus data ini?"
+    );
+
+  if (!yakin) return;
+
+
+  try {
+
+    const { error } =
+      await sb
+        .from(tabelAktif)
+        .delete()
+        .eq("id", id);
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    await muat(tabelAktif);
+
+  } catch (err) {
+
+    alert(
+      err.message ||
+      "Gagal menghapus data."
+    );
+
+  }
+
+}
+
+
+/* =========================
+   MUAT DATA
+========================= */
+
+async function muat(tabel) {
+
+  const list =
+    $("dataList");
+
+  list.innerHTML =
+    "Memuat data...";
+
+
+  if (!sb) {
+
+    list.innerHTML =
+      "<p>Supabase belum dikonfigurasi.</p>";
+
+    return;
+
+  }
+
+
+  try {
+
+    const order =
+      S[tabel].urut;
+
+
+    const { data, error } =
+      await sb
+        .from(tabel)
+        .select("*")
+        .order(
+          order,
+          { ascending: true }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (!data || data.length === 0) {
+
+      list.innerHTML =
+        "<p style='color:#777;'>Belum ada data.</p>";
+
+      return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    data.forEach(row => {
+
+      const item =
+        document.createElement("div");
+
+
+      item.style.border =
+        "1px solid #ddd";
+
+      item.style.borderRadius =
+        "12px";
+
+      item.style.padding =
+        "15px";
+
+      item.style.marginBottom =
+        "12px";
+
+
+      const info =
+        document.createElement("div");
+
+
+      info.style.lineHeight =
+        "1.7";
+
+
+      /* PENGURUS */
+
+      if (
+        tabel === "pengurus"
+      ) {
+
+        info.innerHTML = `
+          <strong>${escapeHtml(row.nama || "")}</strong>
+          <br>
+          ${escapeHtml(row.jabatan || "")}
+          ${row.divisi ? " · " + escapeHtml(row.divisi) : ""}
+          ${row.prodi ? "<br>" + escapeHtml(row.prodi) : ""}
+        `;
+
+
+        if (row.foto) {
+
+          const img =
+            document.createElement("img");
+
+          img.src =
+            row.foto;
+
+          img.alt =
+            "Foto " + (row.nama || "");
+
+          img.style.width =
+            "100px";
+
+          img.style.height =
+            "100px";
+
+          img.style.objectFit =
+            "cover";
+
+          img.style.borderRadius =
+            "12px";
+
+          img.style.display =
+            "block";
+
+          img.style.marginTop =
+            "10px";
+
+          info.appendChild(img);
+
+        }
+
+
+        const socials =
+          document.createElement("div");
+
+        socials.style.marginTop =
+          "8px";
+
+        socials.style.fontSize =
+          "13px";
+
+        socials.style.color =
+          "#666";
+
+        const links = [];
+
+        if (row.instagram)
+          links.push("Instagram");
+
+        if (row.tiktok)
+          links.push("TikTok");
+
+        if (row.linkedin)
+          links.push("LinkedIn");
+
+        socials.textContent =
+          links.join(" · ");
+
+        info.appendChild(socials);
+
+      }
+
+
+      /* AGENDA */
+
+      else if (
+        tabel === "agenda"
+      ) {
+
+        info.innerHTML = `
+          <strong>${escapeHtml(row.kegiatan || "")}</strong>
+          <br>
+          ${escapeHtml(row.waktu || "")}
+          ${row.jenis ? " · " + escapeHtml(row.jenis) : ""}
+        `;
+
+
+        if (row.foto) {
+
+          const img =
+            document.createElement("img");
+
+          img.src =
+            row.foto;
+
+          img.alt =
+            "Foto dokumentasi " +
+            (row.kegiatan || "");
+
+          img.style.width =
+            "120px";
+
+          img.style.height =
+            "80px";
+
+          img.style.objectFit =
+            "cover";
+
+          img.style.borderRadius =
+            "8px";
+
+          img.style.display =
+            "block";
+
+          img.style.marginTop =
+            "10px";
+
+          info.appendChild(img);
+
+        }
+
+      }
+
+
+      /* DATA LAIN */
+
+      else {
+
+        info.textContent =
+          S[tabel].f
+            .map(([key]) => {
+
+              const value =
+                row[key];
+
+              if (
+                value === null ||
+                value === undefined ||
+                value === ""
+              ) {
+                return null;
+              }
+
+              return value;
+
+            })
+            .filter(Boolean)
+            .join(" · ");
+
+      }
+
+
+      item.appendChild(info);
+
+
+      /* BUTTON */
+
+      const actions =
+        document.createElement("div");
+
+      actions.style.display =
+        "flex";
+
+      actions.style.gap =
+        "8px";
+
+      actions.style.marginTop =
+        "12px";
+
+
+      const edit =
+        document.createElement("button");
+
+      edit.className =
+        "btn";
+
+      edit.textContent =
+        "Edit";
+
+      edit.type =
+        "button";
+
+      edit.addEventListener(
+        "click",
+        () => mulaiEdit(row.id, row)
+      );
+
+
+      const del =
+        document.createElement("button");
+
+      del.className =
+        "btn alt";
+
+      del.textContent =
+        "Hapus";
+
+      del.type =
+        "button";
+
+      del.addEventListener(
+        "click",
+        () => hapusData(row.id)
+      );
+
+
+      actions.appendChild(edit);
+      actions.appendChild(del);
+
+      item.appendChild(actions);
+
+
+      list.appendChild(item);
+
+    });
+
+
+  } catch (err) {
+
+    list.innerHTML =
+      `
+      <p style="color:#b00020;">
+        ${escapeHtml(
+          err.message ||
+          "Gagal memuat data."
+        )}
+      </p>
+      `;
+
+  }
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================
+   TOMBOL TAMBAH
+========================= */
+
+$("tambahBtn")
+  .addEventListener("click", () => {
+
+    editId =
+      null;
+
+    $("formTitle").textContent =
+      "Tambah " +
+      $("panelTitle").textContent;
+
+    $("formMsg").textContent =
+      "";
+
+    buatForm(
+      tabelAktif
+    );
+
+    $("formBox").style.display =
+      "block";
+
+    $("formBox").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+  });
+
+
+/* =========================
+   BATAL
+========================= */
+
+$("batalBtn")
+  .addEventListener("click", () => {
+
+    editId =
+      null;
+
+    $("formBox").style.display =
+      "none";
+
+    $("formMsg").textContent =
+      "";
+
+  });
+
+
+/* =========================
+   SIMPAN
+========================= */
+
+$("simpanBtn")
+  .addEventListener("click", async () => {
+
+    if (editId) {
+
+      await simpanEdit();
+
+    } else {
+
+      await tambah();
+
+    }
+
+  });
+
+
+/* =========================
+   CEK SESSION
+========================= */
+
+async function cekSession() {
+
+  if (!sb) return;
+
+
+  try {
+
+    const {
+      data: {
+        session
+      }
+    } =
+      await sb.auth.getSession();
+
+
+    if (!session) {
+      return;
+    }
+
+
+    const user =
+      session.user;
+
+
+    const {
+      data: admin,
+      error
+    } =
+      await sb
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+
+    if (error || !admin) {
+
+      await sb.auth.signOut();
+
+      return;
+
+    }
+
+
+    $("loginBox").style.display =
+      "none";
+
+    $("adminBox").style.display =
+      "block";
+
+    $("adminEmail").textContent =
+      user.email || "";
+
+
+    await muat(
+      tabelAktif
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+  }
+
+}
+
+
+cekSession();
+
+</script>
+
+</body>
+</html>
