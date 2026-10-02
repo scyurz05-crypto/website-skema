@@ -2,36 +2,8 @@
    SKEMA UNINDRA — SCRIPT UTAMA
    ========================================================= */
 
-/* ---------------------------------------------------------
-   HELPER
---------------------------------------------------------- */
-
-function $(selector) {
-  return document.querySelector(selector);
-}
-
-function el(tag, className = "", html = "") {
-  const node = document.createElement(tag);
-
-  if (className) {
-    node.className = className;
-  }
-
-  if (html) {
-    node.innerHTML = html;
-  }
-
-  return node;
-}
-
-/* ---------------------------------------------------------
-   ESCAPE HTML
---------------------------------------------------------- */
-
 function escapeHTML(value) {
-  if (value === null || value === undefined) {
-    return "";
-  }
+  if (value === null || value === undefined) return "";
 
   return String(value)
     .replace(/&/g, "&amp;")
@@ -40,10 +12,6 @@ function escapeHTML(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
-
-/* ---------------------------------------------------------
-   INISIAL NAMA
---------------------------------------------------------- */
 
 function inisial(nama) {
   if (!nama) return "?";
@@ -56,62 +24,120 @@ function inisial(nama) {
     .join("");
 }
 
-/* ---------------------------------------------------------
+
+/* =========================================================
    KARTU PENGURUS
---------------------------------------------------------- */
+========================================================= */
 
 function kartuOrang(o) {
+
+  const card = document.createElement("div");
+  card.className = "person";
+
   const nama = escapeHTML(o.nama || "Tanpa nama");
   const jabatan = escapeHTML(o.jabatan || "");
   const divisi = escapeHTML(o.divisi || "");
   const prodi = escapeHTML(o.prodi || "");
   const angkatan = escapeHTML(o.angkatan || "");
-  const foto = o.foto ? String(o.foto).trim() : "";
 
-  const card = el("div", "person");
+  const foto =
+    o.foto &&
+    String(o.foto).trim()
+      ? String(o.foto).trim()
+      : "";
 
-  /* FOTO DARI SUPABASE */
-  if (foto) {
-    const img = document.createElement("img");
 
-    img.className = "person-photo";
-    img.src = foto;
-    img.alt = `Foto ${nama}`;
+  /* =====================================================
+     AVATAR
+  ===================================================== */
 
-    img.onerror = function () {
-      this.style.display = "none";
-      avatar.style.display = "flex";
-    };
+  const avatar = document.createElement("div");
 
-    card.appendChild(img);
-  }
-
-  /* AVATAR FALLBACK */
-  const avatar = el("div", "avatar");
+  avatar.className = "avatar";
   avatar.textContent = inisial(o.nama);
-
-  if (foto) {
-    avatar.style.display = "none";
-  }
 
   card.appendChild(avatar);
 
-  /* INFORMASI */
-  const info = el("div", "info");
+
+  /* =====================================================
+     FOTO
+  ===================================================== */
+
+  if (foto) {
+
+    const img = document.createElement("img");
+
+    img.className = "person-photo";
+
+    img.src = foto;
+
+    img.alt = `Foto ${nama}`;
+
+    /*
+      Kalau foto gagal dimuat,
+      avatar kembali ditampilkan.
+    */
+
+    img.onload = function () {
+      avatar.style.display = "none";
+      img.style.display = "block";
+    };
+
+    img.onerror = function () {
+      console.error(
+        "Foto gagal dimuat:",
+        foto
+      );
+
+      img.remove();
+
+      avatar.style.display = "flex";
+    };
+
+    card.insertBefore(img, avatar);
+  }
+
+
+  /* =====================================================
+     INFORMASI PENGURUS
+  ===================================================== */
+
+  const info = document.createElement("div");
+
+  info.className = "info";
 
   info.innerHTML = `
     <strong>${nama}</strong>
-    ${jabatan ? `<span class="role">${jabatan}</span>` : ""}
+
+    ${
+      jabatan
+        ? `<span class="role">${jabatan}</span>`
+        : ""
+    }
+
     ${
       divisi
         ? `<span class="meta">${divisi}</span>`
         : ""
     }
+
     ${
       prodi || angkatan
-        ? `<span class="meta">
-            ${prodi}${prodi && angkatan ? " • " : ""}${angkatan ? `Angkatan ${angkatan}` : ""}
-          </span>`
+        ? `
+          <span class="meta">
+            ${prodi}
+            ${
+              prodi && angkatan
+                ? " • "
+                : ""
+            }
+            ${
+              angkatan
+                ? `Angkatan ${angkatan}`
+                : ""
+            }
+          </span>
+        `
         : ""
     }
   `;
@@ -121,16 +147,22 @@ function kartuOrang(o) {
   return card;
 }
 
-/* ---------------------------------------------------------
-   RENDER PENGURUS
---------------------------------------------------------- */
+
+/* =========================================================
+   PENGURUS
+========================================================= */
 
 function renderPengurus(data) {
-  const inti = $("#inti");
-  const filter = $("#filter-divisi");
-  const divisiBox = $("#divisi");
+
+  const inti = document.getElementById("inti");
+  const filter = document.getElementById("filter-divisi");
+  const divisiBox = document.getElementById("divisi");
 
   if (!inti || !filter || !divisiBox) {
+    console.error(
+      "Element pengurus tidak ditemukan."
+    );
+
     return;
   }
 
@@ -138,157 +170,285 @@ function renderPengurus(data) {
   filter.innerHTML = "";
   divisiBox.innerHTML = "";
 
-  const pengurus = Array.isArray(data) ? data : [];
+  const pengurus =
+    Array.isArray(data)
+      ? data
+      : [];
 
-  /* -----------------------------------------------
+
+  /* =====================================================
      PENGURUS INTI
-  ------------------------------------------------ */
+  ===================================================== */
 
-  const pengurusInti = pengurus.filter(
-    orang => !String(orang.divisi || "").trim()
-  );
+  const pengurusInti =
+    pengurus.filter(
+      orang =>
+        !String(
+          orang.divisi || ""
+        ).trim()
+    );
+
 
   if (pengurusInti.length === 0) {
+
     inti.innerHTML = `
       <p class="lead">
         Belum ada data pengurus inti.
       </p>
     `;
+
   } else {
+
     pengurusInti.forEach(orang => {
-      inti.appendChild(kartuOrang(orang));
+      inti.appendChild(
+        kartuOrang(orang)
+      );
     });
+
   }
 
-  /* -----------------------------------------------
+
+  /* =====================================================
      DAFTAR DIVISI
-  ------------------------------------------------ */
+  ===================================================== */
 
   const daftarDivisi = [
     ...new Set(
       pengurus
-        .map(orang => String(orang.divisi || "").trim())
+        .map(
+          orang =>
+            String(
+              orang.divisi || ""
+            ).trim()
+        )
         .filter(Boolean)
     )
   ];
 
+
   if (daftarDivisi.length === 0) {
+
     divisiBox.innerHTML = `
       <p class="lead">
         Belum ada data divisi.
       </p>
     `;
+
     return;
   }
 
-  /* -----------------------------------------------
-     TOMBOL SEMUA
-  ------------------------------------------------ */
 
-  const semuaBtn = document.createElement("button");
+  /* =====================================================
+     TOMBOL SEMUA
+  ===================================================== */
+
+  const semuaBtn =
+    document.createElement("button");
 
   semuaBtn.type = "button";
+
   semuaBtn.textContent = "Semua";
-  semuaBtn.setAttribute("aria-pressed", "true");
 
-  filter.appendChild(semuaBtn);
+  semuaBtn.setAttribute(
+    "aria-pressed",
+    "true"
+  );
 
-  /* -----------------------------------------------
-     ISI DIVISI
-  ------------------------------------------------ */
+  filter.appendChild(
+    semuaBtn
+  );
 
-  const tampilkan = namaDivisi => {
+
+  /* =====================================================
+     TAMPILKAN DIVISI
+  ===================================================== */
+
+  function tampilkan(namaDivisi) {
+
     divisiBox.innerHTML = "";
 
     const dataTampil =
       namaDivisi === "Semua"
+
         ? pengurus.filter(
-            orang => String(orang.divisi || "").trim()
+            orang =>
+              String(
+                orang.divisi || ""
+              ).trim()
           )
+
         : pengurus.filter(
             orang =>
-              String(orang.divisi || "").trim() === namaDivisi
+              String(
+                orang.divisi || ""
+              ).trim() === namaDivisi
           );
 
+
     if (dataTampil.length === 0) {
+
       divisiBox.innerHTML = `
         <p class="lead">
           Belum ada anggota di divisi ini.
         </p>
       `;
+
       return;
     }
 
-    const people = el("div", "people");
+
+    const people =
+      document.createElement("div");
+
+    people.className = "people";
+
 
     dataTampil.forEach(orang => {
-      people.appendChild(kartuOrang(orang));
-    });
 
-    divisiBox.appendChild(people);
-  };
-
-  semuaBtn.addEventListener("click", () => {
-    filter
-      .querySelectorAll("button")
-      .forEach(button =>
-        button.setAttribute("aria-pressed", "false")
+      people.appendChild(
+        kartuOrang(orang)
       );
 
-    semuaBtn.setAttribute("aria-pressed", "true");
-
-    tampilkan("Semua");
-  });
-
-  daftarDivisi.forEach(namaDivisi => {
-    const button = document.createElement("button");
-
-    button.type = "button";
-    button.textContent = namaDivisi;
-    button.setAttribute("aria-pressed", "false");
-
-    button.addEventListener("click", () => {
-      filter
-        .querySelectorAll("button")
-        .forEach(btn =>
-          btn.setAttribute("aria-pressed", "false")
-        );
-
-      button.setAttribute("aria-pressed", "true");
-
-      tampilkan(namaDivisi);
     });
 
-    filter.appendChild(button);
-  });
+
+    divisiBox.appendChild(
+      people
+    );
+  }
+
+
+  /* =====================================================
+     BUTTON SEMUA
+  ===================================================== */
+
+  semuaBtn.addEventListener(
+    "click",
+    () => {
+
+      filter
+        .querySelectorAll("button")
+        .forEach(button => {
+
+          button.setAttribute(
+            "aria-pressed",
+            "false"
+          );
+
+        });
+
+      semuaBtn.setAttribute(
+        "aria-pressed",
+        "true"
+      );
+
+      tampilkan("Semua");
+    }
+  );
+
+
+  /* =====================================================
+     BUTTON DIVISI
+  ===================================================== */
+
+  daftarDivisi.forEach(
+    namaDivisi => {
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+
+      button.textContent =
+        namaDivisi;
+
+      button.setAttribute(
+        "aria-pressed",
+        "false"
+      );
+
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          filter
+            .querySelectorAll("button")
+            .forEach(btn => {
+
+              btn.setAttribute(
+                "aria-pressed",
+                "false"
+              );
+
+            });
+
+          button.setAttribute(
+            "aria-pressed",
+            "true"
+          );
+
+          tampilkan(
+            namaDivisi
+          );
+        }
+      );
+
+
+      filter.appendChild(
+        button
+      );
+    }
+  );
+
 
   tampilkan("Semua");
 }
 
-/* ---------------------------------------------------------
-   RENDER AGENDA
---------------------------------------------------------- */
+
+/* =========================================================
+   AGENDA
+========================================================= */
 
 function renderAgenda(data) {
-  const box = $("#agenda-list");
+
+  const box =
+    document.getElementById(
+      "agenda-list"
+    );
 
   if (!box) return;
 
-  const agenda = Array.isArray(data) ? data : [];
+  const agenda =
+    Array.isArray(data)
+      ? data
+      : [];
+
+  box.innerHTML = "";
 
   if (agenda.length === 0) {
+
     box.innerHTML = `
       <p class="lead">
         Belum ada agenda.
       </p>
     `;
+
     return;
   }
 
-  const wrap = el("div", "wrap-x");
 
-  const table = document.createElement("table");
+  const wrap =
+    document.createElement("div");
+
+  wrap.className = "wrap-x";
+
+
+  const table =
+    document.createElement("table");
+
   table.className = "agenda";
+
 
   table.innerHTML = `
     <thead>
@@ -300,24 +460,41 @@ function renderAgenda(data) {
     </thead>
   `;
 
-  const tbody = document.createElement("tbody");
+
+  const tbody =
+    document.createElement("tbody");
+
 
   agenda.forEach(item => {
-    const tr = document.createElement("tr");
+
+    const tr =
+      document.createElement("tr");
 
     tr.innerHTML = `
       <td>
-        <strong>${escapeHTML(item.kegiatan || "-")}</strong>
+        <strong>
+          ${escapeHTML(
+            item.kegiatan || "-"
+          )}
+        </strong>
       </td>
 
       <td>
-        ${escapeHTML(item.waktu || "-")}
+        ${escapeHTML(
+          item.waktu || "-"
+        )}
       </td>
 
       <td>
         ${
           item.jenis
-            ? `<span class="tag">${escapeHTML(item.jenis)}</span>`
+            ? `
+              <span class="tag">
+                ${escapeHTML(
+                  item.jenis
+                )}
+              </span>
+            `
             : "-"
         }
       </td>
@@ -326,75 +503,131 @@ function renderAgenda(data) {
     tbody.appendChild(tr);
   });
 
+
   table.appendChild(tbody);
+
   wrap.appendChild(table);
+
   box.appendChild(wrap);
 }
 
-/* ---------------------------------------------------------
-   RENDER KARYA
---------------------------------------------------------- */
+
+/* =========================================================
+   KARYA
+========================================================= */
 
 function renderKarya(data) {
-  const filter = $("#filter-karya");
-  const pub = $("#pub");
+
+  const filter =
+    document.getElementById(
+      "filter-karya"
+    );
+
+  const pub =
+    document.getElementById(
+      "pub"
+    );
 
   if (!filter || !pub) return;
 
-  const karya = Array.isArray(data) ? data : [];
+  const karya =
+    Array.isArray(data)
+      ? data
+      : [];
 
   filter.innerHTML = "";
   pub.innerHTML = "";
 
+
   if (karya.length === 0) {
+
     pub.innerHTML = `
       <p class="lead">
         Belum ada karya.
       </p>
     `;
+
     return;
   }
+
 
   const jenis = [
     ...new Set(
       karya
-        .map(item => String(item.jenis || "").trim())
+        .map(
+          item =>
+            String(
+              item.jenis || ""
+            ).trim()
+        )
         .filter(Boolean)
     )
   ];
 
-  const semuaBtn = document.createElement("button");
+
+  const semuaBtn =
+    document.createElement("button");
 
   semuaBtn.type = "button";
+
   semuaBtn.textContent = "Semua";
-  semuaBtn.setAttribute("aria-pressed", "true");
 
-  filter.appendChild(semuaBtn);
+  semuaBtn.setAttribute(
+    "aria-pressed",
+    "true"
+  );
 
-  const tampilkan = jenisAktif => {
+  filter.appendChild(
+    semuaBtn
+  );
+
+
+  function tampilkan(
+    jenisAktif
+  ) {
+
     pub.innerHTML = "";
 
     const dataTampil =
       jenisAktif === "Semua"
+
         ? karya
+
         : karya.filter(
             item =>
-              String(item.jenis || "").trim() === jenisAktif
+              String(
+                item.jenis || ""
+              ).trim() ===
+              jenisAktif
           );
 
+
     dataTampil.forEach(item => {
-      const article = document.createElement("article");
+
+      const article =
+        document.createElement(
+          "article"
+        );
 
       article.innerHTML = `
         <h3>
-          ${escapeHTML(item.judul || "Tanpa judul")}
+          ${escapeHTML(
+            item.judul ||
+            "Tanpa judul"
+          )}
         </h3>
 
         <p>
-          ${escapeHTML(item.jenis || "Karya")}
+          ${escapeHTML(
+            item.jenis ||
+            "Karya"
+          )}
+
           ${
             item.tahun
-              ? ` • ${escapeHTML(item.tahun)}`
+              ? ` • ${escapeHTML(
+                  item.tahun
+                )}`
               : ""
           }
         </p>
@@ -403,139 +636,249 @@ function renderKarya(data) {
           item.penulis
             ? `
               <p style="margin-top:8px;">
-                Oleh ${escapeHTML(item.penulis)}
+                Oleh
+                ${escapeHTML(
+                  item.penulis
+                )}
               </p>
             `
             : ""
         }
       `;
 
-      pub.appendChild(article);
-    });
-  };
-
-  semuaBtn.addEventListener("click", () => {
-    filter
-      .querySelectorAll("button")
-      .forEach(button =>
-        button.setAttribute("aria-pressed", "false")
+      pub.appendChild(
+        article
       );
+    });
+  }
 
-    semuaBtn.setAttribute("aria-pressed", "true");
 
-    tampilkan("Semua");
-  });
+  semuaBtn.addEventListener(
+    "click",
+    () => {
 
-  jenis.forEach(namaJenis => {
-    const button = document.createElement("button");
-
-    button.type = "button";
-    button.textContent = namaJenis;
-    button.setAttribute("aria-pressed", "false");
-
-    button.addEventListener("click", () => {
       filter
         .querySelectorAll("button")
-        .forEach(btn =>
-          btn.setAttribute("aria-pressed", "false")
+        .forEach(button =>
+          button.setAttribute(
+            "aria-pressed",
+            "false"
+          )
         );
 
-      button.setAttribute("aria-pressed", "true");
+      semuaBtn.setAttribute(
+        "aria-pressed",
+        "true"
+      );
 
-      tampilkan(namaJenis);
-    });
+      tampilkan("Semua");
+    }
+  );
 
-    filter.appendChild(button);
-  });
+
+  jenis.forEach(
+    namaJenis => {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+      button.type = "button";
+
+      button.textContent =
+        namaJenis;
+
+      button.setAttribute(
+        "aria-pressed",
+        "false"
+      );
+
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          filter
+            .querySelectorAll("button")
+            .forEach(btn =>
+              btn.setAttribute(
+                "aria-pressed",
+                "false"
+              )
+            );
+
+          button.setAttribute(
+            "aria-pressed",
+            "true"
+          );
+
+          tampilkan(
+            namaJenis
+          );
+        }
+      );
+
+
+      filter.appendChild(
+        button
+      );
+    }
+  );
+
 
   tampilkan("Semua");
 }
 
-/* ---------------------------------------------------------
-   STATISTIK DASHBOARD
---------------------------------------------------------- */
 
-function renderStatistik(pengurus, agenda, karya) {
-  const sPengurus = $("#s-pengurus");
-  const sDivisi = $("#s-divisi");
-  const sAgenda = $("#s-agenda");
-  const sKarya = $("#s-karya");
-  const barKarya = $("#bar-karya");
+/* =========================================================
+   STATISTIK
+========================================================= */
 
-  const dataPengurus = Array.isArray(pengurus)
-    ? pengurus
-    : [];
+function renderStatistik(
+  pengurus,
+  agenda,
+  karya
+) {
 
-  const dataAgenda = Array.isArray(agenda)
-    ? agenda
-    : [];
-
-  const dataKarya = Array.isArray(karya)
-    ? karya
-    : [];
-
-  /* JUMLAH PENGURUS */
-  if (sPengurus) {
-    sPengurus.textContent = dataPengurus.length;
-  }
-
-  /* JUMLAH DIVISI */
-  if (sDivisi) {
-    const divisi = new Set(
-      dataPengurus
-        .map(item => String(item.divisi || "").trim())
-        .filter(Boolean)
+  const sPengurus =
+    document.getElementById(
+      "s-pengurus"
     );
 
-    sDivisi.textContent = divisi.size;
+  const sDivisi =
+    document.getElementById(
+      "s-divisi"
+    );
+
+  const sAgenda =
+    document.getElementById(
+      "s-agenda"
+    );
+
+  const sKarya =
+    document.getElementById(
+      "s-karya"
+    );
+
+  const barKarya =
+    document.getElementById(
+      "bar-karya"
+    );
+
+
+  const dataPengurus =
+    Array.isArray(pengurus)
+      ? pengurus
+      : [];
+
+  const dataAgenda =
+    Array.isArray(agenda)
+      ? agenda
+      : [];
+
+  const dataKarya =
+    Array.isArray(karya)
+      ? karya
+      : [];
+
+
+  if (sPengurus) {
+    sPengurus.textContent =
+      dataPengurus.length;
   }
 
-  /* JUMLAH KEGIATAN */
-  if (sAgenda) {
-    sAgenda.textContent = dataAgenda.length;
-  }
 
-  /* JUMLAH KARYA */
-  if (sKarya) {
-    sKarya.textContent = dataKarya.length;
-  }
+  if (sDivisi) {
 
-  /* BAR KARYA */
-  if (barKarya) {
-    barKarya.innerHTML = "";
-
-    const jenisMap = {};
-
-    dataKarya.forEach(item => {
-      const jenis = String(item.jenis || "Lainnya").trim();
-
-      if (!jenisMap[jenis]) {
-        jenisMap[jenis] = 0;
-      }
-
-      jenisMap[jenis]++;
-    });
-
-    const daftarJenis = Object.entries(jenisMap);
-
-    if (daftarJenis.length === 0) {
-      barKarya.innerHTML = `
-        <p class="lead">
-          Belum ada data karya.
-        </p>
-      `;
-      return;
-    }
-
-    const total = dataKarya.length;
-
-    daftarJenis.forEach(([jenis, jumlah]) => {
-      const persen = Math.round(
-        (jumlah / total) * 100
+    const divisi =
+      new Set(
+        dataPengurus
+          .map(
+            item =>
+              String(
+                item.divisi || ""
+              ).trim()
+          )
+          .filter(Boolean)
       );
 
-      const row = document.createElement("div");
-      row.className = "bar";
+    sDivisi.textContent =
+      divisi.size;
+  }
+
+
+  if (sAgenda) {
+    sAgenda.textContent =
+      dataAgenda.length;
+  }
+
+
+  if (sKarya) {
+    sKarya.textContent =
+      dataKarya.length;
+  }
+
+
+  if (!barKarya) return;
+
+  barKarya.innerHTML = "";
+
+  const jenisMap = {};
+
+
+  dataKarya.forEach(item => {
+
+    const jenis =
+      String(
+        item.jenis ||
+        "Lainnya"
+      ).trim();
+
+    jenisMap[jenis] =
+      (jenisMap[jenis] || 0) + 1;
+  });
+
+
+  const daftarJenis =
+    Object.entries(
+      jenisMap
+    );
+
+
+  if (daftarJenis.length === 0) {
+
+    barKarya.innerHTML = `
+      <p class="lead">
+        Belum ada data karya.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  const total =
+    dataKarya.length;
+
+
+  daftarJenis.forEach(
+    ([jenis, jumlah]) => {
+
+      const persen =
+        Math.round(
+          (jumlah / total) * 100
+        );
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "bar";
+
 
       row.innerHTML = `
         <span>
@@ -554,104 +897,178 @@ function renderStatistik(pengurus, agenda, karya) {
         </b>
       `;
 
-      barKarya.appendChild(row);
-    });
-  }
+
+      barKarya.appendChild(
+        row
+      );
+    }
+  );
 }
 
-/* ---------------------------------------------------------
-   BIDANG KAJIAN
---------------------------------------------------------- */
+
+/* =========================================================
+   KAJIAN
+========================================================= */
 
 function renderKajian(data) {
-  const fields = document.querySelector(".fields");
+
+  const fields =
+    document.querySelector(
+      ".fields"
+    );
 
   if (!fields) return;
 
-  const kajian = Array.isArray(data) ? data : [];
+  const kajian =
+    Array.isArray(data)
+      ? data
+      : [];
 
-  /*
-    Kalau tabel kajian kosong, desain awal tetap dipakai.
-  */
+
   if (kajian.length === 0) {
     return;
   }
 
-  /*
-    Hanya tampilkan kajian yang statusnya Aktif.
-  */
-  const aktif = kajian.filter(item => {
-    const status = String(item.status || "Aktif")
-      .trim()
-      .toLowerCase();
 
-    return status === "aktif";
-  });
+  const aktif =
+    kajian.filter(item => {
+
+      const status =
+        String(
+          item.status ||
+          "Aktif"
+        )
+        .trim()
+        .toLowerCase();
+
+      return status === "aktif";
+    });
+
 
   if (aktif.length === 0) {
     return;
   }
 
+
   fields.innerHTML = "";
 
-  aktif.forEach(item => {
-    const field = document.createElement("div");
 
-    field.className = "field";
+  aktif.forEach(item => {
+
+    const field =
+      document.createElement(
+        "div"
+      );
+
+    field.className =
+      "field";
+
 
     field.innerHTML = `
       <h3>
-        ${escapeHTML(item.judul || item.bidang || "Bidang Kajian")}
+        ${escapeHTML(
+          item.judul ||
+          item.bidang ||
+          "Bidang Kajian"
+        )}
       </h3>
 
       <p>
-        ${escapeHTML(item.deskripsi || "")}
+        ${escapeHTML(
+          item.deskripsi || ""
+        )}
       </p>
     `;
 
-    fields.appendChild(field);
+
+    fields.appendChild(
+      field
+    );
   });
 }
 
-/* ---------------------------------------------------------
+
+/* =========================================================
    MULAI
---------------------------------------------------------- */
+========================================================= */
 
 async function mulai() {
+
   try {
+
     const [
       pengurus,
       agenda,
       karya,
       kajian
     ] = await Promise.all([
-      ambil("pengurus", "urutan"),
-      ambil("agenda", "id"),
-      ambil("karya", "tahun"),
-      ambil("kajian", "urutan")
+
+      ambil(
+        "pengurus",
+        "urutan"
+      ),
+
+      ambil(
+        "agenda",
+        "id"
+      ),
+
+      ambil(
+        "karya",
+        "tahun"
+      ),
+
+      ambil(
+        "kajian",
+        "urutan"
+      )
+
     ]);
 
-    renderPengurus(pengurus);
-    renderAgenda(agenda);
-    renderKarya(karya);
+
+    console.log(
+      "DATA PENGURUS:",
+      pengurus
+    );
+
+
+    renderPengurus(
+      pengurus
+    );
+
+    renderAgenda(
+      agenda
+    );
+
+    renderKarya(
+      karya
+    );
+
     renderStatistik(
       pengurus,
       agenda,
       karya
     );
-    renderKajian(kajian);
+
+    renderKajian(
+      kajian
+    );
+
 
   } catch (error) {
+
     console.error(
       "Gagal memuat data SKEMA:",
       error
     );
+
   }
 }
 
-/* ---------------------------------------------------------
-   JALANKAN SETELAH HTML SELESAI
---------------------------------------------------------- */
+
+/* =========================================================
+   JALANKAN
+========================================================= */
 
 document.addEventListener(
   "DOMContentLoaded",
