@@ -1,0 +1,2944 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pengurus — SKEMA UNINDRA</title>
+
+<script src="config.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f6f8;
+color:#111827;
+}
+
+.hidden{
+display:none!important;
+}
+
+.login-page{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:#111827;
+}
+
+.login-box{
+width:100%;
+max-width:420px;
+background:white;
+padding:30px;
+border-radius:18px;
+box-shadow:0 20px 50px #0003;
+}
+
+.login-box h1{
+margin-top:0;
+}
+
+.login-box p,
+.muted{
+color:#6b7280;
+}
+
+.app{
+min-height:100vh;
+}
+
+header{
+background:#111827;
+color:white;
+padding:18px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+header h1{
+margin:0;
+font-size:21px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:25px;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+.tab{
+border:0;
+background:white;
+padding:12px 18px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+color:#374151;
+box-shadow:0 2px 8px #0001;
+}
+
+.tab.active{
+background:#111827;
+color:white;
+}
+
+.panel{
+background:white;
+padding:25px;
+border-radius:16px;
+box-shadow:0 3px 15px #0001;
+margin-bottom:25px;
+}
+
+.panel h2{
+margin-top:0;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:repeat(
+2,
+minmax(0,1fr)
+);
+gap:15px;
+}
+
+.full{
+grid-column:1/-1;
+}
+
+label{
+display:block;
+font-weight:bold;
+margin-bottom:7px;
+}
+
+input,
+select,
+textarea{
+width:100%;
+padding:12px;
+border:1px solid #d1d5db;
+border-radius:9px;
+font:inherit;
+background:white;
+}
+
+textarea{
+min-height:110px;
+resize:vertical;
+}
+
+.btn{
+border:0;
+padding:11px 17px;
+border-radius:9px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn-primary{
+background:#111827;
+color:white;
+}
+
+.btn-secondary{
+background:#e5e7eb;
+color:#111827;
+}
+
+.btn-danger{
+background:#dc2626;
+color:white;
+}
+
+.actions{
+display:flex;
+gap:10px;
+margin-top:18px;
+flex-wrap:wrap;
+}
+
+.preview{
+margin-top:12px;
+}
+
+.preview img{
+width:180px;
+max-height:150px;
+object-fit:cover;
+border-radius:12px;
+border:1px solid #ddd;
+}
+
+.pdf-preview{
+padding:15px;
+background:#f3f4f6;
+border-radius:10px;
+margin-top:10px;
+}
+
+.pdf-link{
+display:inline-block;
+margin-top:8px;
+text-decoration:none;
+color:#2563eb;
+font-weight:bold;
+}
+
+.table-wrap{
+overflow-x:auto;
+margin-top:20px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:700px;
+}
+
+th,
+td{
+text-align:left;
+padding:12px;
+border-bottom:1px solid #e5e7eb;
+vertical-align:middle;
+}
+
+th{
+background:#f9fafb;
+}
+
+.thumb{
+width:70px;
+height:55px;
+object-fit:cover;
+border-radius:8px;
+}
+
+.status{
+margin-top:15px;
+padding:12px;
+border-radius:9px;
+background:#f3f4f6;
+}
+
+@media(max-width:700px){
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+.full{
+grid-column:auto;
+}
+
+header{
+align-items:flex-start;
+flex-direction:column;
+gap:12px;
+}
+
+.container{
+padding:15px;
+}
+
+.panel{
+padding:18px;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= LOGIN ================= -->
+
+<section
+id="login-page"
+class="login-page">
+
+<div class="login-box">
+
+<h1>Pengurus SKEMA</h1>
+
+<p>
+Masuk menggunakan akun pengurus.
+</p>
+
+
+<form id="login-form">
+
+
+<label>Email</label>
+
+<input
+id="email"
+type="email"
+required
+>
+
+
+<br><br>
+
+
+<label>Password</label>
+
+<input
+id="password"
+type="password"
+required
+>
+
+
+<div class="actions">
+
+<button
+class="btn btn-primary"
+type="submit">
+
+Masuk
+
+</button>
+
+</div>
+
+
+<div
+id="login-status"
+class="status hidden">
+</div>
+
+
+</form>
+
+</div>
+
+</section>
+
+
+
+<!-- ================= APP ================= -->
+
+<section
+id="pengurus-app"
+class="app hidden">
+
+
+<header>
+
+<h1>
+SKEMA UNINDRA — Pengurus
+</h1>
+
+<button
+id="btn-logout"
+class="btn btn-danger">
+
+Keluar
+
+</button>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- TABS -->
+
+<div class="tabs">
+
+<button
+class="tab active"
+data-tab="agenda-panel">
+
+Agenda
+
+</button>
+
+
+<button
+class="tab"
+data-tab="kajian-panel">
+
+Kajian
+
+</button>
+
+
+<button
+class="tab"
+data-tab="karya-panel">
+
+Karya
+
+</button>
+
+</div>
+
+
+
+<!-- ================= AGENDA ================= -->
+
+<section
+id="agenda-panel"
+class="tab-panel">
+
+
+<div class="panel">
+
+
+<h2 id="agenda-form-title">
+Tambah Agenda
+</h2>
+
+
+<form id="agenda-form">
+
+
+<input
+type="hidden"
+id="agenda-id"
+>
+
+
+<div class="form-grid">
+
+
+<div class="full">
+
+<label>
+Nama Kegiatan
+</label>
+
+<input
+id="kegiatan"
+type="text"
+required
+>
+
+</div>
+
+
+<div>
+
+<label>
+Waktu
+</label>
+
+<input
+id="waktu"
+type="text"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Jenis
+</label>
+
+<select id="jenis">
+
+<option value="Seminar">
+Seminar
+</option>
+
+<option value="Diskusi">
+Diskusi
+</option>
+
+<option value="Riset">
+Riset
+</option>
+
+<option value="Workshop">
+Workshop
+</option>
+
+<option value="Lainnya">
+Lainnya
+</option>
+
+</select>
+
+</div>
+
+
+<div class="full">
+
+<label>
+Foto Agenda
+</label>
+
+<input
+id="foto-agenda"
+type="file"
+accept="image/*"
+>
+
+<div
+id="preview-foto"
+class="preview">
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="actions">
+
+
+<button
+id="btn-simpan-agenda"
+class="btn btn-primary"
+type="submit">
+
+Simpan Agenda
+
+</button>
+
+
+<button
+id="btn-batal-agenda"
+type="button"
+class="btn btn-secondary hidden">
+
+Batal Edit
+
+</button>
+
+
+</div>
+
+
+<div
+id="agenda-status"
+class="status hidden">
+</div>
+
+
+</form>
+
+</div>
+
+
+
+<div class="panel">
+
+
+<h2>
+Data Agenda
+</h2>
+
+
+<div class="table-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Foto</th>
+
+<th>Kegiatan</th>
+
+<th>Waktu</th>
+
+<th>Jenis</th>
+
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+id="data-agenda">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+</div>
+
+
+</section>
+
+
+
+<!-- ================= KAJIAN ================= -->
+
+<section
+id="kajian-panel"
+class="tab-panel hidden">
+
+
+<div class="panel">
+
+
+<h2 id="kajian-form-title">
+Tambah Kajian
+</h2>
+
+
+<form id="kajian-form">
+
+
+<input
+type="hidden"
+id="kajian-id"
+>
+
+
+<div class="form-grid">
+
+
+<div class="full">
+
+<label>
+Judul Kajian
+</label>
+
+<input
+id="kajian-judul"
+required
+>
+
+</div>
+
+
+<div>
+
+<label>
+Bidang Kajian
+</label>
+
+<select
+id="kajian-bidang"
+required>
+
+<option value="">
+Pilih bidang
+</option>
+
+<option>
+Pendidikan & Pembelajaran
+</option>
+
+<option>
+Sosial & Kebijakan
+</option>
+
+<option>
+Sains & Teknologi
+</option>
+
+<option>
+Bahasa & Budaya
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Penulis
+</label>
+
+<input
+id="kajian-penulis"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Tahun
+</label>
+
+<input
+id="kajian-tahun"
+type="number"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Status
+</label>
+
+<select id="kajian-status">
+
+<option>
+Aktif
+</option>
+
+<option>
+Nonaktif
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Urutan
+</label>
+
+<input
+id="kajian-urutan"
+type="number"
+value="0"
+>
+
+</div>
+
+
+<div class="full">
+
+<label>
+Deskripsi
+</label>
+
+<textarea
+id="kajian-deskripsi">
+</textarea>
+
+</div>
+
+
+</div>
+
+
+<div class="actions">
+
+
+<button
+id="btn-simpan-kajian"
+class="btn btn-primary"
+type="submit">
+
+Simpan Kajian
+
+</button>
+
+
+<button
+id="btn-batal-kajian"
+type="button"
+class="btn btn-secondary hidden">
+
+Batal Edit
+
+</button>
+
+
+</div>
+
+
+<div
+id="kajian-status"
+class="status hidden">
+</div>
+
+
+</form>
+
+</div>
+
+
+
+<div class="panel">
+
+
+<h2>
+Data Kajian
+</h2>
+
+
+<div class="table-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>Judul</th>
+
+<th>Bidang</th>
+
+<th>Penulis</th>
+
+<th>Tahun</th>
+
+<th>Status</th>
+
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+id="data-kajian">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+</div>
+
+
+</section>
+
+
+
+<!-- ================= KARYA ================= -->
+
+<section
+id="karya-panel"
+class="tab-panel hidden">
+
+
+<div class="panel">
+
+
+<h2 id="karya-form-title">
+Tambah Karya
+</h2>
+
+
+<form id="karya-form">
+
+
+<input
+type="hidden"
+id="karya-id"
+>
+
+
+<div class="form-grid">
+
+
+<div class="full">
+
+<label>
+Judul Karya
+</label>
+
+<input
+id="karya-judul"
+type="text"
+required
+>
+
+</div>
+
+
+<div>
+
+<label>
+Jenis Karya
+</label>
+
+<select id="karya-jenis">
+
+<option>
+Artikel
+</option>
+
+<option>
+Jurnal
+</option>
+
+<option>
+Esai
+</option>
+
+<option>
+Laporan Riset
+</option>
+
+<option>
+Makalah
+</option>
+
+<option>
+Lainnya
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Penulis
+</label>
+
+<input
+id="karya-penulis"
+type="text"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Tahun
+</label>
+
+<input
+id="karya-tahun"
+type="number"
+>
+
+</div>
+
+
+<div class="full">
+
+<label>
+File Karya
+</label>
+
+<input
+id="foto-karya"
+type="file"
+accept="image/*,.pdf,application/pdf"
+>
+
+<p class="muted">
+Bisa upload JPG, PNG, WebP atau PDF.
+</p>
+
+
+<div
+id="preview-karya"
+class="preview">
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<div class="actions">
+
+
+<button
+id="btn-simpan-karya"
+class="btn btn-primary"
+type="submit">
+
+Simpan Karya
+
+</button>
+
+
+<button
+id="btn-batal-karya"
+type="button"
+class="btn btn-secondary hidden">
+
+Batal Edit
+
+</button>
+
+
+</div>
+
+
+<div
+id="karya-status"
+class="status hidden">
+</div>
+
+
+</form>
+
+</div>
+
+
+
+<div class="panel">
+
+
+<h2>
+Data Karya
+</h2>
+
+
+<div class="table-wrap">
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>File</th>
+
+<th>Judul</th>
+
+<th>Jenis</th>
+
+<th>Penulis</th>
+
+<th>Tahun</th>
+
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+id="data-karya">
+</tbody>
+
+
+</table>
+
+
+</div>
+
+</div>
+
+
+</section>
+
+
+</main>
+
+</section>
+
+
+
+<script>
+
+
+/* ================= SUPABASE ================= */
+
+let sb=null;
+
+
+if(
+typeof SUPABASE_URL!=="undefined" &&
+typeof SUPABASE_ANON_KEY!=="undefined" &&
+SUPABASE_URL &&
+SUPABASE_ANON_KEY
+){
+
+sb=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+}
+
+
+
+/* ================= HELPER ================= */
+
+function $(id){
+
+return document.getElementById(id);
+
+}
+
+
+function showStatus(
+id,
+message,
+error=false
+){
+
+const box=$(id);
+
+if(!box)return;
+
+box.textContent=message;
+
+box.classList.remove("hidden");
+
+box.style.background=
+error
+?
+"#fee2e2"
+:
+"#ecfdf5";
+
+box.style.color=
+error
+?
+"#991b1b"
+:
+"#065f46";
+
+}
+
+
+function hideStatus(id){
+
+const box=$(id);
+
+if(box)
+box.classList.add("hidden");
+
+}
+
+
+function escapeHtml(value){
+
+return String(value??"")
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+
+/* ================= CEK PENGURUS ================= */
+
+async function cekPengurus(userId){
+
+const {data,error}=await sb
+.from("pengurus_users")
+.select("user_id")
+.eq("user_id",userId)
+.maybeSingle();
+
+
+if(error){
+
+console.error(error);
+
+return false;
+
+}
+
+
+return !!data;
+
+}
+
+
+
+/* ================= TAMPILKAN APP ================= */
+
+async function tampilkanApp(user){
+
+if(!user)return;
+
+
+const pengurus=
+await cekPengurus(user.id);
+
+
+if(!pengurus){
+
+await sb.auth.signOut();
+
+
+showStatus(
+"login-status",
+"Akun ini bukan akun pengurus.",
+true
+);
+
+return;
+
+}
+
+
+$("login-page")
+.classList.add("hidden");
+
+
+$("pengurus-app")
+.classList.remove("hidden");
+
+
+await loadAgenda();
+
+await loadKajian();
+
+await loadKarya();
+
+}
+
+
+
+/* ================= LOGIN ================= */
+
+$("login-form")
+.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+hideStatus("login-status");
+
+
+const email=
+$("email").value.trim();
+
+
+const password=
+$("password").value;
+
+
+const {data,error}=
+await sb.auth.signInWithPassword({
+
+email,
+password
+
+});
+
+
+if(error){
+
+showStatus(
+"login-status",
+error.message,
+true
+);
+
+return;
+
+}
+
+
+await tampilkanApp(
+data.user
+);
+
+});
+
+
+
+/* ================= LOGOUT ================= */
+
+$("btn-logout")
+.addEventListener(
+"click",
+async()=>{
+
+await sb.auth.signOut();
+
+location.reload();
+
+});
+
+
+
+/* ================= TABS ================= */
+
+document
+.querySelectorAll(".tab")
+.forEach(button=>{
+
+button.addEventListener(
+"click",
+()=>{
+
+document
+.querySelectorAll(".tab")
+.forEach(x=>
+x.classList.remove("active")
+);
+
+
+document
+.querySelectorAll(".tab-panel")
+.forEach(x=>
+x.classList.add("hidden")
+);
+
+
+button.classList.add("active");
+
+
+$(button.dataset.tab)
+.classList.remove("hidden");
+
+});
+
+});
+
+
+
+/* ================= STORAGE ================= */
+
+function ambilPath(
+url,
+bucket
+){
+
+if(!url)return null;
+
+
+const marker=
+`/storage/v1/object/public/${bucket}/`;
+
+
+const index=
+url.indexOf(marker);
+
+
+if(index===-1)return null;
+
+
+return url.substring(
+index+marker.length
+);
+
+}
+
+
+async function hapusFoto(
+url,
+bucket
+){
+
+const path=
+ambilPath(url,bucket);
+
+
+if(!path)return;
+
+
+await sb.storage
+.from(bucket)
+.remove([path]);
+
+}
+
+
+
+/* ================= AGENDA ================= */
+
+let agendaFotoLama="";
+
+
+async function uploadFotoAgenda(file){
+
+if(!file)return "";
+
+
+const ext=
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
+
+const path=
+"agenda/"+
+Date.now()+"-"+
+Math.random()
+.toString(36)
+.substring(2,9)+
+"."+
+ext;
+
+
+const {error}=
+await sb.storage
+.from("agenda-foto")
+.upload(
+path,
+file,
+{
+cacheControl:"3600",
+upsert:false
+}
+);
+
+
+if(error)throw error;
+
+
+return sb.storage
+.from("agenda-foto")
+.getPublicUrl(path)
+.data.publicUrl;
+
+}
+
+
+
+/* PREVIEW AGENDA */
+
+$("foto-agenda")
+.addEventListener(
+"change",
+function(){
+
+const file=
+this.files[0];
+
+
+$("preview-foto")
+.innerHTML="";
+
+
+if(!file)return;
+
+
+const img=
+document.createElement("img");
+
+
+img.src=
+URL.createObjectURL(file);
+
+
+$("preview-foto")
+.appendChild(img);
+
+});
+
+
+
+/* SIMPAN AGENDA */
+
+$("agenda-form")
+.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+
+try{
+
+$("btn-simpan-agenda")
+.disabled=true;
+
+
+let foto=
+agendaFotoLama;
+
+
+const file=
+$("foto-agenda")
+.files[0];
+
+
+if(file){
+
+foto=
+await uploadFotoAgenda(file);
+
+}
+
+
+const payload={
+
+kegiatan:
+$("kegiatan")
+.value
+.trim(),
+
+waktu:
+$("waktu")
+.value
+.trim(),
+
+jenis:
+$("jenis")
+.value,
+
+foto
+
+};
+
+
+const id=
+$("agenda-id").value;
+
+
+if(id){
+
+const {error}=
+await sb
+.from("agenda")
+.update(payload)
+.eq("id",id);
+
+
+if(error)throw error;
+
+}else{
+
+const {error}=
+await sb
+.from("agenda")
+.insert(payload);
+
+
+if(error)throw error;
+
+}
+
+
+resetAgendaForm();
+
+await loadAgenda();
+
+
+showStatus(
+"agenda-status",
+"Agenda berhasil disimpan."
+);
+
+
+}catch(error){
+
+showStatus(
+"agenda-status",
+error.message,
+true
+);
+
+}finally{
+
+$("btn-simpan-agenda")
+.disabled=false;
+
+}
+
+});
+
+
+
+/* LOAD AGENDA */
+
+async function loadAgenda(){
+
+const {data,error}=
+await sb
+.from("agenda")
+.select("*")
+.order("id",{ascending:true});
+
+
+if(error){
+
+showStatus(
+"agenda-status",
+error.message,
+true
+);
+
+return;
+
+}
+
+
+const tbody=
+$("data-agenda");
+
+
+tbody.innerHTML="";
+
+
+if(!data?.length){
+
+tbody.innerHTML=
+`
+<tr>
+<td colspan="5">
+Belum ada agenda.
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+
+data.forEach(a=>{
+
+const tr=
+document.createElement("tr");
+
+
+tr.innerHTML=`
+
+<td>
+
+${
+a.foto
+?
+`
+<img
+class="thumb"
+src="${escapeHtml(a.foto)}"
+alt="Foto agenda">
+`
+:
+"-"
+}
+
+</td>
+
+
+<td>
+${escapeHtml(a.kegiatan)}
+</td>
+
+
+<td>
+${escapeHtml(a.waktu)}
+</td>
+
+
+<td>
+${escapeHtml(a.jenis)}
+</td>
+
+
+<td>
+
+<button
+class="btn btn-secondary"
+onclick="editAgenda(${a.id})">
+
+Edit
+
+</button>
+
+
+<button
+class="btn btn-danger"
+onclick="hapusAgenda(${a.id})">
+
+Hapus
+
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(tr);
+
+});
+
+}
+
+
+
+/* EDIT AGENDA */
+
+async function editAgenda(id){
+
+const {data,error}=
+await sb
+.from("agenda")
+.select("*")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+$("agenda-id").value=
+data.id;
+
+
+$("kegiatan").value=
+data.kegiatan||"";
+
+
+$("waktu").value=
+data.waktu||"";
+
+
+$("jenis").value=
+data.jenis||"";
+
+
+agendaFotoLama=
+data.foto||"";
+
+
+$("preview-foto")
+.innerHTML=
+data.foto
+?
+`
+<img
+src="${escapeHtml(data.foto)}">
+`
+:
+"";
+
+
+$("agenda-form-title")
+.textContent=
+"Edit Agenda";
+
+
+$("btn-simpan-agenda")
+.textContent=
+"Update Agenda";
+
+
+$("btn-batal-agenda")
+.classList
+.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+
+/* RESET AGENDA */
+
+$("btn-batal-agenda")
+.addEventListener(
+"click",
+resetAgendaForm
+);
+
+
+function resetAgendaForm(){
+
+$("agenda-form").reset();
+
+$("agenda-id").value="";
+
+$("preview-foto").innerHTML="";
+
+agendaFotoLama="";
+
+
+$("agenda-form-title")
+.textContent=
+"Tambah Agenda";
+
+
+$("btn-simpan-agenda")
+.textContent=
+"Simpan Agenda";
+
+
+$("btn-batal-agenda")
+.classList.add("hidden");
+
+}
+
+
+
+/* HAPUS AGENDA */
+
+async function hapusAgenda(id){
+
+if(!confirm(
+"Hapus agenda ini?"
+))return;
+
+
+const {data,error}=
+await sb
+.from("agenda")
+.select("foto")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+const {error:deleteError}=
+await sb
+.from("agenda")
+.delete()
+.eq("id",id);
+
+
+if(deleteError){
+
+alert(deleteError.message);
+
+return;
+
+}
+
+
+if(data?.foto){
+
+await hapusFoto(
+data.foto,
+"agenda-foto"
+);
+
+}
+
+
+await loadAgenda();
+
+}
+
+
+
+/* ================= KAJIAN ================= */
+
+$("kajian-form")
+.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+
+try{
+
+$("btn-simpan-kajian")
+.disabled=true;
+
+
+const payload={
+
+judul:
+$("kajian-judul")
+.value
+.trim(),
+
+bidang:
+$("kajian-bidang")
+.value,
+
+deskripsi:
+$("kajian-deskripsi")
+.value
+.trim(),
+
+penulis:
+$("kajian-penulis")
+.value
+.trim(),
+
+tahun:
+$("kajian-tahun")
+.value
+?
+Number(
+$("kajian-tahun")
+.value
+)
+:
+null,
+
+status:
+$("kajian-status")
+.value,
+
+urutan:
+$("kajian-urutan")
+.value
+?
+Number(
+$("kajian-urutan")
+.value
+)
+:
+0
+
+};
+
+
+const id=
+$("kajian-id").value;
+
+
+if(id){
+
+const {error}=
+await sb
+.from("kajian")
+.update(payload)
+.eq("id",id);
+
+
+if(error)throw error;
+
+}else{
+
+const {error}=
+await sb
+.from("kajian")
+.insert(payload);
+
+
+if(error)throw error;
+
+}
+
+
+resetKajianForm();
+
+await loadKajian();
+
+
+showStatus(
+"kajian-status",
+"Kajian berhasil disimpan."
+);
+
+
+}catch(error){
+
+showStatus(
+"kajian-status",
+error.message,
+true
+);
+
+}finally{
+
+$("btn-simpan-kajian")
+.disabled=false;
+
+}
+
+});
+
+
+
+/* LOAD KAJIAN */
+
+async function loadKajian(){
+
+const {data,error}=
+await sb
+.from("kajian")
+.select("*")
+.order("urutan",{ascending:true})
+.order("id",{ascending:true});
+
+
+if(error){
+
+showStatus(
+"kajian-status",
+error.message,
+true
+);
+
+return;
+
+}
+
+
+const tbody=
+$("data-kajian");
+
+
+tbody.innerHTML="";
+
+
+if(!data?.length){
+
+tbody.innerHTML=
+`
+<tr>
+<td colspan="6">
+Belum ada kajian.
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+
+data.forEach(k=>{
+
+const tr=
+document.createElement("tr");
+
+
+tr.innerHTML=`
+
+<td>
+${escapeHtml(k.judul)}
+</td>
+
+<td>
+${escapeHtml(k.bidang)}
+</td>
+
+<td>
+${escapeHtml(k.penulis||"-")}
+</td>
+
+<td>
+${k.tahun??"-"}
+</td>
+
+<td>
+${escapeHtml(k.status||"Aktif")}
+</td>
+
+<td>
+
+<button
+class="btn btn-secondary"
+onclick="editKajian('${k.id}')">
+
+Edit
+
+</button>
+
+
+<button
+class="btn btn-danger"
+onclick="hapusKajian('${k.id}')">
+
+Hapus
+
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(tr);
+
+});
+
+}
+
+
+
+/* EDIT KAJIAN */
+
+async function editKajian(id){
+
+const {data,error}=
+await sb
+.from("kajian")
+.select("*")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+$("kajian-id").value=
+data.id;
+
+
+$("kajian-judul").value=
+data.judul||"";
+
+
+$("kajian-bidang").value=
+data.bidang||"";
+
+
+$("kajian-deskripsi").value=
+data.deskripsi||"";
+
+
+$("kajian-penulis").value=
+data.penulis||"";
+
+
+$("kajian-tahun").value=
+data.tahun??"";
+
+
+$("kajian-status").value=
+data.status||"Aktif";
+
+
+$("kajian-urutan").value=
+data.urutan??0;
+
+
+$("kajian-form-title")
+.textContent=
+"Edit Kajian";
+
+
+$("btn-simpan-kajian")
+.textContent=
+"Update Kajian";
+
+
+$("btn-batal-kajian")
+.classList
+.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+
+/* RESET KAJIAN */
+
+$("btn-batal-kajian")
+.addEventListener(
+"click",
+resetKajianForm
+);
+
+
+function resetKajianForm(){
+
+$("kajian-form").reset();
+
+$("kajian-id").value="";
+
+$("kajian-urutan").value=0;
+
+
+$("kajian-form-title")
+.textContent=
+"Tambah Kajian";
+
+
+$("btn-simpan-kajian")
+.textContent=
+"Simpan Kajian";
+
+
+$("btn-batal-kajian")
+.classList.add("hidden");
+
+}
+
+
+
+/* HAPUS KAJIAN */
+
+async function hapusKajian(id){
+
+if(!confirm(
+"Hapus kajian ini?"
+))return;
+
+
+const {error}=
+await sb
+.from("kajian")
+.delete()
+.eq("id",id);
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+await loadKajian();
+
+}
+
+
+
+/* ================= KARYA ================= */
+
+let karyaFotoLama="";
+
+
+/* UPLOAD KARYA */
+
+async function uploadFileKarya(file){
+
+if(!file)return "";
+
+
+const ext=
+file.name
+.split(".")
+.pop()
+.toLowerCase();
+
+
+const path=
+"karya/"+
+Date.now()+"-"+
+Math.random()
+.toString(36)
+.substring(2,9)+
+"."+
+ext;
+
+
+const {error}=
+await sb.storage
+.from("karya-foto")
+.upload(
+path,
+file,
+{
+cacheControl:"3600",
+upsert:false,
+contentType:file.type
+}
+);
+
+
+if(error)throw error;
+
+
+return sb.storage
+.from("karya-foto")
+.getPublicUrl(path)
+.data.publicUrl;
+
+}
+
+
+
+/* PREVIEW KARYA */
+
+$("foto-karya")
+.addEventListener(
+"change",
+function(){
+
+const file=
+this.files[0];
+
+
+$("preview-karya")
+.innerHTML="";
+
+
+if(!file)return;
+
+
+if(file.type==="application/pdf"){
+
+$("preview-karya")
+.innerHTML=`
+
+<div class="pdf-preview">
+
+<strong>
+📄 File PDF
+</strong>
+
+<br>
+
+<span>
+${escapeHtml(file.name)}
+</span>
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+if(file.type.startsWith("image/")){
+
+const img=
+document.createElement("img");
+
+
+img.src=
+URL.createObjectURL(file);
+
+
+$("preview-karya")
+.appendChild(img);
+
+}
+
+});
+
+
+
+/* SIMPAN KARYA */
+
+$("karya-form")
+.addEventListener(
+"submit",
+async e=>{
+
+e.preventDefault();
+
+
+try{
+
+$("btn-simpan-karya")
+.disabled=true;
+
+
+let foto=
+karyaFotoLama;
+
+
+const file=
+$("foto-karya")
+.files[0];
+
+
+if(file){
+
+const isImage=
+file.type.startsWith(
+"image/"
+);
+
+
+const isPdf=
+file.type===
+"application/pdf";
+
+
+if(!isImage && !isPdf){
+
+throw new Error(
+"File harus berupa gambar atau PDF."
+);
+
+}
+
+
+foto=
+await uploadFileKarya(file);
+
+}
+
+
+const payload={
+
+judul:
+$("karya-judul")
+.value
+.trim(),
+
+jenis:
+$("karya-jenis")
+.value,
+
+penulis:
+$("karya-penulis")
+.value
+.trim(),
+
+tahun:
+$("karya-tahun")
+.value
+?
+Number(
+$("karya-tahun")
+.value
+)
+:
+null,
+
+foto
+
+};
+
+
+const id=
+$("karya-id").value;
+
+
+if(id){
+
+const {error}=
+await sb
+.from("karya")
+.update(payload)
+.eq("id",id);
+
+
+if(error)throw error;
+
+}else{
+
+const {error}=
+await sb
+.from("karya")
+.insert(payload);
+
+
+if(error)throw error;
+
+}
+
+
+resetKaryaForm();
+
+await loadKarya();
+
+
+showStatus(
+"karya-status",
+"Karya berhasil disimpan."
+);
+
+
+}catch(error){
+
+console.error(error);
+
+
+showStatus(
+"karya-status",
+error.message,
+true
+);
+
+}finally{
+
+$("btn-simpan-karya")
+.disabled=false;
+
+}
+
+});
+
+
+
+/* LOAD KARYA */
+
+async function loadKarya(){
+
+const {data,error}=
+await sb
+.from("karya")
+.select("*")
+.order("tahun",{ascending:false})
+.order("id",{ascending:true});
+
+
+if(error){
+
+showStatus(
+"karya-status",
+error.message,
+true
+);
+
+return;
+
+}
+
+
+const tbody=
+$("data-karya");
+
+
+tbody.innerHTML="";
+
+
+if(!data?.length){
+
+tbody.innerHTML=
+`
+<tr>
+<td colspan="6">
+Belum ada karya.
+</td>
+</tr>
+`;
+
+return;
+
+}
+
+
+data.forEach(k=>{
+
+const tr=
+document.createElement("tr");
+
+
+let fileHtml="-";
+
+
+if(k.foto){
+
+const lower=
+k.foto.toLowerCase();
+
+
+const isPdf=
+lower.includes(".pdf");
+
+
+if(isPdf){
+
+fileHtml=`
+
+<div class="pdf-preview">
+
+<strong>
+📄 PDF
+</strong>
+
+<br>
+
+<a
+class="pdf-link"
+href="${escapeHtml(k.foto)}"
+target="_blank">
+
+Lihat PDF
+
+</a>
+
+</div>
+
+`;
+
+}else{
+
+fileHtml=`
+
+<img
+class="thumb"
+src="${escapeHtml(k.foto)}"
+alt="Foto karya">
+
+`;
+
+}
+
+}
+
+
+tr.innerHTML=`
+
+<td>
+${fileHtml}
+</td>
+
+
+<td>
+${escapeHtml(k.judul)}
+</td>
+
+
+<td>
+${escapeHtml(k.jenis||"-")}
+</td>
+
+
+<td>
+${escapeHtml(k.penulis||"-")}
+</td>
+
+
+<td>
+${k.tahun??"-"}
+</td>
+
+
+<td>
+
+<button
+class="btn btn-secondary"
+onclick="editKarya('${k.id}')">
+
+Edit
+
+</button>
+
+
+<button
+class="btn btn-danger"
+onclick="hapusKarya('${k.id}')">
+
+Hapus
+
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(tr);
+
+});
+
+}
+
+
+
+/* EDIT KARYA */
+
+async function editKarya(id){
+
+const {data,error}=
+await sb
+.from("karya")
+.select("*")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+$("karya-id").value=
+data.id;
+
+
+$("karya-judul").value=
+data.judul||"";
+
+
+$("karya-jenis").value=
+data.jenis||"";
+
+
+$("karya-penulis").value=
+data.penulis||"";
+
+
+$("karya-tahun").value=
+data.tahun??"";
+
+
+karyaFotoLama=
+data.foto||"";
+
+
+$("preview-karya")
+.innerHTML="";
+
+
+if(data.foto){
+
+const isPdf=
+data.foto
+.toLowerCase()
+.includes(".pdf");
+
+
+if(isPdf){
+
+$("preview-karya")
+.innerHTML=`
+
+<div class="pdf-preview">
+
+<strong>
+📄 PDF saat ini
+</strong>
+
+<br>
+
+<a
+class="pdf-link"
+href="${escapeHtml(data.foto)}"
+target="_blank">
+
+Lihat PDF
+
+</a>
+
+</div>
+
+`;
+
+}else{
+
+$("preview-karya")
+.innerHTML=`
+
+<img
+src="${escapeHtml(data.foto)}"
+alt="Foto karya">
+
+`;
+
+}
+
+}
+
+
+$("karya-form-title")
+.textContent=
+"Edit Karya";
+
+
+$("btn-simpan-karya")
+.textContent=
+"Update Karya";
+
+
+$("btn-batal-karya")
+.classList
+.remove("hidden");
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+
+/* RESET KARYA */
+
+$("btn-batal-karya")
+.addEventListener(
+"click",
+resetKaryaForm
+);
+
+
+function resetKaryaForm(){
+
+$("karya-form").reset();
+
+$("karya-id").value="";
+
+$("preview-karya")
+.innerHTML="";
+
+karyaFotoLama="";
+
+
+$("karya-form-title")
+.textContent=
+"Tambah Karya";
+
+
+$("btn-simpan-karya")
+.textContent=
+"Simpan Karya";
+
+
+$("btn-batal-karya")
+.classList.add("hidden");
+
+}
+
+
+
+/* HAPUS KARYA */
+
+async function hapusKarya(id){
+
+if(!confirm(
+"Hapus karya ini?"
+))return;
+
+
+const {data,error}=
+await sb
+.from("karya")
+.select("foto")
+.eq("id",id)
+.single();
+
+
+if(error){
+
+alert(error.message);
+
+return;
+
+}
+
+
+const {error:deleteError}=
+await sb
+.from("karya")
+.delete()
+.eq("id",id);
+
+
+if(deleteError){
+
+alert(deleteError.message);
+
+return;
+
+}
+
+
+if(data?.foto){
+
+await hapusFoto(
+data.foto,
+"karya-foto"
+);
+
+}
+
+
+await loadKarya();
+
+}
+
+
+
+/* ================= SESSION ================= */
+
+async function cekSession(){
+
+if(!sb){
+
+showStatus(
+"login-status",
+"Supabase belum terhubung. Cek config.js.",
+true
+);
+
+return;
+
+}
+
+
+const {
+data:{session}
+}=
+await sb.auth.getSession();
+
+
+if(session?.user){
+
+await tampilkanApp(
+session.user
+);
+
+}
+
+}
+
+
+cekSession();
+
+</script>
+
+</body>
+</html>
