@@ -4,526 +4,579 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>SKEMA UNINDRA – Studi Kajian dan Riset Mahasiswa</title>
+  <title>SKEMA UNINDRA — Studi Kajian dan Riset Mahasiswa</title>
 
   <link rel="icon" href="skema.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@10..48,400;10..48,500;10..48,600;10..48,700;10..48,800&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
-
-  <script src="config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="data.js"></script>
-  <script src="db.js"></script>
-  <script src="script.js"></script>
 </head>
 
 <body>
 
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
-
-  <header>
-
+  <!-- NAVBAR -->
+  <header class="site-header">
     <div class="wrap">
-
       <nav>
 
         <a href="index.html" class="logo">
           <img src="skema.jpg" alt="Logo SKEMA">
-          <span>SKEMA UNINDRA</span>
+          <span>
+            <strong>SKEMA</strong>
+            <small>UNINDRA</small>
+          </span>
         </a>
 
         <div class="links">
-
-          <a href="#dashboard">
-            Dashboard
-          </a>
-
-          <a href="#kajian">
-            Bidang kajian
-          </a>
-
-          <a href="#cara">
-            Cara kerja
-          </a>
-
-          <a href="#pengurus">
-            Pengurus
-          </a>
-
-          <a href="#agenda">
-            Agenda
-          </a>
-
-          <a href="#karya">
-            Karya
-          </a>
-
-          <a href="#gabung">
-            Gabung
-          </a>
-
-          <a href="login.html">
-            Login SKEMA
-          </a>
-
+          <a href="#dashboard">Dashboard</a>
+          <a href="#kajian">Bidang Kajian</a>
+          <a href="#cara">Cara Kerja</a>
+          <a href="#pengurus">Pengurus</a>
+          <a href="#agenda">Agenda</a>
+          <a href="#karya">Karya</a>
+          <a href="#gabung" class="nav-join">Gabung SKEMA</a>
         </div>
 
       </nav>
-
     </div>
-
   </header>
 
 
-  <!-- =====================================================
-       HERO
-  ====================================================== -->
+  <main>
 
-  <section class="hero">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
 
-    <div class="wrap">
+        <div class="hero-content">
 
-      <div class="eyebrow">
-        STUDI KAJIAN DAN RISET MAHASISWA
-      </div>
+          <div class="eyebrow">
+            STUDI KAJIAN DAN RISET MAHASISWA
+          </div>
 
-      <h1>
-        Ruang bagi mahasiswa
-        <mark>untuk bertanya,</mark>
-        meneliti, dan menuliskan hasilnya.
-      </h1>
-
-      <p>
-        Ruang bagi mahasiswa UNINDRA untuk mengajukan pertanyaan,
-        membaca literatur, meneliti, dan menuliskan hasilnya bersama.
-      </p>
-
-      <a href="register.html" class="btn">
-        Gabung SKEMA
-      </a>
-
-      <a href="#pengurus" class="btn alt">
-        Lihat pengurus
-      </a>
-
-    </div>
-
-  </section>
-
-
-  <!-- =====================================================
-       DASHBOARD
-  ====================================================== -->
-
-  <section id="dashboard">
-
-    <div class="wrap">
-
-      <h2>
-        Dashboard
-      </h2>
-
-      <p class="lead">
-        Ringkasan aktivitas SKEMA UNINDRA.
-      </p>
-
-
-      <div class="stats">
-
-        <div class="stat">
-
-          <b id="s-pengurus">
-            0
-          </b>
-
-          <span>
-            Pengurus
-          </span>
-
-        </div>
-
-
-        <div class="stat">
-
-          <b id="s-divisi">
-            0
-          </b>
-
-          <span>
-            Divisi
-          </span>
-
-        </div>
-
-
-        <div class="stat">
-
-          <b id="s-agenda">
-            0
-          </b>
-
-          <span>
-            Kegiatan
-          </span>
-
-        </div>
-
-
-        <div class="stat">
-
-          <b id="s-karya">
-            0
-          </b>
-
-          <span>
-            Karya
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <div id="bar-karya"></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =====================================================
-       BIDANG KAJIAN
-  ====================================================== -->
-
-  <section id="kajian">
-
-    <div class="wrap">
-
-      <h2>
-        Bidang kajian
-      </h2>
-
-      <p class="lead">
-        Ruang kajian yang dapat dikembangkan bersama
-        oleh mahasiswa SKEMA UNINDRA.
-      </p>
-
-
-      <div class="fields">
-
-        <article class="field">
-
-          <h3>
-            Pendidikan & Pembelajaran
-          </h3>
+          <h1>
+            Tempat mahasiswa
+            <mark>bertanya, meneliti,</mark>
+            dan menghasilkan karya.
+          </h1>
 
           <p>
-            Membahas proses pendidikan, pembelajaran,
-            kurikulum, serta berbagai persoalan akademik.
+            SKEMA UNINDRA menjadi ruang bagi mahasiswa untuk
+            mengajukan pertanyaan, membaca literatur, melakukan
+            kajian, meneliti, dan menuliskan hasilnya bersama.
           </p>
 
-        </article>
+          <div class="hero-actions">
+            <a href="register.html" class="btn">
+              Gabung SKEMA
+            </a>
 
+            <a href="#pengurus" class="btn alt">
+              Lihat pengurus
+            </a>
+          </div>
 
-        <article class="field">
+        </div>
 
-          <h3>
-            Sosial & Kebijakan
-          </h3>
+        <div class="hero-info">
 
-          <p>
-            Mengkaji fenomena sosial, masyarakat,
-            kebijakan, dan berbagai persoalan publik.
-          </p>
+          <div class="hero-card">
+            <span>01</span>
+            <b>Kajian</b>
+            <p>
+              Membahas berbagai persoalan
+              melalui diskusi dan literatur.
+            </p>
+          </div>
 
-        </article>
+          <div class="hero-card">
+            <span>02</span>
+            <b>Riset</b>
+            <p>
+              Mengembangkan gagasan menjadi
+              penelitian mahasiswa.
+            </p>
+          </div>
 
+          <div class="hero-card">
+            <span>03</span>
+            <b>Karya</b>
+            <p>
+              Mendokumentasikan hasil kajian
+              dalam bentuk karya.
+            </p>
+          </div>
 
-        <article class="field">
-
-          <h3>
-            Sains & Teknologi
-          </h3>
-
-          <p>
-            Membahas perkembangan ilmu pengetahuan,
-            teknologi, dan penerapannya.
-          </p>
-
-        </article>
-
-
-        <article class="field">
-
-          <h3>
-            Bahasa & Budaya
-          </h3>
-
-          <p>
-            Mengembangkan kajian mengenai bahasa,
-            budaya, komunikasi, dan identitas masyarakat.
-          </p>
-
-        </article>
+        </div>
 
       </div>
+    </section>
 
 
-      <div id="inti"></div>
+    <!-- DASHBOARD -->
+    <section id="dashboard">
+      <div class="wrap">
 
-    </div>
+        <div class="section-head">
+          <div>
+            <span class="section-label">01 — DASHBOARD</span>
 
-  </section>
+            <h2>
+              SKEMA dalam angka.
+            </h2>
+          </div>
 
-
-  <!-- =====================================================
-       CARA KERJA
-  ====================================================== -->
-
-  <section id="cara">
-
-    <div class="wrap">
-
-      <div class="cols">
-
-        <div>
-
-          <h2>
-            Cara kerja
-          </h2>
-
-          <p class="lead">
-            Dari pertanyaan sederhana menjadi
-            kajian dan karya mahasiswa.
+          <p class="section-desc">
+            Gambaran singkat aktivitas, pengurus,
+            kegiatan, dan karya yang ada di SKEMA UNINDRA.
           </p>
+        </div>
+
+
+        <div class="stats">
+
+          <article class="stat">
+            <span class="stat-label">PENGURUS</span>
+            <b id="s-pengurus">0</b>
+            <span>orang</span>
+          </article>
+
+          <article class="stat">
+            <span class="stat-label">BIDANG</span>
+            <b id="s-divisi">0</b>
+            <span>bidang kajian</span>
+          </article>
+
+          <article class="stat">
+            <span class="stat-label">AGENDA</span>
+            <b id="s-agenda">0</b>
+            <span>kegiatan</span>
+          </article>
+
+          <article class="stat">
+            <span class="stat-label">KARYA</span>
+            <b id="s-karya">0</b>
+            <span>publikasi</span>
+          </article>
 
         </div>
 
 
-        <ol class="flow">
+        <div class="dashboard-bottom">
 
-          <li>
+          <div>
+            <span class="mini-label">AKTIVITAS KARYA</span>
 
-            <b>
-              Ajukan pertanyaan
-            </b>
+            <div class="bar">
+              <div class="track">
+                <div class="fill" id="bar-karya"></div>
+              </div>
+            </div>
+          </div>
 
-            Mulai dari rasa ingin tahu
-            dan persoalan yang ingin dipahami.
+          <p>
+            Setiap kajian dan kegiatan diarahkan
+            untuk menghasilkan pengetahuan yang
+            dapat dibagikan kembali.
+          </p>
 
-          </li>
-
-
-          <li>
-
-            <b>
-              Baca & diskusi
-            </b>
-
-            Cari literatur, bertukar gagasan,
-            dan memperkuat sudut pandang.
-
-          </li>
-
-
-          <li>
-
-            <b>
-              Teliti
-            </b>
-
-            Susun metode dan kumpulkan data
-            untuk menjawab pertanyaan.
-
-          </li>
-
-
-          <li>
-
-            <b>
-              Tuliskan
-            </b>
-
-            Ubah hasil kajian menjadi karya
-            yang dapat dibagikan.
-
-          </li>
-
-        </ol>
+        </div>
 
       </div>
-
-    </div>
-
-  </section>
+    </section>
 
 
-  <!-- =====================================================
-       PENGURUS
-  ====================================================== -->
+    <!-- BIDANG KAJIAN -->
+    <section id="kajian">
+      <div class="wrap">
 
-  <section id="pengurus">
+        <div class="section-head">
+          <div>
+            <span class="section-label">02 — BIDANG KAJIAN</span>
 
-    <div class="wrap">
+            <h2>
+              Hal yang kami kaji.
+            </h2>
+          </div>
 
-      <h2>
-        Pengurus
-      </h2>
-
-      <p class="lead">
-        Kenali pengurus dan bidang yang menjalankan
-        kegiatan SKEMA UNINDRA.
-      </p>
-
-
-      <div class="tabs">
-
-        <button
-          id="filter-divisi"
-          type="button"
-          aria-pressed="true"
-        >
-          Semua
-        </button>
-
-      </div>
+          <p class="section-desc">
+            Beberapa bidang yang menjadi ruang
+            eksplorasi dan diskusi mahasiswa.
+          </p>
+        </div>
 
 
-      <div id="divisi"></div>
+        <div class="fields">
 
-    </div>
+          <article class="field">
+            <span class="field-number">01</span>
 
-  </section>
+            <h3>
+              Pendidikan &amp; Pembelajaran
+            </h3>
 
-
-  <!-- =====================================================
-       AGENDA
-  ====================================================== -->
-
-  <section id="agenda">
-
-    <div class="wrap">
-
-      <h2>
-        Agenda
-      </h2>
-
-      <p class="lead">
-        Kegiatan SKEMA yang akan dan sudah dilaksanakan.
-      </p>
+            <p>
+              Membahas proses belajar, pendidikan,
+              metode pembelajaran, dan berbagai
+              persoalan akademik.
+            </p>
+          </article>
 
 
-      <div id="agenda-list"></div>
+          <article class="field">
+            <span class="field-number">02</span>
 
-    </div>
+            <h3>
+              Sosial &amp; Kebijakan
+            </h3>
 
-  </section>
-
-
-  <!-- =====================================================
-       KARYA
-  ====================================================== -->
-
-  <section id="karya">
-
-    <div class="wrap">
-
-      <h2>
-        Karya
-      </h2>
-
-      <p class="lead">
-        Hasil kajian dan karya yang telah dibuat
-        oleh mahasiswa SKEMA.
-      </p>
+            <p>
+              Mengkaji fenomena sosial, masyarakat,
+              kebijakan, dan berbagai persoalan
+              yang berkembang di lingkungan sekitar.
+            </p>
+          </article>
 
 
-      <div class="tabs">
+          <article class="field">
+            <span class="field-number">03</span>
 
-        <button
-          id="filter-karya"
-          type="button"
-          aria-pressed="true"
-        >
-          Semua
-        </button>
+            <h3>
+              Sains &amp; Teknologi
+            </h3>
+
+            <p>
+              Mengeksplorasi perkembangan sains,
+              teknologi, pemrograman, dan inovasi
+              yang dapat dikembangkan mahasiswa.
+            </p>
+          </article>
+
+
+          <article class="field">
+            <span class="field-number">04</span>
+
+            <h3>
+              Bahasa &amp; Budaya
+            </h3>
+
+            <p>
+              Membahas bahasa, sastra, budaya,
+              komunikasi, serta berbagai bentuk
+              ekspresi masyarakat.
+            </p>
+          </article>
+
+        </div>
+
+
+        <div id="inti" class="dynamic-content"></div>
 
       </div>
+    </section>
 
 
-      <div id="pub"></div>
+    <!-- CARA KERJA -->
+    <section id="cara">
+      <div class="wrap">
 
-    </div>
+        <div class="section-head">
+          <div>
+            <span class="section-label">03 — CARA KERJA</span>
 
-  </section>
+            <h2>
+              Dari pertanyaan<br>
+              menjadi karya.
+            </h2>
+          </div>
 
-
-  <!-- =====================================================
-       GABUNG SKEMA
-  ====================================================== -->
-
-  <section id="gabung" class="join">
-
-    <div class="wrap">
-
-      <h2>
-        Gabung SKEMA
-      </h2>
-
-      <p class="lead">
-        Punya pertanyaan? Mari kita kaji bersama.
-      </p>
-
-      <p>
-        Gabung bersama SKEMA UNINDRA untuk belajar,
-        berdiskusi, melakukan riset, dan menghasilkan karya.
-      </p>
+          <p class="section-desc">
+            Proses sederhana yang membantu gagasan
+            mahasiswa berkembang menjadi hasil kajian.
+          </p>
+        </div>
 
 
-      <a href="register.html" class="btn">
-        Gabung SKEMA
-      </a>
+        <div class="process">
 
-      <a href="login.html" class="btn alt">
-        Login SKEMA
-      </a>
-
-    </div>
-
-  </section>
+          <div class="process-intro">
+            <p>
+              Tidak harus langsung menjadi penelitian
+              besar. Semua dapat dimulai dari satu
+              pertanyaan sederhana.
+            </p>
+          </div>
 
 
-  <!-- =====================================================
-       FOOTER
-  ====================================================== -->
+          <ol class="flow">
 
+            <li>
+              <span class="flow-number">01</span>
+
+              <div>
+                <b>Ajukan pertanyaan</b>
+
+                <p>
+                  Mulai dari masalah atau hal yang
+                  ingin kamu pahami.
+                </p>
+              </div>
+            </li>
+
+
+            <li>
+              <span class="flow-number">02</span>
+
+              <div>
+                <b>Baca &amp; diskusikan</b>
+
+                <p>
+                  Cari literatur, kumpulkan informasi,
+                  lalu diskusikan bersama.
+                </p>
+              </div>
+            </li>
+
+
+            <li>
+              <span class="flow-number">03</span>
+
+              <div>
+                <b>Lakukan kajian</b>
+
+                <p>
+                  Kembangkan pertanyaan menjadi
+                  kajian atau penelitian.
+                </p>
+              </div>
+            </li>
+
+
+            <li>
+              <span class="flow-number">04</span>
+
+              <div>
+                <b>Tuliskan hasilnya</b>
+
+                <p>
+                  Dokumentasikan hasil dan bagikan
+                  menjadi sebuah karya.
+                </p>
+              </div>
+            </li>
+
+          </ol>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- PENGURUS -->
+    <section id="pengurus">
+      <div class="wrap">
+
+        <div class="section-head">
+          <div>
+            <span class="section-label">04 — PENGURUS</span>
+
+            <h2>
+              Orang-orang di balik SKEMA.
+            </h2>
+          </div>
+
+          <p class="section-desc">
+            Kenali pengurus yang menjalankan
+            kegiatan dan kajian SKEMA UNINDRA.
+          </p>
+        </div>
+
+
+        <div class="tabs">
+          <button
+            type="button"
+            id="filter-divisi"
+            aria-pressed="true">
+            Semua
+          </button>
+        </div>
+
+
+        <div id="divisi" class="people">
+          <!-- DATA PENGURUS DARI SUPABASE -->
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- AGENDA -->
+    <section id="agenda">
+      <div class="wrap">
+
+        <div class="section-head">
+          <div>
+            <span class="section-label">05 — AGENDA</span>
+
+            <h2>
+              Apa yang sedang berlangsung?
+            </h2>
+          </div>
+
+          <p class="section-desc">
+            Jadwal kegiatan dan agenda SKEMA
+            yang dapat diikuti mahasiswa.
+          </p>
+        </div>
+
+
+        <div class="wrap-x">
+
+          <div class="agenda">
+            <table>
+
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Kegiatan</th>
+                  <th>Waktu</th>
+                  <th>Jenis</th>
+                </tr>
+              </thead>
+
+              <tbody id="agenda-list">
+                <!-- DATA AGENDA -->
+              </tbody>
+
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- KARYA -->
+    <section id="karya">
+      <div class="wrap">
+
+        <div class="section-head">
+          <div>
+            <span class="section-label">06 — KARYA</span>
+
+            <h2>
+              Hasil yang bisa dibaca.
+            </h2>
+          </div>
+
+          <p class="section-desc">
+            Kumpulan karya dan hasil kajian
+            yang telah dibuat oleh mahasiswa.
+          </p>
+        </div>
+
+
+        <div class="tabs">
+          <button
+            type="button"
+            id="filter-karya"
+            aria-pressed="true">
+            Semua karya
+          </button>
+        </div>
+
+
+        <div id="pub" class="pub">
+          <!-- DATA KARYA -->
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- GABUNG -->
+    <section id="gabung" class="join">
+      <div class="wrap">
+
+        <div class="join-inner">
+
+          <div>
+            <span class="section-label">
+              07 — GABUNG SKEMA
+            </span>
+
+            <h2>
+              Punya pertanyaan<br>
+              yang ingin dikaji?
+            </h2>
+
+            <p>
+              Bergabung dengan SKEMA dan
+              kembangkan pertanyaanmu menjadi
+              diskusi, kajian, riset, atau karya.
+            </p>
+          </div>
+
+
+          <div class="join-actions">
+
+            <a href="register.html" class="btn">
+              Gabung SKEMA
+            </a>
+
+            <a href="login.html" class="btn alt">
+              Login SKEMA
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
   <footer>
 
     <div class="wrap">
 
-      <img
-        src="skema.jpg"
-        alt="Logo SKEMA"
-      >
+      <a href="index.html" class="footer-logo">
+        <img src="skema.jpg" alt="Logo SKEMA">
+      </a>
 
-      <span>
-        © 2026 SKEMA UNINDRA — Studi Kajian dan Riset Mahasiswa
-      </span>
+      <div class="footer-text">
+        <strong>SKEMA UNINDRA</strong>
+        <span>
+          Studi Kajian dan Riset Mahasiswa
+        </span>
+      </div>
 
-      <a href="login.html">
+      <a href="login.html" class="footer-login">
         Login SKEMA
       </a>
 
     </div>
 
   </footer>
+
+
+  <!-- SCRIPT -->
+  <script src="config.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="data.js"></script>
+  <script src="db.js"></script>
+  <script src="script.js"></script>
 
 </body>
 </html>
