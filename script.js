@@ -46,11 +46,6 @@ function kartuOrang(o) {
       ? String(o.foto).trim()
       : "";
 
-
-  /* =====================================================
-     AVATAR
-  ===================================================== */
-
   const avatar = document.createElement("div");
 
   avatar.className = "avatar";
@@ -58,25 +53,13 @@ function kartuOrang(o) {
 
   card.appendChild(avatar);
 
-
-  /* =====================================================
-     FOTO
-  ===================================================== */
-
   if (foto) {
 
     const img = document.createElement("img");
 
     img.className = "person-photo";
-
     img.src = foto;
-
     img.alt = `Foto ${nama}`;
-
-    /*
-      Kalau foto gagal dimuat,
-      avatar kembali ditampilkan.
-    */
 
     img.onload = function () {
       avatar.style.display = "none";
@@ -85,7 +68,7 @@ function kartuOrang(o) {
 
     img.onerror = function () {
       console.error(
-        "Foto gagal dimuat:",
+        "Foto pengurus gagal dimuat:",
         foto
       );
 
@@ -96,11 +79,6 @@ function kartuOrang(o) {
 
     card.insertBefore(img, avatar);
   }
-
-
-  /* =====================================================
-     INFORMASI PENGURUS
-  ===================================================== */
 
   const info = document.createElement("div");
 
@@ -246,7 +224,6 @@ function renderPengurus(data) {
     document.createElement("button");
 
   semuaBtn.type = "button";
-
   semuaBtn.textContent = "Semua";
 
   semuaBtn.setAttribute(
@@ -355,12 +332,12 @@ function renderPengurus(data) {
     namaDivisi => {
 
       const button =
-        document.createElement("button");
+        document.createElement(
+          "button"
+        );
 
       button.type = "button";
-
-      button.textContent =
-        namaDivisi;
+      button.textContent = namaDivisi;
 
       button.setAttribute(
         "aria-pressed",
@@ -408,6 +385,7 @@ function renderPengurus(data) {
 
 /* =========================================================
    AGENDA
+   FOTO AGENDA DITAMPILKAN DI SINI
 ========================================================= */
 
 function renderAgenda(data) {
@@ -453,6 +431,7 @@ function renderAgenda(data) {
   table.innerHTML = `
     <thead>
       <tr>
+        <th>Foto</th>
         <th>Kegiatan</th>
         <th>Waktu</th>
         <th>Jenis</th>
@@ -470,35 +449,104 @@ function renderAgenda(data) {
     const tr =
       document.createElement("tr");
 
-    tr.innerHTML = `
-      <td>
-        <strong>
-          ${escapeHTML(
-            item.kegiatan || "-"
-          )}
-        </strong>
-      </td>
 
-      <td>
+    /* =====================================================
+       FOTO AGENDA
+    ===================================================== */
+
+    const tdFoto =
+      document.createElement("td");
+
+    if (
+      item.foto &&
+      String(item.foto).trim()
+    ) {
+
+      const img =
+        document.createElement("img");
+
+      img.src =
+        String(item.foto).trim();
+
+      img.alt =
+        `Foto ${item.kegiatan || "Agenda"}`;
+
+      img.style.width = "90px";
+      img.style.height = "60px";
+      img.style.objectFit = "cover";
+      img.style.borderRadius = "10px";
+      img.style.display = "block";
+
+      img.onerror = function () {
+
+        console.error(
+          "Foto agenda gagal dimuat:",
+          item.foto
+        );
+
+        img.remove();
+
+        tdFoto.textContent =
+          "Tidak ada foto";
+      };
+
+      tdFoto.appendChild(img);
+
+    } else {
+
+      tdFoto.textContent =
+        "Tidak ada foto";
+    }
+
+
+    /* =====================================================
+       DATA AGENDA
+    ===================================================== */
+
+    const tdKegiatan =
+      document.createElement("td");
+
+    tdKegiatan.innerHTML = `
+      <strong>
         ${escapeHTML(
-          item.waktu || "-"
+          item.kegiatan || "-"
         )}
-      </td>
-
-      <td>
-        ${
-          item.jenis
-            ? `
-              <span class="tag">
-                ${escapeHTML(
-                  item.jenis
-                )}
-              </span>
-            `
-            : "-"
-        }
-      </td>
+      </strong>
     `;
+
+
+    const tdWaktu =
+      document.createElement("td");
+
+    tdWaktu.textContent =
+      item.waktu || "-";
+
+
+    const tdJenis =
+      document.createElement("td");
+
+    if (item.jenis) {
+
+      const tag =
+        document.createElement("span");
+
+      tag.className = "tag";
+
+      tag.textContent =
+        item.jenis;
+
+      tdJenis.appendChild(tag);
+
+    } else {
+
+      tdJenis.textContent = "-";
+    }
+
+
+    tr.appendChild(tdFoto);
+    tr.appendChild(tdKegiatan);
+    tr.appendChild(tdWaktu);
+    tr.appendChild(tdJenis);
 
     tbody.appendChild(tr);
   });
@@ -569,7 +617,6 @@ function renderKarya(data) {
     document.createElement("button");
 
   semuaBtn.type = "button";
-
   semuaBtn.textContent = "Semua";
 
   semuaBtn.setAttribute(
@@ -685,9 +732,7 @@ function renderKarya(data) {
         );
 
       button.type = "button";
-
-      button.textContent =
-        namaJenis;
+      button.textContent = namaJenis;
 
       button.setAttribute(
         "aria-pressed",
@@ -1029,6 +1074,11 @@ async function mulai() {
     console.log(
       "DATA PENGURUS:",
       pengurus
+    );
+
+    console.log(
+      "DATA AGENDA:",
+      agenda
     );
 
 
