@@ -53,12 +53,17 @@ function kartuOrang(o) {
 
   card.appendChild(avatar);
 
+
+  /* FOTO PENGURUS */
+
   if (foto) {
 
     const img = document.createElement("img");
 
     img.className = "person-photo";
+
     img.src = foto;
+
     img.alt = `Foto ${nama}`;
 
     img.onload = function () {
@@ -67,6 +72,7 @@ function kartuOrang(o) {
     };
 
     img.onerror = function () {
+
       console.error(
         "Foto pengurus gagal dimuat:",
         foto
@@ -79,6 +85,9 @@ function kartuOrang(o) {
 
     card.insertBefore(img, avatar);
   }
+
+
+  /* INFORMASI PENGURUS */
 
   const info = document.createElement("div");
 
@@ -132,11 +141,21 @@ function kartuOrang(o) {
 
 function renderPengurus(data) {
 
-  const inti = document.getElementById("inti");
-  const filter = document.getElementById("filter-divisi");
-  const divisiBox = document.getElementById("divisi");
+  const inti =
+    document.getElementById("inti");
+
+  const filter =
+    document.getElementById(
+      "filter-divisi"
+    );
+
+  const divisiBox =
+    document.getElementById(
+      "divisi"
+    );
 
   if (!inti || !filter || !divisiBox) {
+
     console.error(
       "Element pengurus tidak ditemukan."
     );
@@ -154,9 +173,7 @@ function renderPengurus(data) {
       : [];
 
 
-  /* =====================================================
-     PENGURUS INTI
-  ===================================================== */
+  /* PENGURUS INTI */
 
   const pengurusInti =
     pengurus.filter(
@@ -177,18 +194,20 @@ function renderPengurus(data) {
 
   } else {
 
-    pengurusInti.forEach(orang => {
-      inti.appendChild(
-        kartuOrang(orang)
-      );
-    });
+    pengurusInti.forEach(
+      orang => {
+
+        inti.appendChild(
+          kartuOrang(orang)
+        );
+
+      }
+    );
 
   }
 
 
-  /* =====================================================
-     DAFTAR DIVISI
-  ===================================================== */
+  /* DAFTAR DIVISI */
 
   const daftarDivisi = [
     ...new Set(
@@ -216,15 +235,17 @@ function renderPengurus(data) {
   }
 
 
-  /* =====================================================
-     TOMBOL SEMUA
-  ===================================================== */
+  /* TOMBOL SEMUA */
 
   const semuaBtn =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
   semuaBtn.type = "button";
-  semuaBtn.textContent = "Semua";
+
+  semuaBtn.textContent =
+    "Semua";
 
   semuaBtn.setAttribute(
     "aria-pressed",
@@ -236,11 +257,11 @@ function renderPengurus(data) {
   );
 
 
-  /* =====================================================
-     TAMPILKAN DIVISI
-  ===================================================== */
+  /* TAMPILKAN DIVISI */
 
-  function tampilkan(namaDivisi) {
+  function tampilkan(
+    namaDivisi
+  ) {
 
     divisiBox.innerHTML = "";
 
@@ -258,7 +279,8 @@ function renderPengurus(data) {
             orang =>
               String(
                 orang.divisi || ""
-              ).trim() === namaDivisi
+              ).trim() ===
+              namaDivisi
           );
 
 
@@ -275,18 +297,23 @@ function renderPengurus(data) {
 
 
     const people =
-      document.createElement("div");
-
-    people.className = "people";
-
-
-    dataTampil.forEach(orang => {
-
-      people.appendChild(
-        kartuOrang(orang)
+      document.createElement(
+        "div"
       );
 
-    });
+    people.className =
+      "people";
+
+
+    dataTampil.forEach(
+      orang => {
+
+        people.appendChild(
+          kartuOrang(orang)
+        );
+
+      }
+    );
 
 
     divisiBox.appendChild(
@@ -295,24 +322,26 @@ function renderPengurus(data) {
   }
 
 
-  /* =====================================================
-     BUTTON SEMUA
-  ===================================================== */
+  /* BUTTON SEMUA */
 
   semuaBtn.addEventListener(
     "click",
     () => {
 
       filter
-        .querySelectorAll("button")
-        .forEach(button => {
+        .querySelectorAll(
+          "button"
+        )
+        .forEach(
+          button => {
 
-          button.setAttribute(
-            "aria-pressed",
-            "false"
-          );
+            button.setAttribute(
+              "aria-pressed",
+              "false"
+            );
 
-        });
+          }
+        );
 
       semuaBtn.setAttribute(
         "aria-pressed",
@@ -324,9 +353,7 @@ function renderPengurus(data) {
   );
 
 
-  /* =====================================================
-     BUTTON DIVISI
-  ===================================================== */
+  /* BUTTON DIVISI */
 
   daftarDivisi.forEach(
     namaDivisi => {
@@ -337,7 +364,9 @@ function renderPengurus(data) {
         );
 
       button.type = "button";
-      button.textContent = namaDivisi;
+
+      button.textContent =
+        namaDivisi;
 
       button.setAttribute(
         "aria-pressed",
@@ -350,15 +379,19 @@ function renderPengurus(data) {
         () => {
 
           filter
-            .querySelectorAll("button")
-            .forEach(btn => {
+            .querySelectorAll(
+              "button"
+            )
+            .forEach(
+              btn => {
 
-              btn.setAttribute(
-                "aria-pressed",
-                "false"
-              );
+                btn.setAttribute(
+                  "aria-pressed",
+                  "false"
+                );
 
-            });
+              }
+            );
 
           button.setAttribute(
             "aria-pressed",
@@ -375,6 +408,7 @@ function renderPengurus(data) {
       filter.appendChild(
         button
       );
+
     }
   );
 
@@ -385,7 +419,7 @@ function renderPengurus(data) {
 
 /* =========================================================
    AGENDA
-   FOTO AGENDA DITAMPILKAN DI SINI
+   FOTO AGENDA
 ========================================================= */
 
 function renderAgenda(data) {
@@ -404,6 +438,7 @@ function renderAgenda(data) {
 
   box.innerHTML = "";
 
+
   if (agenda.length === 0) {
 
     box.innerHTML = `
@@ -417,15 +452,21 @@ function renderAgenda(data) {
 
 
   const wrap =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
-  wrap.className = "wrap-x";
+  wrap.className =
+    "wrap-x";
 
 
   const table =
-    document.createElement("table");
+    document.createElement(
+      "table"
+    );
 
-  table.className = "agenda";
+  table.className =
+    "agenda";
 
 
   table.innerHTML = `
@@ -441,127 +482,199 @@ function renderAgenda(data) {
 
 
   const tbody =
-    document.createElement("tbody");
+    document.createElement(
+      "tbody"
+    );
 
 
-  agenda.forEach(item => {
+  agenda.forEach(
+    item => {
 
-    const tr =
-      document.createElement("tr");
-
-
-    /* =====================================================
-       FOTO AGENDA
-    ===================================================== */
-
-    const tdFoto =
-      document.createElement("td");
-
-    if (
-      item.foto &&
-      String(item.foto).trim()
-    ) {
-
-      const img =
-        document.createElement("img");
-
-      img.src =
-        String(item.foto).trim();
-
-      img.alt =
-        `Foto ${item.kegiatan || "Agenda"}`;
-
-      img.style.width = "90px";
-      img.style.height = "60px";
-      img.style.objectFit = "cover";
-      img.style.borderRadius = "10px";
-      img.style.display = "block";
-
-      img.onerror = function () {
-
-        console.error(
-          "Foto agenda gagal dimuat:",
-          item.foto
+      const tr =
+        document.createElement(
+          "tr"
         );
 
-        img.remove();
+
+      /* FOTO AGENDA */
+
+      const tdFoto =
+        document.createElement(
+          "td"
+        );
+
+
+      if (
+        item.foto &&
+        String(
+          item.foto
+        ).trim()
+      ) {
+
+        const img =
+          document.createElement(
+            "img"
+          );
+
+        img.src =
+          String(
+            item.foto
+          ).trim();
+
+        img.alt =
+          `Foto ${
+            item.kegiatan ||
+            "Agenda"
+          }`;
+
+        img.style.width =
+          "90px";
+
+        img.style.height =
+          "60px";
+
+        img.style.objectFit =
+          "cover";
+
+        img.style.borderRadius =
+          "10px";
+
+        img.style.display =
+          "block";
+
+
+        img.onerror =
+          function () {
+
+            console.error(
+              "Foto agenda gagal dimuat:",
+              item.foto
+            );
+
+            img.remove();
+
+            tdFoto.textContent =
+              "Tidak ada foto";
+          };
+
+
+        tdFoto.appendChild(
+          img
+        );
+
+      } else {
 
         tdFoto.textContent =
           "Tidak ada foto";
-      };
+      }
 
-      tdFoto.appendChild(img);
 
-    } else {
+      /* KEGIATAN */
 
-      tdFoto.textContent =
-        "Tidak ada foto";
+      const tdKegiatan =
+        document.createElement(
+          "td"
+        );
+
+      const strong =
+        document.createElement(
+          "strong"
+        );
+
+      strong.textContent =
+        item.kegiatan ||
+        "-";
+
+      tdKegiatan.appendChild(
+        strong
+      );
+
+
+      /* WAKTU */
+
+      const tdWaktu =
+        document.createElement(
+          "td"
+        );
+
+      tdWaktu.textContent =
+        item.waktu ||
+        "-";
+
+
+      /* JENIS */
+
+      const tdJenis =
+        document.createElement(
+          "td"
+        );
+
+
+      if (item.jenis) {
+
+        const tag =
+          document.createElement(
+            "span"
+          );
+
+        tag.className =
+          "tag";
+
+        tag.textContent =
+          item.jenis;
+
+        tdJenis.appendChild(
+          tag
+        );
+
+      } else {
+
+        tdJenis.textContent =
+          "-";
+      }
+
+
+      tr.appendChild(
+        tdFoto
+      );
+
+      tr.appendChild(
+        tdKegiatan
+      );
+
+      tr.appendChild(
+        tdWaktu
+      );
+
+      tr.appendChild(
+        tdJenis
+      );
+
+      tbody.appendChild(
+        tr
+      );
+
     }
+  );
 
 
-    /* =====================================================
-       DATA AGENDA
-    ===================================================== */
+  table.appendChild(
+    tbody
+  );
 
-    const tdKegiatan =
-      document.createElement("td");
+  wrap.appendChild(
+    table
+  );
 
-    tdKegiatan.innerHTML = `
-      <strong>
-        ${escapeHTML(
-          item.kegiatan || "-"
-        )}
-      </strong>
-    `;
-
-
-    const tdWaktu =
-      document.createElement("td");
-
-    tdWaktu.textContent =
-      item.waktu || "-";
-
-
-    const tdJenis =
-      document.createElement("td");
-
-    if (item.jenis) {
-
-      const tag =
-        document.createElement("span");
-
-      tag.className = "tag";
-
-      tag.textContent =
-        item.jenis;
-
-      tdJenis.appendChild(tag);
-
-    } else {
-
-      tdJenis.textContent = "-";
-    }
-
-
-    tr.appendChild(tdFoto);
-    tr.appendChild(tdKegiatan);
-    tr.appendChild(tdWaktu);
-    tr.appendChild(tdJenis);
-
-    tbody.appendChild(tr);
-  });
-
-
-  table.appendChild(tbody);
-
-  wrap.appendChild(table);
-
-  box.appendChild(wrap);
+  box.appendChild(
+    wrap
+  );
 }
 
 
 /* =========================================================
    KARYA
+   FOTO KARYA
 ========================================================= */
 
 function renderKarya(data) {
@@ -614,10 +727,14 @@ function renderKarya(data) {
 
 
   const semuaBtn =
-    document.createElement("button");
+    document.createElement(
+      "button"
+    );
 
   semuaBtn.type = "button";
-  semuaBtn.textContent = "Semua";
+
+  semuaBtn.textContent =
+    "Semua";
 
   semuaBtn.setAttribute(
     "aria-pressed",
@@ -635,6 +752,7 @@ function renderKarya(data) {
 
     pub.innerHTML = "";
 
+
     const dataTampil =
       jenisAktif === "Semua"
 
@@ -649,68 +767,158 @@ function renderKarya(data) {
           );
 
 
-    dataTampil.forEach(item => {
+    dataTampil.forEach(
+      item => {
 
-      const article =
-        document.createElement(
-          "article"
+        const article =
+          document.createElement(
+            "article"
+          );
+
+
+        /* FOTO KARYA */
+
+        if (
+          item.foto &&
+          String(
+            item.foto
+          ).trim()
+        ) {
+
+          const img =
+            document.createElement(
+              "img"
+            );
+
+          img.src =
+            String(
+              item.foto
+            ).trim();
+
+          img.alt =
+            `Foto ${
+              item.judul ||
+              "Karya"
+            }`;
+
+          img.style.width =
+            "100%";
+
+          img.style.maxHeight =
+            "220px";
+
+          img.style.objectFit =
+            "cover";
+
+          img.style.borderRadius =
+            "12px";
+
+          img.style.display =
+            "block";
+
+          img.style.marginBottom =
+            "16px";
+
+
+          img.onerror =
+            function () {
+
+              console.error(
+                "Foto karya gagal dimuat:",
+                item.foto
+              );
+
+              img.remove();
+            };
+
+
+          article.appendChild(
+            img
+          );
+        }
+
+
+        /* JUDUL */
+
+        const judul =
+          document.createElement(
+            "h3"
+          );
+
+        judul.textContent =
+          item.judul ||
+          "Tanpa judul";
+
+        article.appendChild(
+          judul
         );
 
-      article.innerHTML = `
-        <h3>
-          ${escapeHTML(
-            item.judul ||
-            "Tanpa judul"
-          )}
-        </h3>
 
-        <p>
-          ${escapeHTML(
-            item.jenis ||
-            "Karya"
-          )}
+        /* JENIS + TAHUN */
 
-          ${
+        const info =
+          document.createElement(
+            "p"
+          );
+
+        info.textContent =
+          `${item.jenis || "Karya"}${
             item.tahun
-              ? ` • ${escapeHTML(
-                  item.tahun
-                )}`
+              ? ` • ${item.tahun}`
               : ""
-          }
-        </p>
+          }`;
 
-        ${
-          item.penulis
-            ? `
-              <p style="margin-top:8px;">
-                Oleh
-                ${escapeHTML(
-                  item.penulis
-                )}
-              </p>
-            `
-            : ""
+        article.appendChild(
+          info
+        );
+
+
+        /* PENULIS */
+
+        if (item.penulis) {
+
+          const penulis =
+            document.createElement(
+              "p"
+            );
+
+          penulis.style.marginTop =
+            "8px";
+
+          penulis.textContent =
+            `Oleh ${item.penulis}`;
+
+          article.appendChild(
+            penulis
+          );
         }
-      `;
 
-      pub.appendChild(
-        article
-      );
-    });
+
+        pub.appendChild(
+          article
+        );
+
+      }
+    );
   }
 
+
+  /* BUTTON SEMUA */
 
   semuaBtn.addEventListener(
     "click",
     () => {
 
       filter
-        .querySelectorAll("button")
-        .forEach(button =>
-          button.setAttribute(
-            "aria-pressed",
-            "false"
-          )
+        .querySelectorAll(
+          "button"
+        )
+        .forEach(
+          button =>
+            button.setAttribute(
+              "aria-pressed",
+              "false"
+            )
         );
 
       semuaBtn.setAttribute(
@@ -723,6 +931,8 @@ function renderKarya(data) {
   );
 
 
+  /* BUTTON JENIS */
+
   jenis.forEach(
     namaJenis => {
 
@@ -732,7 +942,9 @@ function renderKarya(data) {
         );
 
       button.type = "button";
-      button.textContent = namaJenis;
+
+      button.textContent =
+        namaJenis;
 
       button.setAttribute(
         "aria-pressed",
@@ -745,12 +957,15 @@ function renderKarya(data) {
         () => {
 
           filter
-            .querySelectorAll("button")
-            .forEach(btn =>
-              btn.setAttribute(
-                "aria-pressed",
-                "false"
-              )
+            .querySelectorAll(
+              "button"
+            )
+            .forEach(
+              btn =>
+                btn.setAttribute(
+                  "aria-pressed",
+                  "false"
+                )
             );
 
           button.setAttribute(
@@ -768,6 +983,7 @@ function renderKarya(data) {
       filter.appendChild(
         button
       );
+
     }
   );
 
@@ -829,6 +1045,7 @@ function renderStatistik(
 
 
   if (sPengurus) {
+
     sPengurus.textContent =
       dataPengurus.length;
   }
@@ -854,12 +1071,14 @@ function renderStatistik(
 
 
   if (sAgenda) {
+
     sAgenda.textContent =
       dataAgenda.length;
   }
 
 
   if (sKarya) {
+
     sKarya.textContent =
       dataKarya.length;
   }
@@ -872,17 +1091,19 @@ function renderStatistik(
   const jenisMap = {};
 
 
-  dataKarya.forEach(item => {
+  dataKarya.forEach(
+    item => {
 
-    const jenis =
-      String(
-        item.jenis ||
-        "Lainnya"
-      ).trim();
+      const jenis =
+        String(
+          item.jenis ||
+          "Lainnya"
+        ).trim();
 
-    jenisMap[jenis] =
-      (jenisMap[jenis] || 0) + 1;
-  });
+      jenisMap[jenis] =
+        (jenisMap[jenis] || 0) + 1;
+    }
+  );
 
 
   const daftarJenis =
@@ -891,7 +1112,9 @@ function renderStatistik(
     );
 
 
-  if (daftarJenis.length === 0) {
+  if (
+    daftarJenis.length === 0
+  ) {
 
     barKarya.innerHTML = `
       <p class="lead">
@@ -946,6 +1169,7 @@ function renderStatistik(
       barKarya.appendChild(
         row
       );
+
     }
   );
 }
@@ -976,18 +1200,20 @@ function renderKajian(data) {
 
 
   const aktif =
-    kajian.filter(item => {
+    kajian.filter(
+      item => {
 
-      const status =
-        String(
-          item.status ||
-          "Aktif"
-        )
-        .trim()
-        .toLowerCase();
+        const status =
+          String(
+            item.status ||
+            "Aktif"
+          )
+            .trim()
+            .toLowerCase();
 
-      return status === "aktif";
-    });
+        return status === "aktif";
+      }
+    );
 
 
   if (aktif.length === 0) {
@@ -998,38 +1224,41 @@ function renderKajian(data) {
   fields.innerHTML = "";
 
 
-  aktif.forEach(item => {
+  aktif.forEach(
+    item => {
 
-    const field =
-      document.createElement(
-        "div"
+      const field =
+        document.createElement(
+          "div"
+        );
+
+      field.className =
+        "field";
+
+
+      field.innerHTML = `
+        <h3>
+          ${escapeHTML(
+            item.judul ||
+            item.bidang ||
+            "Bidang Kajian"
+          )}
+        </h3>
+
+        <p>
+          ${escapeHTML(
+            item.deskripsi || ""
+          )}
+        </p>
+      `;
+
+
+      fields.appendChild(
+        field
       );
 
-    field.className =
-      "field";
-
-
-    field.innerHTML = `
-      <h3>
-        ${escapeHTML(
-          item.judul ||
-          item.bidang ||
-          "Bidang Kajian"
-        )}
-      </h3>
-
-      <p>
-        ${escapeHTML(
-          item.deskripsi || ""
-        )}
-      </p>
-    `;
-
-
-    fields.appendChild(
-      field
-    );
-  });
+    }
+  );
 }
 
 
@@ -1079,6 +1308,11 @@ async function mulai() {
     console.log(
       "DATA AGENDA:",
       agenda
+    );
+
+    console.log(
+      "DATA KARYA:",
+      karya
     );
 
 
