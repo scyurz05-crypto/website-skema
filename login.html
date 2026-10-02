@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Login Member — SKEMA UNINDRA</title>
+
+<script src="config.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#111827;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px
+}
+.box{
+width:100%;
+max-width:420px;
+background:white;
+padding:30px;
+border-radius:18px
+}
+h1{margin-top:0}
+.field{margin-bottom:15px}
+input{
+width:100%;
+padding:12px;
+margin-top:7px;
+border:1px solid #ddd;
+border-radius:9px;
+box-sizing:border-box
+}
+button{
+width:100%;
+padding:13px;
+border:0;
+border-radius:9px;
+background:#111827;
+color:white;
+font-weight:bold;
+cursor:pointer
+}
+.status{
+margin-top:15px;
+padding:12px;
+border-radius:9px;
+background:#f3f4f6
+}
+.hidden{display:none}
+a{color:#111827;font-weight:bold}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Login Member</h1>
+<p>Masuk ke dashboard member SKEMA.</p>
+
+<form id="login-form">
+
+<div class="field">
+<label>Email</label>
+<input id="email" type="email" required>
+</div>
+
+<div class="field">
+<label>Password</label>
+<input id="password" type="password" required>
+</div>
+
+<button type="submit">Login</button>
+
+<div id="status" class="status hidden"></div>
+
+</form>
+
+<p>
+Belum punya akun?
+<a href="register.html">Daftar Member</a>
+</p>
+
+</div>
+
+<script>
+
+const sb=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+const form=document.getElementById("login-form");
+const status=document.getElementById("status");
+
+
+async function cekMember(user){
+
+const {data,error}=await sb
+.from("member_profiles")
+.select("*")
+.eq("id",user.id)
+.maybeSingle();
+
+if(error){
+throw error;
+}
+
+return data;
+
+}
+
+
+form.addEventListener("submit",async e=>{
+
+e.preventDefault();
+
+status.classList.remove("hidden");
+status.textContent="Login...";
+
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+
+
+const {data,error}=await sb.auth.signInWithPassword({
+email,
+password
+});
+
+
+if(error){
+
+status.textContent=error.message;
+status.style.background="#fee2e2";
+status.style.color="#991b1b";
+
+return;
+
+}
+
+
+try{
+
+const member=await cekMember(data.user);
+
+if(!member){
+
+await sb.auth.signOut();
+
+status.textContent=
+"Profil member belum ditemukan.";
+
+return;
+
+}
+
+
+if(member.status!=="Aktif"){
+
+await sb.auth.signOut();
+
+status.textContent=
+"Akun member sedang nonaktif.";
+
+status.style.background="#fee2e2";
+status.style.color="#991b1b";
+
+return;
+
+}
+
+
+window.location.href="member.html";
+
+}catch(error){
+
+await sb.auth.signOut();
+
+status.textContent=error.message;
+status.style.background="#fee2e2";
+status.style.color="#991b1b";
+
+}
+
+});
+
+
+</script>
+
+</body>
+</html>

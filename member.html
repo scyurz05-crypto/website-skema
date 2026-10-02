@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard Member — SKEMA UNINDRA</title>
+
+<script src="config.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f6f8;
+color:#111827
+}
+header{
+background:#111827;
+color:white;
+padding:18px 25px;
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+header h1{margin:0;font-size:20px}
+.container{
+max-width:900px;
+margin:auto;
+padding:25px
+}
+.card{
+background:white;
+padding:25px;
+border-radius:16px;
+margin-bottom:20px;
+box-shadow:0 3px 15px #0001
+}
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px
+}
+.info{
+padding:15px;
+background:#f9fafb;
+border-radius:10px
+}
+.label{
+font-size:13px;
+color:#6b7280;
+margin-bottom:5px
+}
+.value{
+font-weight:bold
+}
+button{
+border:0;
+padding:11px 17px;
+border-radius:9px;
+cursor:pointer;
+font-weight:bold
+}
+.logout{
+background:#dc2626;
+color:white
+}
+a{
+display:inline-block;
+margin-top:15px;
+color:#111827;
+font-weight:bold
+}
+.hidden{display:none}
+@media(max-width:600px){
+.grid{grid-template-columns:1fr}
+header{
+flex-direction:column;
+align-items:flex-start;
+gap:12px
+}
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>SKEMA UNINDRA — Member</h1>
+
+<button id="logout" class="logout">
+Keluar
+</button>
+
+</header>
+
+<main class="container">
+
+<div class="card">
+
+<h2>Dashboard Member</h2>
+
+<p>
+Selamat datang di ruang member SKEMA UNINDRA.
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>Profil Saya</h2>
+
+<div class="grid">
+
+<div class="info">
+<div class="label">Nama</div>
+<div id="nama" class="value">-</div>
+</div>
+
+<div class="info">
+<div class="label">Email</div>
+<div id="email" class="value">-</div>
+</div>
+
+<div class="info">
+<div class="label">Program Studi</div>
+<div id="prodi" class="value">-</div>
+</div>
+
+<div class="info">
+<div class="label">Angkatan</div>
+<div id="angkatan" class="value">-</div>
+</div>
+
+<div class="info">
+<div class="label">Status</div>
+<div id="status-member" class="value">-</div>
+</div>
+
+<div class="info">
+<div class="label">Terdaftar</div>
+<div id="tanggal" class="value">-</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Akses Website</h2>
+
+<p>
+Kembali ke halaman utama SKEMA untuk melihat agenda,
+pengurus, kajian, dan karya.
+</p>
+
+<a href="index.html">
+← Kembali ke Website SKEMA
+</a>
+
+</div>
+
+</main>
+
+<script>
+
+const sb=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+
+async function mulai(){
+
+const {
+data:{session}
+}=await sb.auth.getSession();
+
+
+if(!session){
+
+window.location.href="login.html";
+return;
+
+}
+
+
+const {data,error}=await sb
+.from("member_profiles")
+.select("*")
+.eq("id",session.user.id)
+.single();
+
+
+if(error || !data){
+
+await sb.auth.signOut();
+
+window.location.href="login.html";
+return;
+
+}
+
+
+if(data.status!=="Aktif"){
+
+await sb.auth.signOut();
+
+alert("Akun member sedang nonaktif.");
+
+window.location.href="login.html";
+return;
+
+}
+
+
+document.getElementById("nama").textContent=
+data.nama||"-";
+
+document.getElementById("email").textContent=
+data.email||session.user.email||"-";
+
+document.getElementById("prodi").textContent=
+data.prodi||"-";
+
+document.getElementById("angkatan").textContent=
+data.angkatan||"-";
+
+document.getElementById("status-member").textContent=
+data.status||"-";
+
+document.getElementById("tanggal").textContent=
+data.created_at
+?new Date(data.created_at).toLocaleDateString("id-ID")
+:"-";
+
+}
+
+
+document.getElementById("logout")
+.addEventListener("click",async()=>{
+
+await sb.auth.signOut();
+
+window.location.href="login.html";
+
+});
+
+
+mulai();
+
+</script>
+
+</body>
+</html>
