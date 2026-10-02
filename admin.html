@@ -250,6 +250,21 @@ const S = {
     ]
 
   }
+    kajian: {
+
+    urut: "urutan",
+
+    f: [
+      ["judul", "Judul Kajian"],
+      ["bidang", "Bidang Kajian"],
+      ["deskripsi", "Deskripsi"],
+      ["penulis", "Penulis"],
+      ["tahun", "Tahun", "number"],
+      ["status", "Status"],
+      ["urutan", "Urutan Tampil", "number"]
+    ]
+
+  }
 
 };
 
@@ -675,7 +690,7 @@ async function muat() {
       );
 
 
-      const socials =
+      ocials =
         el("div", "social-links");
 
 
@@ -901,7 +916,7 @@ async function cekSession() {
     .getSession();
 
 
-  const session =
+  ession =
     data.session;
 
 
